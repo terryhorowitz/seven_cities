@@ -42,5 +42,5 @@ module.exports = gameDB
     console.log('problem connecting:', err)
   })
 
-var User = require('./models/user')(gameDB)
+var Player = require('./models/player')(gameDB)
 

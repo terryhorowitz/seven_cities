@@ -70,12 +70,17 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(db) {
-    var User = db.define('User', {
-        name: Sequelize.STRING,
-        pictureUrl: Sequelize.STRING
-    }, {
-        timestamps: false  // this will deactivate the time columns
-    });
+  var Player = db.define('User', {
+    name: Sequelize.STRING,
+    rotatingCards: "",
+    builtCards: "",
+    money: "",
+    board: "",
+    resources: "",
+    tokens: ""
+  }, {
+    timestamps: false  // this will deactivate the time columns
+  });
 
-    return User;
+  return User;
 };
