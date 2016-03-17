@@ -1,4 +1,4 @@
-//'use strict';
+'use strict';
 //var crypto = require('crypto');
 //var mongoose = require('mongoose');
 //var _ = require('lodash');
@@ -82,5 +82,5 @@ module.exports = function(db) {
     timestamps: false  // this will deactivate the time columns
   });
 
-  return User;
+  return Game;
 };
