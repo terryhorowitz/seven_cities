@@ -1,4 +1,4 @@
-// Require our models -- these should register the model into mongoose
-// so the rest of the application can simply call mongoose.model('User')
-// anywhere the User model needs to be used.
-require('./player');
+var promiseForGameDB = require('../index.js');
+var Game = require('./game');
+var Player = require('./player.js');
+

@@ -40,7 +40,4 @@ module.exports = gameDB
   })
   .catch(function(err){
     console.log('problem connecting:', err)
-  })
-
-var Player = require('./models/player')(gameDB)
-
+  });
