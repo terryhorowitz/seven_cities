@@ -5,22 +5,24 @@ var Board = require('./board')(promiseForGameDB);
 var Deck = require('./deck')(promiseForGameDB);
 var Card = require('./card')(promiseForGameDB);
 
-Player.hasOne(Board); //will now have methods: player.getBoard and player.setBoard
-Player.hasMany(Card, {as: 'BuiltCards'}); //will have player.getBuiltCards and player.setBuiltCards
-Player.hasMany(Card, {as: 'Hand'});//will have player.getHand and player.setHand
-Player.hasOne(Player, {as: "LeftNeighbor"});
-Player.hasOne(Player, {as: "RightNeighbor"});
+Player.belongsTo(Board); //will now have methods: player.getBoard and player.setBoard
+Player.belongsToMany(Card, {as: 'BuiltCards'}); //will have player.getBuiltCards and player.setBuiltCards
+Player.belongsToMany(Card, {as: 'Hand'});//will have player.getHand and player.setHand
+Player.belongsTo(Player, {as: "LeftNeighbor"});
+Player.belongsTo(Player, {as: "RightNeighbor"});
 
-Player.belongsTo(Game);//has player.getGame and player.setGame but key stored on Game
+//Player.belongsTo(Game);//has player.getGame and player.setGame but key stored on Game
 
-Game.hasMany(Player); //game.getPlayers/game.setPlayers
-Game.hasMany(Card, {as: "Discard"});
-Game.hasMany(Deck);
+Game.belongsToMany(Player); //game.getPlayers/game.setPlayers
+Game.belongsToMany(Card, {as: "Discard"});
+Game.belongsToMany(Deck);
 
-Deck.hasMany(Card);
-
-Card.hasOne(Deck);
+Deck.belongsToMany(Card);
 
 module.exports = {
-  
-}
+  Game: Game,
+  Player: Player,
+  Board: Board,
+  Deck: Deck,
+  Card: Card
+};
