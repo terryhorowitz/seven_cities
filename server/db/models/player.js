@@ -77,6 +77,7 @@ module.exports = function(db) {
     money: Sequelize.INTEGER,
 //    board: "",
 //    resources: "",
+    //upgrades
     tokens: Sequelize.INTEGER
   }, {
     timestamps: false
