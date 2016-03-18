@@ -4,7 +4,8 @@ var Sequelize = require('sequelize');
 
 module.exports = function(db) {
   var Deck = db.define('Deck', {
-    numPlayers: Sequelize.INTEGER
+    numPlayers: Sequelize.INTEGER,
+    era: Sequelize.STRING
   }, {
     timestamps: false
   });
