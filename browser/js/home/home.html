@@ -1,4 +1,9 @@
 <section id="home">
-    <fullstack-logo></fullstack-logo>
-    <rando-greeting></rando-greeting>
+	<h1 id='title'>Seven Cities</h1>
+	<h3 id='subtitle'>The best game.</h3>
+ <!--  <button id='choosegame' ng-click='showin()' class='btn btn-option'><h2>Two Player</h2></button> -->
+  <div  id='room'>
+  	<label>Game name: <input id='roomin' type='text', name='roomName' ng-model='chooseroomname' required></label>
+  	<label>Name: <input id='playerName' type='text', name='playerName' ng-model='choosename' required></label>
+  <button id='joingame' ng-click='twoPlayer()' class='btn btn-option'><h2>Join</h2></button>
 </section>
