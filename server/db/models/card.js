@@ -3,7 +3,7 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(db) {
-  var Card = db.define('Card', {
+  var Card = db.define('card', {
     name: Sequelize.STRING,
     cost: Sequelize.ARRAY(Sequelize.STRING),
     functionality: Sequelize.ARRAY(Sequelize.STRING),

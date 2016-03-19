@@ -70,18 +70,12 @@
 var Sequelize = require('sequelize');
 
 module.exports = function(db) {
-  var Player = db.define('Player', {
+  var Player = db.define('player', {
     name: Sequelize.STRING,
-//    rotatingCards: "",
-//    builtCards: "",
     money: Sequelize.INTEGER,
-//    board: "",
-//    resources: "",
-    //upgrades
     tokens: Sequelize.INTEGER
   }, {
     timestamps: false
   });
-
   return Player;
 };

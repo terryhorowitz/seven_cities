@@ -6,13 +6,13 @@ module.exports = router;
 router.get('/', function(req, res, next){
   Card.findAll({})
   .then(function(cards){
-    res.json('cards', cards)
+    res.json(cards)
   }).catch(next)
 });
 
 router.post('/', function(req, res, next){
   Card.create(req.body)
-  .then(function(res){
-    res.json(res)
-  })
+  .then(function(response){
+    res.json(response.data)
+  }).catch(next)
 });

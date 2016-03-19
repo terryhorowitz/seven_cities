@@ -17,6 +17,8 @@ Game.belongsToMany(Deck, {through: "GameDeck"});
 
 Deck.belongsToMany(Card, {through: "DeckCards"});
 
+gameDBObj.sync();
+
 module.exports = {
   Game: Game,
   Player: Player,
