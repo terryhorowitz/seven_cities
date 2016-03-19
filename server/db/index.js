@@ -34,7 +34,7 @@ var gameDB = new Sequelize('gamedb', '', null, {
 });
 
 module.exports = {
-  promiseForGameDB : gameDB
+  promiseForGameDB: gameDB
                     .authenticate()
                     .then(function(){
                       console.log("we're connected . . . now!")
