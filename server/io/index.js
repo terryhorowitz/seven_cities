@@ -7,6 +7,7 @@ module.exports = function (server) {
     if (io) return io;
     io = socketio(server);
     var currentRoom;
+    var users = {};
 
     io.sockets.on('connection', function (socket) {
     	var counter = 0;
@@ -17,6 +18,7 @@ module.exports = function (server) {
 
 				var clients = io.sockets.adapter.rooms[data.roomname];
 				for (var key in clients.sockets) {
+                    users[data.playername] = key;
 					counter++;
 				}
 
