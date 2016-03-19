@@ -1549,19 +1549,6 @@ var ageIIICards = [//victory points
   }
 ];
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+ageIIICards.forEach(function(card){
+  Card.create(card)
+});

@@ -6,6 +6,7 @@ module.exports = router;
 router.get('/', function(req, res, next){
   Card.findAll({})
   .then(function(cards){
+    console.log('HOW MANY', cards.length)
     res.json(cards)
   }).catch(next)
 });

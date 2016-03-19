@@ -12,8 +12,8 @@ module.exports = function(db) {
       values: ["Raw Resource", "Processed Resource", "War", "Technology", "Victory Points", "Trading", "Guild"]
     },
     upgradeTo: Sequelize.ARRAY(Sequelize.STRING),
-    era: Sequelize.ENUM(1,2,3),
-    numPlayers: Sequelize.ENUM(3,4,5,6,7),
+    era: Sequelize.INTEGER,
+    numPlayers: Sequelize.INTEGER,
     picture: Sequelize.STRING
   }, {
     timestamps: false
