@@ -33,11 +33,14 @@ var gameDB = new Sequelize('gamedb', '', null, {
   port: 5432
 });
 
-module.exports = gameDB
-  .authenticate()
-  .then(function(){
-    console.log("we're connected . . . now!")
-  })
-  .catch(function(err){
-    console.log('problem connecting:', err)
-  });
+module.exports = {
+  promiseForGameDB : gameDB
+                    .authenticate()
+                    .then(function(){
+                      console.log("we're connected . . . now!")
+                    })
+                    .catch(function(err){
+                      console.log('problem connecting:', err)
+                    }),
+  db: gameDB
+}
