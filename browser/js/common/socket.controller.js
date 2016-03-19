@@ -1,0 +1,3 @@
+app.controller('MyCtrl', function (mySocket) {
+  // ...
+});

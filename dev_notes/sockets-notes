@@ -1,0 +1,32 @@
+what we need our sockets to do: 
+-broadcast which board a players has
+1. broadcast when player played card and is ready for "reveal" (and listen for other players)
+2. broadcast what a player's choice is
+3. sync the board according to the changes every round (which players played which cards)
+
+
+start game:
+v 1. join players to the room they choose
+x 2. game "leader" chooses when to start game with current num of players (minimum 3)
+3. assign each player a board (grab all boards, then update player db)
+4. randomize neighbors (update each player's right and left neighbors in db)
+
+game cycle:
+1. give cards
+	-grab correct deck from db
+	-change each player's hand (db, hand object)
+2. players make choices
+	-check if each player can make move (db, helper functions)
+	-wait until all players made choices
+3. show everyone's cards
+4. change game status
+	-update each player's built cards/money (db)
+	-update each player's "players" object
+5. shuffle and shift hands
+	-update each player's hand (db, hand object)
+
+6. discard leftovers
+	-update game's discard in db
+7. war
+	-check each player's war cards (db)
+	-update each player's war tokens in db
