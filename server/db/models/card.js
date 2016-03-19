@@ -13,7 +13,8 @@ module.exports = function(db) {
     },
     upgradeTo: Sequelize.STRING,
     era: Sequelize.STRING, //do we need this?
-    numPlayers: Sequelize.ENUM(3,4,5,6,7)
+    numPlayers: Sequelize.ENUM(3,4,5,6,7),
+    picture: Sequelize.STRING
   }, {
     timestamps: false
   });

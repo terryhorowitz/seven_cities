@@ -30,7 +30,7 @@ var Sequelize = require('sequelize');
 
 var gameDB = new Sequelize('gamedb', '', null, {
   dialect: 'postgres',
-  port: 3306
+  port: 5432
 });
 
 module.exports = gameDB
