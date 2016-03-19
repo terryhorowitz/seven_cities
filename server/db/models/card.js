@@ -9,10 +9,10 @@ module.exports = function(db) {
     functionality: Sequelize.ARRAY(Sequelize.STRING),
     type: {
       type: Sequelize.ENUM,
-      values: ["Raw Resource", "Processed Resource", "War", "Technologies", "Victory Points", "Trading", "Guilds"]
+      values: ["Raw Resource", "Processed Resource", "War", "Technology", "Victory Points", "Trading", "Guild"]
     },
-    upgradeTo: Sequelize.STRING,
-    era: Sequelize.STRING, //do we need this?
+    upgradeTo: Sequelize.ARRAY(Sequelize.STRING),
+    era: Sequelize.ENUM(1,2,3),
     numPlayers: Sequelize.ENUM(3,4,5,6,7),
     picture: Sequelize.STRING
   }, {
