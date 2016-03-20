@@ -1,0 +1,24 @@
+@mixin not-last-of-type($selector) {
+  & #{$selector}:not(:last-of-type) {
+    @content;
+  }
+}
+
+.board{
+	/*position: absolute;*/
+	
+}
+
+.wonders{
+	width: 430px;
+	top: 290px;
+    position: absolute;
+    left: 440px;
+    z-index: -1;
+	@include not-last-of-type('img') {
+	    margin-right: 19px;
+	  }
+	img {
+    	width: 128px;
+    }
+}
