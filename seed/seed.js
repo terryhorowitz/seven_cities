@@ -65,6 +65,7 @@ var ageIICards = require('./age_II_cards.js');
 var ageIIICards = require('./age_III_cards.js');
 
 //if statement with gameDBObj.sync({force:true}) if we have cards already???
+connectToDb.sync({force: true});
 
 
 var seedCards = function () {
