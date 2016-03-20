@@ -20,7 +20,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.hand;
     $scope.firstPlayer = false;
     $scope.builtCards;
-    $scope.players = [];
+    $scope.players;
     $scope.money;
     $scope.currentlyPlaying;
 
@@ -40,7 +40,8 @@ app.controller('GameController', function ($scope, $state) {
       })
       //need to initiate game when all players are ready (create a game in the db)
       socket.on('game initialized', function(data) {
-
+        $scope.players = data;
+        $scope.$digest()
       })
 
       //send all players their cards
