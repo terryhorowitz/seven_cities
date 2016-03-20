@@ -1,11 +1,11 @@
 'use strict';
 var router = require('express').Router();
-var Deck = require('../../../db/models/index').Deck;
+var Board = require('../../../db/models/index').Board;
 var Card = require('../../../db/models/index').Card;
 module.exports = router;
 
 router.get('/', function(req, res, next){
-  Deck.findAll()
+  Board.findAll()
   .then(function(cards){
     console.log('HOW MANY', cards.length)
     res.json(cards)
