@@ -56,17 +56,17 @@ name in the environment files.
 //        process.kill(1);
 //    });
 //});
-var connectToDb = require('../server/db');
+var connectToDb = require('../server/db').db;
 var Promise = require('bluebird');
 
 var Card = require('../server/db/models').Card;
-var Deck = require('./decks.js');
+var Deck = require('../server/db/models').Deck;
+var deckSeed = require('./decks.js');
 var ageICards = require('./age_I_cards.js');
 var ageIICards = require('./age_II_cards.js');
 var ageIIICards = require('./age_III_cards.js');
 
-//if statement with gameDBObj.sync({force:true}) if we have cards already???
-connectToDb.sync({force: true});
+//connectToDb.sync({force: true});//clears db before seeding
 
 
 var seedCards = function () {
@@ -74,18 +74,34 @@ var seedCards = function () {
   var cards = ageICards.concat(ageIICards).concat(ageIIICards);
   
   return Promise.map(cards, function(card) { 
-    return Card.create(card)
+    return Card.create(card);
   });
   
 }
 
-var seedDecks = function(cards){
+var seedDecks = function(){
   
-  
+  return Promise.map(deckSeed, function(deck){
+    return Deck.create(deck)
+    .then(function(deck){
+      return Promise.join(Card.findAll({
+        where: {
+          era: deck.era,
+          numPlayers: {$lte: deck.numPlayers}
+        }
+      }), deck);
+    })
+    .spread(function(cards, deck){
+      return deck.setCards(cards)
+    })
+  })
   
 }
 
 seedCards()
-.then(function(cards){
-  
+.then(function(){
+  return seedDecks();
+})
+.then(function(){
+  console.log('DONE')
 })
