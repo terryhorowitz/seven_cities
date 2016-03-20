@@ -61,7 +61,9 @@ var Promise = require('bluebird');
 
 var Card = require('../server/db/models').Card;
 var Deck = require('../server/db/models').Deck;
+var Board = require('../server/db/models').Board;
 var deckSeed = require('./decks.js');
+var boardSeed = require('./boards.js');
 var ageICards = require('./age_I_cards.js');
 var ageIICards = require('./age_II_cards.js');
 var ageIIICards = require('./age_III_cards.js');
@@ -100,9 +102,16 @@ var seedDecks = function(){
   
 }
 
+var seedBoards = function () {
+  return Board.bulkCreate(boardSeed);
+}
+
 seedCards()
 .then(function(){
   return seedDecks();
+})
+.then(function(){
+  return seedBoards();
 })
 .then(function(){
   console.log('Database seeded :)')
