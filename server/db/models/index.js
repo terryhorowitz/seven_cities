@@ -6,16 +6,16 @@ var Deck = require('./deck')(gameDBObj);
 var Card = require('./card')(gameDBObj);
 
 Player.belongsTo(Board); 
-Player.belongsToMany(Card, {through: 'BuiltCards', timeStamps: false}); 
-Player.belongsToMany(Card, {through: 'Hand', timeStamps: false});
-Player.belongsTo(Player, {as: "LeftNeighbor", timeStamps: false});
-Player.belongsTo(Player, {as: "RightNeighbor", timeStamps: false});
+Player.belongsToMany(Card, {through: 'BuiltCards', timestamps: false}); 
+Player.belongsToMany(Card, {through: 'Hand', timestamps: false});
+Player.belongsTo(Player, {as: "LeftNeighbor", timestamps: false});
+Player.belongsTo(Player, {as: "RightNeighbor", timestamps: false});
 
-Game.belongsToMany(Player, {through: "GamePlayers", timeStamps: false});
-Game.belongsToMany(Card, {through: "Discard", timeStamps: false});
-Game.belongsToMany(Deck, {through: "GameDeck", timeStamps: false});
+Game.belongsToMany(Player, {through: "GamePlayers", timestamps: false});
+Game.belongsToMany(Card, {through: "Discard", timestamps: false});
+Game.belongsToMany(Deck, {through: "GameDeck", timestamps: false});
 
-Deck.belongsToMany(Card, {through: "DeckCards", timeStamps: false});
+Deck.belongsToMany(Card, {through: "DeckCards", timestamps: false});
 
 //gameDBObj.sync({force: true});
 

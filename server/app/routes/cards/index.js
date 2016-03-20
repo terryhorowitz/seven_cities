@@ -5,7 +5,7 @@ var Card = require('../../../db/models/index').Card;
 module.exports = router;
 
 router.get('/', function(req, res, next){
-  Deck.findAll({})
+  Deck.findAll({include: [Card], where: {id:1}})
   .then(function(cards){
     console.log('HOW MANY', cards.length)
     res.json(cards)
