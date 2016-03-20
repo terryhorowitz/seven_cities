@@ -5,7 +5,7 @@ var Sequelize = require('sequelize');
 module.exports = function(db) {
   var Deck = db.define('deck', {
     numPlayers: Sequelize.INTEGER,
-    era: Sequelize.STRING
+    era: Sequelize.INTEGER
   }, {
     timestamps: false
   });

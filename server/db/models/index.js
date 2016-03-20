@@ -5,6 +5,8 @@ var Board = require('./board')(gameDBObj);
 var Deck = require('./deck')(gameDBObj);
 var Card = require('./card')(gameDBObj);
 
+gameDBObj.sync();
+
 Player.belongsTo(Board); 
 Player.belongsToMany(Card, {through: 'BuiltCards', timestamps: false}); 
 Player.belongsToMany(Card, {through: 'Hand', timestamps: false});
@@ -16,8 +18,6 @@ Game.belongsToMany(Card, {through: "Discard", timestamps: false});
 Game.belongsToMany(Deck, {through: "GameDeck", timestamps: false});
 
 Deck.belongsToMany(Card, {through: "DeckCards", timestamps: false});
-
-//gameDBObj.sync({force: true});
 
 module.exports = {
   Game: Game,

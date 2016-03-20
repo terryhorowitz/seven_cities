@@ -72,27 +72,31 @@ var ageIIICards = require('./age_III_cards.js');
 var seedCards = function () {
   
   var cards = ageICards.concat(ageIICards).concat(ageIIICards);
-  
-  return Promise.map(cards, function(card) { 
-    return Card.create(card);
-  });
+
+  return Card.destroy({where: {era: {$lte: 3}}})
+  .then(function(){
+    return Card.bulkCreate(cards);
+  })
   
 }
 
 var seedDecks = function(){
   
-  return Promise.map(deckSeed, function(deck){
-    return Deck.create(deck)
-    .then(function(deck){
-      return Promise.join(Card.findAll({
-        where: {
-          era: deck.era,
-          numPlayers: {$lte: deck.numPlayers}
-        }
-      }), deck);
-    })
-    .spread(function(cards, deck){
-      return deck.setCards(cards)
+  return Deck.destroy({where: {era: {$lte: 3}}})
+  .then(function(){
+    return Promise.map(deckSeed, function(deck){
+      return Deck.create(deck)
+      .then(function(deck){
+        return Promise.join(Card.findAll({
+          where: {
+            era: deck.era,
+            numPlayers: {$lte: deck.numPlayers}
+          }
+        }), deck);
+      })
+      .spread(function(cards, deck){
+        return deck.setCards(cards)
+      })
     })
   })
   
