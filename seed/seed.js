@@ -66,13 +66,11 @@ var ageICards = require('./age_I_cards.js');
 var ageIICards = require('./age_II_cards.js');
 var ageIIICards = require('./age_III_cards.js');
 
-//connectToDb.sync({force: true});//clears db before seeding
-
 
 var seedCards = function () {
   
   var cards = ageICards.concat(ageIICards).concat(ageIIICards);
-
+  //clear db first to avoid duplicates
   return Card.destroy({where: {era: {$lte: 3}}})
   .then(function(){
     return Card.bulkCreate(cards);
@@ -107,5 +105,5 @@ seedCards()
   return seedDecks();
 })
 .then(function(){
-  console.log('DONE')
+  console.log('Database seeded :)')
 })
