@@ -66,12 +66,14 @@ var ageIIICards = require('./age_III_cards.js');
 
 //if statement with gameDBObj.sync({force:true}) if we have cards already???
 
+
 var seedCards = function () {
-  return Promise.all([
-    ageICards.forEach(function(card){ Card.create(card) }),
-    ageIICards.forEach(function(card){ Card.create(card) }),
-    ageIIICards.forEach(function(card){ Card.create(card) })
-  ])
+  
+  var cards = ageICards.concat(ageIICards).concat(ageIIICards);
+  
+  return Promise.map(cards, function(card) { 
+    return Card.create(card)
+  });
 }
 
 seedCards().then(function(){console.log('done!')})
