@@ -60,6 +60,7 @@ var connectToDb = require('../server/db');
 var Promise = require('bluebird');
 
 var Card = require('../server/db/models').Card;
+var Deck = require('./decks.js');
 var ageICards = require('./age_I_cards.js');
 var ageIICards = require('./age_II_cards.js');
 var ageIIICards = require('./age_III_cards.js');
@@ -75,6 +76,16 @@ var seedCards = function () {
   return Promise.map(cards, function(card) { 
     return Card.create(card)
   });
+  
 }
 
-seedCards().then(function(){console.log('done!')})
+var seedDecks = function(cards){
+  
+  
+  
+}
+
+seedCards()
+.then(function(cards){
+  
+})
