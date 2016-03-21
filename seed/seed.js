@@ -20,6 +20,8 @@ var seedCards = function () {
   return Card.destroy({where: {era: {$lte: 3}}})
   .then(function(){
     return Card.bulkCreate(cards);
+  }).catch(function(err){
+    console.error('error seeding cards', err)
   })
   
 }
@@ -42,6 +44,8 @@ var seedDecks = function(){
         return deck.setCards(cards)
       })
     })
+  }).catch(function(err){
+    console.error('error seeding decks', err)
   })
   
 }
@@ -50,6 +54,8 @@ var seedBoards = function () {
   return Board.destroy({where: {side: 'A'}})
   .then(function(){
     return Board.bulkCreate(boardSeed)
+  }).catch(function(err){
+    console.error('error seeding boards', err)
   })
 }
 
@@ -62,4 +68,6 @@ seedCards()
 })
 .then(function(){
   console.log('Database seeded :)')
+}).catch(function(err){
+    console.error('seed error!', err)
 })

@@ -7,7 +7,7 @@ module.exports = function(db) {
     money: Sequelize.INTEGER,
     tokens: Sequelize.INTEGER
   }, {
-    timestamps: false
+    timestamps: true
   });
   return Player;
 };
