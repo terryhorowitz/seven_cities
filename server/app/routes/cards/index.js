@@ -24,7 +24,7 @@ router.get('/player', function(req, res, next){
 });
 
 router.get('/deck', function(req, res, next){
-  Deck.findAll()
+  Deck.findAll({include: [Card]})
   .then(function(deck){
     console.log('HOW MANY', deck.length)
     res.json(deck)
