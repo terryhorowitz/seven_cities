@@ -32,7 +32,7 @@ router.get('/deck', function(req, res, next){
 });
 
 router.get('/game', function(req, res, next){
-  Game.findAll()
+  Game.findAll({include: [Player]})
   .then(function(games){
     console.log('HOW MANY', games.length)
     res.json(games)
