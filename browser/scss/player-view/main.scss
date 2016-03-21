@@ -1,3 +1,10 @@
+body {
+	background: url('/img/background/olympia.jpg');
+	background-size: cover;
+	margin-bottom: 70px;
+	height: 100%;
+}
+
 @mixin not-last-of-type($selector) {
   & #{$selector}:not(:last-of-type) {
     @content;
@@ -12,13 +19,13 @@
   	margin-top: -110px;
 }
 
-.wonders{
+/*.wonders{
 	width: 430px;
 	top: 290px;
     position: absolute;
     left: 50%;
   	margin-left: -215px;
-  	/*fix vertical positioning*/
+  	fix vertical positioning
   	top: 70%;
     z-index: -1;
 	@include not-last-of-type('img') {
@@ -27,10 +34,75 @@
 	img {
     	width: 128px;
     }
-}
+}*/
 
 .hand {
-	img {
-		width: 128px;
+	li {
+		float: left;
 	}
+	margin: 0 auto;
+	img {
+		width: 80px;
+	}
+}
+
+#built-cards {
+	vertical-align: bottom;
+	#raw-resources, #processed-resources, #trade, #technology, #military, #victory, #guild {
+		ul {
+			width: 140px;
+			position:relative;
+			float: left;
+			li {
+				list-style-type: none;
+				position: absolute;
+				img {
+					width: 80px;
+				}
+			}
+			li.card-1 {
+				left:150px;
+  				top:40px;
+  				z-index: 5;
+			}
+			li.card-2 {
+				left:135px;
+  				top:10px;
+  				z-index: 4;
+			}
+			li.card-3 {
+				left:120px;
+  				top:-20px;
+  				z-index: 3;
+			}
+			li.card-4 {
+				left:105px;
+  				top:-50px;
+  				z-index: 2;
+			}
+			li.card-5 {
+				left:90px;
+  				top:-80px;
+  				z-index: 1;
+			}
+		}
+		
+	}
+}
+
+.wonders{
+	.test {
+		width: 120px;
+		height: 70px;
+		background-color: white;
+		float: left;
+	}
+	position: absolute;
+	left: 50%;
+	margin-left: -230px;
+	bottom: 0px;
+	@include not-last-of-type('.test') {
+	    margin-right: 50px;
+	}
+
 }
