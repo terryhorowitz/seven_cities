@@ -5,15 +5,21 @@
 }
 
 .board{
-	/*position: absolute;*/
-	
+	position: absolute;
+	left: 50%;
+  	margin-left: -250px;
+  	top: 50%;
+  	margin-top: -110px;
 }
 
 .wonders{
 	width: 430px;
 	top: 290px;
     position: absolute;
-    left: 440px;
+    left: 50%;
+  	margin-left: -215px;
+  	/*fix vertical positioning*/
+  	top: 70%;
     z-index: -1;
 	@include not-last-of-type('img') {
 	    margin-right: 19px;
@@ -21,4 +27,10 @@
 	img {
     	width: 128px;
     }
+}
+
+.hand {
+	img {
+		width: 128px;
+	}
 }
