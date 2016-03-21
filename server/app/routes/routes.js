@@ -1,10 +1,10 @@
 'use strict';
 var router = require('express').Router();
-var Board = require('../../../db/models/index').Board;
-var Player = require('../../../db/models/index').Player;
-var Deck = require('../../../db/models/index').Deck;
-var Game = require('../../../db/models/index').Game;
-var Card = require('../../../db/models/index').Card;
+var Board = require('../../db/models/index').Board;
+var Player = require('../../db/models/index').Player;
+var Deck = require('../../db/models/index').Deck;
+var Game = require('../../db/models/index').Game;
+var Card = require('../../db/models/index').Card;
 module.exports = router;
 
 router.get('/board', function(req, res, next){
