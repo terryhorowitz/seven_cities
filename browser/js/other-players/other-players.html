@@ -1,14 +1,12 @@
 <nav class="navbar navbar-static-top">
-    <div class="container">
+    <!-- <div class="container"> -->
+    <div>
         <ul class="nav navbar-nav">
             <li class="other-player-icons" ng-repeat="player in otherPlayers" ng-show="otherPlayers" ng-class="{'neighbor-icons':$last || $first}">
                 <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
             </li>
         </ul>
-        <!-- <button ng-show="!user" ui-sref="login" class="btn login-button">Login</button> -->
-        <!-- <div ng-show="user" class="welcome">
-            <span>Welcome, {{ user.email }}!</span>
-            <a ng-click="logout()">Logout</a>
-        </div> -->
     </div>
+    <div>Waiting on {{ players }}...</div>
+    <!-- </div> -->
 </nav>
