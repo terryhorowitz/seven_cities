@@ -101,18 +101,18 @@ module.exports = function () {
     return player.getPermanent()
     .then(function(builtCards){
       if (!builtCards.length) {
-        if (!card.cost) return "free";
+        if (!card.cost) return "get free";
         // if card cost is money value
         else if (!!Number(card.cost[0])) {
-          if (player.money >= card.cost[0]) return "paid money";
-          else return "can't pay money";
+          if (player.money >= card.cost[0]) return "pay money";
+          else return "can't afford";
         }
       }
       else { 
         for (var i = 0; i < builtCards.length; i++) {
           // for (let i of builtCards) {}
-          if (builtCards[i].name === card.name) return "already have it, can't play";
-          else if (!card.cost) return "free";
+          if (builtCards[i].name === card.name) return "already have it";
+          else if (!card.cost) return "get free";
           else if (builtCards[i].upgradeTo.indexOf(card.name)!==-1) return "upgrade";
         }
       }
@@ -127,9 +127,6 @@ module.exports = function () {
       if (builtWonders === 1) return checkResourcePaymentMethods(player, board.wonder2Cost);
       if (builtWonders === 2) return checkResourcePaymentMethods(player, board.wonder3Cost);
       if (builtWonders === 3) return 'all built';
-    })
-    .then(function(response){
-      //????????
     })
   }
 
