@@ -10,8 +10,11 @@ var _ = require('lodash');
 module.exports = function () {
 
   var playersResources = {};
+  var listOfOwnResources = playersResources[player.id];
+  var listOfLeftResources = playersResources.leftNeighbor;
+  var listOfRightResources = playersResources.rightNeighbor;
 
-  //after a card is selected by player - receive player, card, game?
+  //after a card is selected by player - receive player & card?
 
   // 1. do i already have the card?
   // 2. do i have an upgrade? (cards)
@@ -23,37 +26,37 @@ module.exports = function () {
   var firstBuild = function() {
     return player.getBoard()
     .then(function(board){
-      playersResources[player.id] = {};
-      playersResources[player.id][board.resource] = 1;
+      listOfOwnResources = {};
+      listOfOwnResources[board.resource] = 1;
       return Promise.join(player.getLeftNeighbor(), player.getRightNeighbor());
     })
     .spread(function(leftNeighbor, rightNeighbor) {
       return Promise.join(leftNeighbor, rightNeighbor, leftNeighbor.getBoard(), rightNeighbor.getBoard())
     })
     .spread(function(leftNeighbor, rightNeighbor, leftNeighborBoard, rightNeighborBoard) {
-      playersResources.leftNeighbor = {};
-      playersResources.rightNeighbor = {};
-      playersResources.leftNeighbor[leftNeighborBoard.resource] = 1;
-      playersResources.rightNeighbor[rightNeighborBoard.resource] = 1;
+      listOfLeftResources = {};
+      listOfRightResources = {};
+      listOfLeftResources[leftNeighborBoard.resource] = 1;
+      listOfRightResources[rightNeighborBoard.resource] = 1;
     })
   }
 
   var buildResources = function(player, resources) {
     for (var i = 0; i < resources.length; i++) {
-      if (!playersResources[player.id][resources[i]]) playersResources[player.id][resources[i]] = 1;
-      else playersResources[player.id][resources[i]]++;
+      if (!listOfOwnResources[resources[i]]) listOfOwnResources[resources[i]] = 1;
+      else listOfOwnResources[resources[i]]++;
     }
   }
 
   var canIBuyFromMyNeighbors = function(player, cost) {
-    var leftResources = _.clone(playersResources.leftNeighbor);
-    var rightResources = _.clone(playersResources.rightNeighbor);
-
+    var leftResources = _.clone(listOfLeftResources);
+    var rightResources = _.clone(listOfRightResources);
+    
   }
   // cost = ['wood', 'clay']
   // ownResources = {'wood': 2, 'glass': 5}
   var checkResourcePaymentMethods = function(player, cost) {
-    var ownResources = _.clone(playersResources[player.id])
+    var ownResources = _.clone(listOfOwnResources)
     for (var i = 0; i < cost.length; i++) {
       if (ownResource[cost[i]] && ownResource[cost[i]] > 0) {
         ownResource[cost[i]]--;
