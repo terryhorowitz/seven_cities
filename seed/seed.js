@@ -19,7 +19,7 @@ var seedCards = function () {
   
   var cards = ageICards.concat(ageIICards).concat(ageIIICards);
   //clear db first to avoid duplicates
-  return Card.destroy({where: {era: {$lte: 3}}})
+  return Card.destroy({where: {}})
   .then(function(){
     return Card.bulkCreate(cards);
   }).catch(function(err){
@@ -30,7 +30,7 @@ var seedCards = function () {
 
 var seedDecks = function(){
   
-  return Deck.destroy({where: {era: {$lte: 3}}})
+  return Deck.destroy({where: {}})
   .then(function(){
     return Promise.map(deckSeed, function(deck){
       return Deck.create(deck)
@@ -53,7 +53,7 @@ var seedDecks = function(){
 }
 
 var seedBoards = function () {
-  return Board.destroy({where: {side: 'A'}})
+  return Board.destroy({where: {}})
   .then(function(){
     return Board.bulkCreate(boardSeed)
   }).catch(function(err){
@@ -62,7 +62,7 @@ var seedBoards = function () {
 }
 
 var seedDeckToGame = function () {
-  return Game.destroy({where: {name: "test game"}})
+  return Game.destroy({where: {}})
   .then(function(){
     return Game.create({name: "test game"})
   })
