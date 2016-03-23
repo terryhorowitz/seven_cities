@@ -134,15 +134,14 @@ module.exports = function (server) {
 						for (var a = 0; a < players.length; a++) {
 							io.sockets.connected[players[a].socket].emit('your hand', hands[a])
 							players[a].hand = hands[a];
-							return startGameFuncs,startGame(players, currentRoom);	
+							return startGameFuncs.startGame(players, currentRoom);	
 						}
 						//is this a thing?
 						// return player.setTemporary(hand)
 					})
-					.then(function(_players) {
-						players = _players;
-						// console.log('this is players', players, 'this is game', newGame[0][0].dataValues)
-					})
+					// .then(function(_players) {
+					// 	players = _players;
+					// })
 					// .then(function(player) {
 					// 	return player.setBoard(players[x].board)
 					// })
@@ -167,10 +166,10 @@ module.exports = function (server) {
 			
 					//divide cards and emit hand to each player
 					
-				Game.create({name: currentRoom})
-				.then(function(game) {
-					game.addPlayers(players)
-				})
+				// Game.create({name: currentRoom})
+				// .then(function(game) {
+				// 	game.addPlayers(players)
+				// })
 
     		}
     	});
