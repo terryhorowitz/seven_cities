@@ -28,6 +28,12 @@ module.exports = function () {
 
 var buildCard = function (player, cardToBuild) {
   
-  
+  return Player.findOne({where: {id: player.id}})
+  .then(function(player){
+    return player.removeTemporary(cardToBuild)
+  })
+  .then(function(){
+    return player.addPermanent(cardToBuild)
+  })
   
 }
