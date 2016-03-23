@@ -28,6 +28,7 @@ module.exports = function (server) {
     if (io) return io;
     io = socketio(server);
     var currentRoom;
+
     var newGame;
     var player;
     var socketId;
@@ -36,6 +37,9 @@ module.exports = function (server) {
     var newPlayers = [];
 	//hold all user socket ids with names
 	var allPlayers = {};
+
+    // var users = {};
+
 
     io.sockets.on('connection', function (socket) {
     	thisSocket = socket;
@@ -66,7 +70,11 @@ module.exports = function (server) {
     		}
 				clients = io.sockets.adapter.rooms[data.roomname];
 				for (var key in clients.sockets) {
+
 					// allPlayers[key] = data.playername;
+
+                    // users[data.playername] = key;
+
 					counter++;
 				}
 
