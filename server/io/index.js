@@ -20,8 +20,10 @@ module.exports = function (server) {
     var newGame;
     var socketId;
     var clients;
+
 	//hold all user socket ids with names and playerids (from db)
 	var allPlayers = {};
+
 
 
 
@@ -34,8 +36,8 @@ module.exports = function (server) {
     	socket.on('create', function(data) {
     		allPlayers[socket.id] = [];
     		allPlayers[socket.id].push(data.playername);
-				currentRoom = data.roomname;
-				socket.join(data.roomname);
+			currentRoom = data.roomname;
+			socket.join(data.roomname);
     		if (data.localId) {
     			allPlayers[socket.id].push(data.localId);
     			// Player.find({where: {id: data.localId}})
@@ -43,6 +45,7 @@ module.exports = function (server) {
     			// 	player = data;
     			// })
     		} else {
+
 					Player.create({name: data.playername, money: 3})
 					.then(function(data) {
 						allPlayers[socket.id].push(data.dataValues.id);
@@ -149,7 +152,6 @@ module.exports = function (server) {
 							// console.log('hand', hand)
 						
 						// io.to(currentRoom).emit('cards', deck)
-					
 
     			
     			//attach each object in the array a player's name and socket id
@@ -169,6 +171,7 @@ module.exports = function (server) {
 				.then(function(game) {
 					game.addPlayers(players)
 				})
+
     		}
     	});
 
