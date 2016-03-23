@@ -2,7 +2,7 @@ app.directive('otherPlayers', function ($rootScope, $state) {
 
     return {
         restrict: 'E',
-        scope: {},
+        // scope: {},
         templateUrl: 'js/other-players/other-players.html',
         link: function (scope) {
 
@@ -11,6 +11,8 @@ app.directive('otherPlayers', function ($rootScope, $state) {
                 { name: 'player 3'},
                 { name: 'player 4'}
             ];
+
+            console.log(scope.players)
 
         }
 

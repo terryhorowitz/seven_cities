@@ -1,6 +1,12 @@
 <div>
     <ul class="nav navbar-nav">
-        <li class="other-player-icons" ng-repeat="player in otherPlayers" ng-show="otherPlayers" ng-class="{'neighbor-icons':$last || $first}">
+        <li class="other-player-icons neighbor-icons">
+            <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
+        </li>
+        <li class="other-player-icons" ng-repeat="player in players" ng-show="true">
+            <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
+        </li>
+        <li class="other-player-icons neighbor-icons">
             <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
         </li>
     </ul>

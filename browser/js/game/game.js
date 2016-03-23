@@ -16,8 +16,6 @@ app.controller('GameController', function ($scope, $state) {
     $scope.roomname = $state.params.roomname;
     $scope.playername = $state.params.playername;
 
-
-    $scope.hand;
     $scope.firstPlayer = false;
     $scope.builtCards;
     $scope.players;
@@ -25,7 +23,8 @@ app.controller('GameController', function ($scope, $state) {
     $scope.currentlyPlaying;
     $scope.me;
     $scope.myHand;
-
+    $scope.rightNeighbor;
+    $scope.leftNeighbor;
 
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
     $scope.startGame = function() {
@@ -47,12 +46,30 @@ app.controller('GameController', function ($scope, $state) {
       })
       //need to initiate game when all players are ready (create a game in the db)
       socket.on('game initialized', function(data) {
+        console.log('game started')
         $scope.players = data;
+        console.log('players', $scope.players)
         for (var i = 0; i < data.length; i++) {
-          if (data[i].name == $scope.playername) {
-            $scope.me = data[i];
+          if ($scope.players[i].name == $scope.playername) {
+            $scope.me = $scope.players[i];
+            if($scope.players[i+1]) {
+              $scope.rightNeighbor = $scope.players[i+1];
+              $scope.players.splice(i+1,1);
+            } else {
+              $scope.rightNeighbor = $scope.players[0];
+              $scope.players.splice(0,1);
+            }
+            if($scope.players[i-1]) {
+              $scope.leftNeighbor = $scope.players[i-1];
+              $scope.players.splice(i-1,1);
+            } else {
+              $scope.leftNeighbor = $scope.players[$scope.players.length-1];
+              $scope.players.splice($scope.players.length-1,1);
+            }
+            $scope.players.splice(i,1);
           }
         }
+        console.log('players modified', $scope.players)
         $scope.$digest()
       })
 
@@ -96,4 +113,47 @@ app.controller('GameController', function ($scope, $state) {
       //   $scope.$digest();
       // })
     });
+
+      $scope.hand = [ {image: 'img/3_arena_3.png'},
+        {image: 'img/3_garden_3.png'},
+        {image: 'img/3_haven_3.png'},
+        {image: 'img/3_arsenal_3.png'},
+        {image: 'img/3_palace_3.png'}
+      ]
+
+      $scope.rawResources = [ {image: 'img/3_arena_3.png'},
+        {image: 'img/3_garden_3.png'},
+        {image: 'img/3_haven_3.png'},
+        {image: 'img/3_arsenal_3.png'},
+        {image: 'img/3_palace_3.png'}
+      ];
+
+      $scope.processedResources = [ {image: 'img/3_observatory_3.png'},
+        {image: 'img/3_pantheon_3.png'},
+        {image: 'img/3_study_3.png'},
+        {image: 'img/3_lodge_3.png'},
+        {image: 'img/3_fortifications_3.png'}
+      ];
+
+      $scope.builtCards = [
+        [ {image: 'img/3_arena_3.png'},
+          {image: 'img/3_garden_3.png'},
+          {image: 'img/3_haven_3.png'},
+          {image: 'img/3_arsenal_3.png'},
+          {image: 'img/3_palace_3.png'}
+        ],
+        [ {image: 'img/3_observatory_3.png'},
+          {image: 'img/3_pantheon_3.png'},
+          {image: 'img/3_study_3.png'},
+          {image: 'img/3_lodge_3.png'},
+          {image: 'img/3_fortifications_3.png'}
+        ]
+      ]
+
+      $scope.clickedPile = false;
+
+      $scope.expandPile = function (pile) {
+        if (!$scope.clickedPile) $scope.clickedPile = pile;
+        else $scope.clickedPile = false;
+      }
 });
