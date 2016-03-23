@@ -24,16 +24,36 @@ module.exports = function () {
     }
     
   }
-}
 
-var buildCard = function (player, cardToBuild) {
+  var buildCard = function (playerToGiveCard, cardToBuild) {
+
+    return Player.findOne({where: {id: playerToGiveCard.id}})
+    .then(function(player){
+      return player.removeTemporary(cardToBuild)
+    })
+    .then(function(){
+      return player.addPermanent(cardToBuild)
+    })
+    .then(function(player){
+      console.log('card moved to built cards (perm)!', player)
+      return player;
+    })
+  }
   
-  return Player.findOne({where: {id: player.id}})
-  .then(function(player){
-    return player.removeTemporary(cardToBuild)
-  })
-  .then(function(){
-    return player.addPermanent(cardToBuild)
-  })
+  var payForCard = function (playerToCharge, cardToBuy) {
+    
+    var price = cardToBuy.cost;
+    return Player.findOne({where: {id: playerToCharge.id}})
+    .then(function(player){
+      var total = player.money - price;
+      return player.update({money: total})
+    })
+    .then(function(player){
+      console.log('charged player, building card!', player)
+      return buildCard(player, cardToBuy);
+    })
+  }
   
+  
+
 }
