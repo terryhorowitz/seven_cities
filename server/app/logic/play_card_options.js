@@ -9,9 +9,17 @@ var _ = require('lodash');
 
 module.exports = function () {
 
-  var playersResources = {};
+  // var playersResources = {};
+  var gamesStoredResources = [];
   var builtWonders = 0;
 
+
+  var addGameToResourcesStorage = function (game) {
+    if (gamesStoredResources[game.id]) return 'already stored!'
+
+    
+
+  }
   //after a card is selected by player - receive player & card?
 
   // 1. do i already have the card?
@@ -97,8 +105,11 @@ module.exports = function () {
     else return canIBuyFromMyNeighbors(cost);
   }
 
-  var checkSelectedCard = function(player, card) {
-    return player.getPermanent()
+  var checkSelectedCard = function(playerId, card) {
+    return Player.findOne({where: {id: playerId}})
+    .then(function(player) {
+      return player.getPermanent()
+    })
     .then(function(builtCards){
       if (!builtCards.length) {
         if (!card.cost) return "get free";
@@ -128,6 +139,12 @@ module.exports = function () {
       if (builtWonders === 2) return checkResourcePaymentMethods(player, board.wonder3Cost);
       if (builtWonders === 3) return 'all built';
     })
+  }
+
+  return {
+    checkSelectedCard: checkSelectedCard,
+    firstBuild: firstBuild,
+    buildResources: buildResources
   }
 
 }

@@ -7,7 +7,8 @@ var Game = require('../db/models/index.js').Game;
 var Player = require('../db/models/index.js').Player;
 var Deck = require('../db/models/index.js').Deck;
 var Card = require('../db/models/index.js').Card;
-var startGameFuncs = require('../app/logic/startGame.js')
+var startGameFuncs = require('../app/logic/startGame.js');
+var playCardOptions = require('../app/logic/play_card_options.js');
 var _ = require('lodash');
 
 
@@ -35,15 +36,15 @@ module.exports = function (server) {
     		allPlayers[socket.id].push(data.playername);
 				currentRoom = data.roomname;
 				socket.join(data.roomname);
-    		if (data.localId) {
-    			allPlayers[socket.id].push(data.localId);
-    		} else {
-					Player.create({name: data.playername, money: 3})
-					.then(function(data) {
-						allPlayers[socket.id].push(data.dataValues.id);
-						socket.emit('your id', {id: data.dataValues.id})
-					})
-    		}
+    	// 	if (data.localId) {
+    	// 		allPlayers[socket.id].push(data.localId);
+    	// 	} else {
+					// Player.create({name: data.playername, money: 3})
+					// .then(function(data) {
+					// 	allPlayers[socket.id].push(data.dataValues.id);
+					// 	socket.emit('your id', {id: data.dataValues.id})
+					// })
+    	// 	}
 				clients = io.sockets.adapter.rooms[data.roomname];
 				for (var key in clients.sockets) {
 
@@ -68,7 +69,7 @@ module.exports = function (server) {
 					//make an object to hold all the data about a player and push it to the players array
 					Board.findAll({})
 					.then(function(allBoards) {
-						_.shuffle(allBoards);
+						allBoards = _.shuffle(allBoards);
 						for (var i = 0; i < counter; i++) {
 							var obj = {};
 							obj.board = allBoards[i];
@@ -98,7 +99,7 @@ module.exports = function (server) {
   					return Deck.findOne({where: {numPlayers: counter, era: 1}, include: [Card]})
   				})
 					.then(function(deck) {
-						_.shuffle(deck.cards)
+						deck.cards = _.shuffle(deck.cards)
 						for (var x = 0; x < counter; x++) {
 							hands.push(deck.cards.splice(0, 7));
 						}
@@ -108,15 +109,16 @@ module.exports = function (server) {
 						for (var a = 0; a < players.length; a++) {
 							io.sockets.connected[players[a].socket].emit('your hand', hands[a])
 							players[a].hand = hands[a];
-							startGameFuncs.startGame(players, currentRoom);	
 						}		
+						startGameFuncs.startGame(players, currentRoom);	
 					})
 
     		}
     	});
 
-    	socket.on('choice made', function(card, playerid) {
+    	socket.on('choice made', function(playerid, card) {
     		//needs to check if the choice is ok and then
+
 
     	});
 
