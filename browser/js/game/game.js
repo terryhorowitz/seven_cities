@@ -24,6 +24,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.money;
     $scope.currentlyPlaying;
     $scope.me;
+    $scope.myHand;
 
 
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
@@ -53,6 +54,11 @@ app.controller('GameController', function ($scope, $state) {
           }
         }
         $scope.$digest()
+      })
+
+      socket.on('your hand', function(data) {
+        $scope.myHand = data;
+        $scope.$digest();
       })
 
       //send all players their cards
