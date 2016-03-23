@@ -10,9 +10,7 @@ var _ = require('lodash');
 module.exports = function () {
 
   var playersResources = {};
-  var listOfOwnResources = playersResources[player.id];
-  var listOfLeftResources = playersResources.leftNeighbor;
-  var listOfRightResources = playersResources.rightNeighbor;
+  var builtWonders = 0;
 
   //after a card is selected by player - receive player & card?
 
@@ -26,31 +24,40 @@ module.exports = function () {
   var firstBuild = function() {
     return player.getBoard()
     .then(function(board){
-      listOfOwnResources = {};
-      listOfOwnResources[board.resource] = 1;
+      playersResources[player.id] = {};
+      playersResources[player.id][board.resource] = 1;
       return Promise.join(player.getLeftNeighbor(), player.getRightNeighbor());
     })
     .spread(function(leftNeighbor, rightNeighbor) {
       return Promise.join(leftNeighbor, rightNeighbor, leftNeighbor.getBoard(), rightNeighbor.getBoard())
     })
     .spread(function(leftNeighbor, rightNeighbor, leftNeighborBoard, rightNeighborBoard) {
-      listOfLeftResources = {};
-      listOfRightResources = {};
-      listOfLeftResources[leftNeighborBoard.resource] = 1;
-      listOfRightResources[rightNeighborBoard.resource] = 1;
+      playersResources.leftNeighbor = {};
+      playersResources.rightNeighbor = {};
+      playersResources.leftNeighbor[leftNeighborBoard.resource] = 1;
+      playersResources.rightNeighbor[rightNeighborBoard.resource] = 1;
     })
   }
 
   var buildResources = function(player, resources) {
     for (var i = 0; i < resources.length; i++) {
-      if (!listOfOwnResources[resources[i]]) listOfOwnResources[resources[i]] = 1;
-      else listOfOwnResources[resources[i]]++;
+      //ore/wood(combo)-type logic
+      if (resources[i].length > 5){
+        resources[i] = resources[i].split('/');
+        if (!playersResources[player.id].combo){
+            playersResources[player.id].combo = [];
+        }
+        playersResources[player.id].combo.push(resources[i])
+      }
+      //
+      if (!playersResources[player.id][resources[i]]) playersResources[player.id][resources[i]] = 1;
+      else playersResources[player.id][resources[i]]++;
     }
   }
 
   var canIBuyFromMyNeighbors = function(player, cost) {
-    var leftResourcesCopy = _.cloneDeep(listOfLeftResources);
-    var rightResourcesCopy = _.cloneDeep(listOfRightResources);
+    var leftResourcesCopy = _.cloneDeep(playersResources.leftNeighbor);
+    var rightResourcesCopy = _.cloneDeep(playersResources.rightNeighbor);
     var trade = {};
     var leftContribution = [];
     var rightContribution = [];
@@ -76,7 +83,7 @@ module.exports = function () {
   // cost = ['wood', 'clay']
   // ownResources = {'wood': 2, 'glass': 5}
   var checkResourcePaymentMethods = function(player, cost) {
-    var ownResourcesCopy = _.cloneDeep(listOfOwnResources)
+    var ownResourcesCopy = _.cloneDeep(playersResources[player.id])
     for (var i = 0; i < cost.length; i++) {
       if (ownResourcesCopy[cost[i]] && ownResourcesCopy[cost[i]] > 0) {
         ownResourcesCopy[cost[i]]--;
@@ -108,6 +115,19 @@ module.exports = function () {
         }
       }
       return checkResourcePaymentMethods(player, card.cost)
+    })
+  }
+  
+  var checkIfPlayerCanBuildWonder = function (player){
+    return player.getBoard()
+    .then(function(board){
+      if (builtWonders === 0) return checkResourcePaymentMethods(player, board.wonder1Cost);
+      if (builtWonders === 1) return checkResourcePaymentMethods(player, board.wonder2Cost);
+      if (builtWonders === 2) return checkResourcePaymentMethods(player, board.wonder3Cost);
+      if (builtWonders === 3) return 'all built';
+    })
+    .then(function(response){
+      //????????
     })
   }
 
