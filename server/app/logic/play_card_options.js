@@ -107,7 +107,7 @@ module.exports = function () {
           else if (builtCards[i].upgradeTo.indexOf(card.name)!==-1) return "upgrade";
         }
       }
-      return checkPaymentMethods(player, card.cost)
+      return checkResourcePaymentMethods(player, card.cost)
     })
   }
 
