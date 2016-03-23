@@ -54,6 +54,11 @@ module.exports = function () {
     })
   }
   
-  
+//  var tradeForCard = function (playerTrading, cardToPayFor, tradeParams){
+//    
+//    //need tradeParams to be an object containing player(s) we are trading with and what items we are trading with them (e.g. {left: ['wood'], right: ['clay']} OR {left: 2} etc).
+//    
+//    
+//  }
 
 }
