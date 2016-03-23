@@ -6,11 +6,10 @@ app.directive('otherPlayers', function ($rootScope, $state) {
         templateUrl: 'js/other-players/other-players.html',
         link: function (scope) {
 
-            scope.otherPlayers = [
-                { label: 'Home', state: 'home' },
-                { label: 'Game', state: 'game' },
-                { label: 'About', state: 'about' },
-                { label: 'Documentation', state: 'docs' }
+            scope.otherPlayers = [ { name: 'player 1'},
+                { name: 'player 2'},
+                { name: 'player 3'},
+                { name: 'player 4'}
             ];
 
         }

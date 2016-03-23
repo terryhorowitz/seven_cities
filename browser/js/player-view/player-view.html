@@ -1,6 +1,7 @@
 <nav class="navbar navbar-static-top">
-	<other-players></other-players>
-	<!-- <tokens></tokens> -->
+	<board-name class='pull-left'></board-name>
+	<other-players class="text-center"></other-players>
+	<tokens class="pull-right"></tokens>
 </nav>
 
 <div class="player-view-container container">
@@ -9,26 +10,8 @@
 		<div class="col-xs-8">
 			<div class='hand'>
 				<ul>
-					<li>
-						<img src='img/3_arena_3.png'>
-					</li>
-					<li>
-						<img src='img/3_arena_3.png'>
-					</li>
-					<li>
-						<img src='img/3_arena_3.png'>
-					</li>
-					<li>
-						<img src='img/3_arena_3.png'>
-					</li>
-					<li>
-						<img src='img/3_arena_3.png'>
-					</li>
-					<li>
-						<img src='img/3_arena_3.png'>
-					</li>
-					<li>
-						<img src='img/3_arena_3.png'>
+					<li ng-repeat="card in hand">
+						<img src='{{card.image}}'>
 					</li>
 				</ul>
 			</div>
@@ -44,45 +27,21 @@
 	<div id="built-cards">
 		<div id="raw-resources">
 			<ul>
-				<li class="card-1">
-					<img src='img/3_arena_3.png'>
+				<li ng-click="expandCard(resource)" ng-repeat="resource in rawResources" ng-class="{expand: resource === clickedCard}">
+					<img src='{{resource.image}}'>
 				</li>
-				<li class="card-2">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li class="card-3">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<!-- <li class="card-4">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li class="card-5">
-					<img src='img/3_arena_3.png'>
-				</li>
-	 -->		</ul>
+			</ul>
 		</div>
 		<div id="processed-resources">
 			<ul>
-				<li class="card-1">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li class="card-2">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li class="card-3">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li class="card-4">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li class="card-5">
-					<img src='img/3_arena_3.png'>
+				<li ng-click="expandCard(resource)" ng-repeat="resource in processedResources" ng-class="{expand: resource === clickedCard}">
+					<img src='{{resource.image}}'>
 				</li>
 			</ul>
 		</div>
 		<div id="trade">
 			<ul>
-				<li class="card-1">
+				<li >
 					<img src='img/3_arena_3.png'>
 				</li>
 				<li class="card-2">
@@ -101,76 +60,76 @@
 		</div>
 		<div id="technology">
 			<ul>
-				<li class="card-1">
+				<li >
 					<img src='img/3_arena_3.png'>
 				</li>
-				<li class="card-2">
+				<li  class="card-2">
 					<img src='img/3_arena_3.png'>
 				</li>
-				<li class="card-3">
+				<li  class="card-3">
 					<img src='img/3_arena_3.png'>
 				</li>
-				<li class="card-4">
+				<li  class="card-4">
 					<img src='img/3_arena_3.png'>
 				</li>
-				<li class="card-5">
+				<li  class="card-5">
 					<img src='img/3_arena_3.png'>
 				</li>
 			</ul>
 		</div>
 		<div id="military">
 			<ul>
-				<li class="card-1">
+				<li >
 					<img src='img/3_arena_3.png'>
 				</li>
-				<li class="card-2">
+				<li  class="card-2">
 					<img src='img/3_arena_3.png'>
 				</li>
-				<li class="card-3">
+				<li  class="card-3">
 					<img src='img/3_arena_3.png'>
 				</li>
-				<li class="card-4">
+				<li  class="card-4">
 					<img src='img/3_arena_3.png'>
 				</li>
-				<li class="card-5">
+				<li  class="card-5">
 					<img src='img/3_arena_3.png'>
 				</li>
 			</ul>
 		</div>
 		<div id="victory">
 			<ul>
-				<li class="card-1">
+				<li >
 					<img src='img/3_arena_3.png'>
 				</li>
-				<li class="card-2">
+				<li  class="card-2">
 					<img src='img/3_arena_3.png'>
 				</li>
-				<li class="card-3">
+				<li  class="card-3">
 					<img src='img/3_arena_3.png'>
 				</li>
-				<li class="card-4">
+				<li  class="card-4">
 					<img src='img/3_arena_3.png'>
 				</li>
-				<li class="card-5">
+				<li  class="card-5">
 					<img src='img/3_arena_3.png'>
 				</li>
 			</ul>
 		</div>
 		<div id="guild">
 			<ul>
-				<li class="card-1">
+				<li >
 					<img src='img/3_arena_3.png'>
 				</li>
-				<li class="card-2">
+				<li  class="card-2">
 					<img src='img/3_arena_3.png'>
 				</li>
-				<li class="card-3">
+				<li  class="card-3">
 					<img src='img/3_arena_3.png'>
 				</li>
-				<li class="card-4">
+				<li  class="card-4">
 					<img src='img/3_arena_3.png'>
 				</li>
-				<li class="card-5">
+				<li  class="card-5">
 					<img src='img/3_arena_3.png'>
 				</li>
 			</ul>
@@ -184,6 +143,8 @@
 		<div class="test"></div>
 		<div class="test"></div>
 	</div>
+
+	<div class="chat-box pull-right"></div>
 
 </div>
 
