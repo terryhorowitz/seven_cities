@@ -49,14 +49,14 @@ module.exports = function () {
   }
 
   var canIBuyFromMyNeighbors = function(player, cost) {
-    var leftResourcesCopy = _.clone(listOfLeftResources);
-    var rightResourcesCopy = _.clone(listOfRightResources);
+    var leftResourcesCopy = _.cloneDeep(listOfLeftResources);
+    var rightResourcesCopy = _.cloneDeep(listOfRightResources);
     
   }
   // cost = ['wood', 'clay']
   // ownResources = {'wood': 2, 'glass': 5}
   var checkResourcePaymentMethods = function(player, cost) {
-    var ownResourcesCopy = _.clone(listOfOwnResources)
+    var ownResourcesCopy = _.cloneDeep(listOfOwnResources)
     for (var i = 0; i < cost.length; i++) {
       if (ownResourcesCopy[cost[i]] && ownResourcesCopy[cost[i]] > 0) {
         ownResourcesCopy[cost[i]]--;
