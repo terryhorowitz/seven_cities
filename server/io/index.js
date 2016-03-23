@@ -38,7 +38,6 @@ module.exports = function (server) {
 	//hold all user socket ids with names
 	var allPlayers = {};
 
-    // var users = {};
 
 
     io.sockets.on('connection', function (socket) {
@@ -72,8 +71,7 @@ module.exports = function (server) {
 				for (var key in clients.sockets) {
 
 					// allPlayers[key] = data.playername;
-
-                    // users[data.playername] = key;
+          // users[data.playername] = key;
 
 					counter++;
 				}
@@ -105,7 +103,6 @@ module.exports = function (server) {
 			socket.on('startGame', function() {
 				var hands = [];
 				counter = 0;
-				// console.log("this is newgame", newGame)
 				for (var key in clients.sockets) {
 					counter++;
 				}
@@ -141,27 +138,24 @@ module.exports = function (server) {
 						return hands;
 					})
 					.then(function() {
-    				console.log('this is players 2', players);
 						return Promise.map(players, function(player) {
-							console.log("player", player)
 							return Player.findOne({where: {id: player.playerId}})
 						})
 					})
 					.then(function(playersArr) {
-						console.log('playersarr', playersArr)
 						for (var a = 0; a < playersArr.length; a++) {
 							io.sockets.connected[players[a].socket].emit('your hand', hands[a])
 							
 						}
 						//is this a thing?
-						return player.setTemporary(hand)
+						// return player.setTemporary(hand)
 					})
-					.then(function(player) {
-						return player.setBoard(players[x].board)
-					})
-					.then(function(player) {
-						newPlayers.push(player)
-					})
+					// .then(function(player) {
+					// 	return player.setBoard(players[x].board)
+					// })
+					// .then(function(player) {
+					// 	newPlayers.push(player)
+					// })
 							// console.log('hand', hand)
 						
 						// io.to(currentRoom).emit('cards', deck)
