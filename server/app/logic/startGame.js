@@ -11,11 +11,14 @@ var _ = require('lodash');
 
 
 	var startGame = function (playersArr, roomName) {
-		console.log('this is players arr', playersArr)
 		//please make it so all the players in the array are updated in the db to match the array (change hand, board). maybe using promise.map if you want
 		//and also create a game and put the players in it and then maybe return the game?
-		Promise.map(players, function(player) {
-			Player.findOne({where: {id: player.playerId}})
+    //{neighborR: socketthing, neighborL: sockethign}
+		return Promise.map(playersArr, function(player) {
+			return Player.create({name: player.name, money: 3, tokens: 0, socket: player.socket})
+      .then(function(newPlayer){
+        return newPlayer.setBoard(player.board)
+      })
 		})
 	}
 module.exports = {

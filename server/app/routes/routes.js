@@ -27,6 +27,13 @@ router.get('/player', function(req, res, next){
   }).catch(next)
 });
 
+router.delete('/player', function(req, res, next){
+  Player.destroy({where: {}})
+  .then(function(){
+    console.log('deleted all')
+  }).catch(next)
+})
+
 router.get('/deck', function(req, res, next){
   Deck.findAll({include: [Card], where: {numPlayers: 3, era: 1}})
   .then(function(deck){
