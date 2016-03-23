@@ -20,7 +20,7 @@ module.exports = function () {
     // 3.1. is free?
   // 4) how much of it can i buy myself?
   // 4.1 can i buy remainder from neighbors?
-
+  
   var firstBuild = function() {
     return player.getBoard()
     .then(function(board){
@@ -50,7 +50,9 @@ module.exports = function () {
         playersResources[player.id].combo.push(resources[i])
       }
       //
-      if (!playersResources[player.id][resources[i]]) playersResources[player.id][resources[i]] = 1;
+      else if (!playersResources[player.id][resources[i]]){
+        playersResources[player.id][resources[i]] = 1;
+      } 
       else playersResources[player.id][resources[i]]++;
     }
   }
