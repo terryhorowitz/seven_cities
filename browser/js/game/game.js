@@ -57,6 +57,7 @@ app.controller('GameController', function ($scope, $state) {
       })
 
       socket.on('your hand', function(data) {
+        console.log('this is data', data)
         $scope.myHand = data;
         $scope.$digest();
       })

@@ -24,9 +24,6 @@ module.exports = function (server) {
 	//hold all user socket ids with names and playerids (from db)
 	var allPlayers = {};
 
-
-
-
     io.sockets.on('connection', function (socket) {
     	//hold the players objects for each game
     	var counter = 0;
@@ -36,16 +33,11 @@ module.exports = function (server) {
     	socket.on('create', function(data) {
     		allPlayers[socket.id] = [];
     		allPlayers[socket.id].push(data.playername);
-			currentRoom = data.roomname;
-			socket.join(data.roomname);
+				currentRoom = data.roomname;
+				socket.join(data.roomname);
     		if (data.localId) {
     			allPlayers[socket.id].push(data.localId);
-    			// Player.find({where: {id: data.localId}})
-    			// .then(function(data) {
-    			// 	player = data;
-    			// })
     		} else {
-
 					Player.create({name: data.playername, money: 3})
 					.then(function(data) {
 						allPlayers[socket.id].push(data.dataValues.id);
@@ -60,27 +52,8 @@ module.exports = function (server) {
 
 				// if player is first in room, allows them to start game
 				if (counter===1) {
-					// Game.create({name: currentRoom})
-					// .then(function(game) {
-					// 	return game.addPlayer(player)
-					// })
-					// .then(function(game) {
-					// 		newGame = game;
-						
-					// })
 					socket.emit('firstPlayer');
 				} 
-				// else {
-				// 	Game.findOne({where: {name: currentRoom}, include: [Player]})
-				// 	.then(function(game) {
-				// 		console.log('game in here', game)
-				// 		return game.addPlayer(player)
-				// 	})
-				// 	.then(function(game) {
-				// 		newGame = game;
-				// 	})
-				// }
-				// console.log("this is also room", io.sockets.adapter.rooms[currentRoom])
 			});
 
 			//when first player decides to start the game with the current num of players
@@ -100,82 +73,51 @@ module.exports = function (server) {
 							var obj = {};
 							obj.board = allBoards[i];
 							obj.money = 3;
-							obj.military = 0;
+							obj.tokens = 0;
 							obj.built = [];
 							obj.socket = Object.keys(io.sockets.adapter.rooms[currentRoom].sockets)[i];
 							obj.name = allPlayers[obj.socket][0];
-							obj.playerId = allPlayers[obj.socket][1];
 							players.push(obj);
     				}
     				return players;
     			})
   				.then(function() {
   					for (var x = 0; x < players.length; x++) {
-  						// players[x].neighborR = 
-  						// player[x].neighborL = 
+  						if (players[x + 1]) {
+								players[x].neighborR = players[x + 1].socket;
+  						} else {
+  							players[x].neighborR = players[0].socket;
+  						}
+  						if (players[x - 1]) {
+	  						players[x].neighborL = players[x - 1].socket;
+  						} else {
+  							players[x].neighborL = players[players.length - 1].socket;
+  						}
   					}
 						io.to(currentRoom).emit('game initialized', players)
   					return Deck.findOne({where: {numPlayers: counter, era: 1}, include: [Card]})
   				})
 					.then(function(deck) {
-						// newPlayers = [];
 						_.shuffle(deck.cards)
 						for (var x = 0; x < counter; x++) {
 							hands.push(deck.cards.splice(0, 7));
 						}
 						return hands;
 					})
-					// .then(function() {
-					// 	return Promise.map(players, function(player) {
-					// 		return Player.findOne({where: {id: player.playerId}})
-					// 	})
-					// })
 					.then(function() {
 						for (var a = 0; a < players.length; a++) {
 							io.sockets.connected[players[a].socket].emit('your hand', hands[a])
 							players[a].hand = hands[a];
-							return startGameFuncs.startGame(players, currentRoom);	
-						}
-						//is this a thing?
-						// return player.setTemporary(hand)
+							startGameFuncs.startGame(players, currentRoom);	
+						}		
 					})
-					// .then(function(_players) {
-					// 	players = _players;
-					// })
-					// .then(function(player) {
-					// 	return player.setBoard(players[x].board)
-					// })
-					// .then(function(player) {
-					// 	newPlayers.push(player)
-					// })
-							// console.log('hand', hand)
-						
-						// io.to(currentRoom).emit('cards', deck)
-
-    			
-    			//attach each object in the array a player's name and socket id
-					// var num = 0;
-					// for (var key in clients.sockets) {
-					// 	console.log("this is playerss", players)
-					// 	players[num].socket = key;
-					// 	players[num].playername = allUsers[key]
-					// 	num++;
-					// }
-
-				
-			
-					//divide cards and emit hand to each player
-					
-				// Game.create({name: currentRoom})
-				// .then(function(game) {
-				// 	game.addPlayers(players)
-				// })
 
     		}
     	});
 
-    	socket.on('choice made', function(card) {
-    		//needs to check if the choice is ok and then 
+    	socket.on('choice made', function(card, playerid) {
+    		//needs to check if the choice is ok and then
+
     	});
 
 
