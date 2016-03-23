@@ -3,7 +3,7 @@ html {
 }
 
 body { 
-  background: url(img/background/olympia.jpg) no-repeat center center fixed; 
+  background: url(img/background/olympia.png) no-repeat center center fixed; 
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
@@ -205,4 +205,8 @@ selected-card {
 	&:hover {
 		z-index: 10;
 	}
+}
+
+.token img{
+	max-width: 30px;
 }

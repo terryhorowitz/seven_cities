@@ -6,8 +6,9 @@ app.directive('tokens', function ($rootScope, $state) {
         templateUrl: 'js/tokens/tokens.html',
         link: function (scope) {
 
-            scope.numCoins = 0;
-            scope.numMilitary = 0;
+            scope.coins = 0;
+            scope.militaryLoss = 0;
+            scope.militaryVictory = 0;
 
         }
 
