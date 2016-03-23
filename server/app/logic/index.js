@@ -51,7 +51,26 @@ module.exports = function () {
   var canIBuyFromMyNeighbors = function(player, cost) {
     var leftResourcesCopy = _.cloneDeep(listOfLeftResources);
     var rightResourcesCopy = _.cloneDeep(listOfRightResources);
+    var trade = {};
+    var leftContribution = [];
+    var rightContribution = [];
     
+    for (var i = 0; i < cost.length; i++){
+      if (leftResourcesCopy[cost[i]] && leftResourcesCopy[cost[i]] > 0){
+        leftResourcesCopy[cost[i]]--;
+        leftContribution.push(cost[i]);
+      }
+      if (rightResourcesCopy[cost[i]] && rightResourcesCopy[cost[i]] > 0){
+        rightResourcesCopy[cost[i]]--;
+        rightContribution.push(cost[i]);
+      }
+    }
+    
+    if (leftContribution.length === cost.length) trade.left = leftContribution;
+    else trade.left = null;
+    if (rightContribution.length === cost.length) trade.right = rightContribution;
+    else trade.right = null;
+    return trade;
   }
   // cost = ['wood', 'clay']
   // ownResources = {'wood': 2, 'glass': 5}
