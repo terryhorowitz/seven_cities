@@ -20,9 +20,11 @@ app.controller('GameController', function ($scope, $state) {
     $scope.hand;
     $scope.firstPlayer = false;
     $scope.builtCards;
-    $scope.players = [];
+    $scope.players;
     $scope.money;
     $scope.currentlyPlaying;
+    $scope.me;
+    $scope.myHand;
 
 
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
@@ -31,8 +33,13 @@ app.controller('GameController', function ($scope, $state) {
     }
 
     socket.on('connect', function(){
-      console.log('I have made a persistent two-way connection to the server!'); 
-      socket.emit('create', {roomname: $scope.roomname, playername: $scope.playername});
+      console.log('I have made a persistent two-way connection to the server!');
+      var tempId = localStorage.getItem('playerId');
+      socket.emit('create', {roomname: $scope.roomname, playername: $scope.playername, localId: tempId});
+
+      socket.on('your id', function(data) {
+        localStorage.setItem('playerId', data.id)
+      })
 
       socket.on('firstPlayer', function() {
       	$scope.firstPlayer = true;
@@ -40,7 +47,18 @@ app.controller('GameController', function ($scope, $state) {
       })
       //need to initiate game when all players are ready (create a game in the db)
       socket.on('game initialized', function(data) {
+        $scope.players = data;
+        for (var i = 0; i < data.length; i++) {
+          if (data[i].name == $scope.playername) {
+            $scope.me = data[i];
+          }
+        }
+        $scope.$digest()
+      })
 
+      socket.on('your hand', function(data) {
+        $scope.myHand = data;
+        $scope.$digest();
       })
 
       //send all players their cards
