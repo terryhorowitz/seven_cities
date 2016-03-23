@@ -70,6 +70,7 @@ module.exports = function () {
     else trade.left = null;
     if (rightContribution.length === cost.length) trade.right = rightContribution;
     else trade.right = null;
+    if (trade.right === null && trade.left === null) return 'no trade available!'
     return trade;
   }
   // cost = ['wood', 'clay']
@@ -85,7 +86,6 @@ module.exports = function () {
     if (!cost.length) return 'paid by own resources';
     else if (player.money == 0) return 'cant afford to buy anything';
     else return canIBuyFromMyNeighbors(cost);
-    // ['wood']
   }
 
   var checkSelectedCard = function(player, card) {
