@@ -7,13 +7,13 @@ var Promise = require('bluebird');
 var _ = require('lodash');
 var Resources = require('./game_resources.js');
 module.exports = function (gameId) {//this is possible?
+
   var playersResources;
   var builtWonders = {};
   var gameResources = Resources.get(gameId);
   
   var addGameToResourcesStorage = function (game) {
     if (gamesStoredResources[game.id]) return 'already stored!'
-    
   }
   //after a card is selected by player - receive player & card?
   // 1. do i already have the card?
