@@ -28,26 +28,29 @@ module.exports = function () {
     }
   }
 
-  var buildCard = function (playerBuildingCard, cardToBuild) {
+  var buildCard = function (playerBuildingCardId, cardToBuildId) {
 
-    return Player.findOne({where: {id: playerBuildingCard.id}})
-    .then(function(player){
-      return player.removeTemporary(cardToBuild)
+    return Promise.join(Player.findOne({where: {id: playerBuildingCardId}}), Card.findOne({where: {id: cardToBuildId}}))
+    .spread(function(player, card){
+      return Promise.join(player.removeTemporary(card), card)
     })
-    .then(function(){
+    .spread(function(player, card){
       
-      return player.addPermanent(cardToBuild)
+      return Promise.join(player.addPermanent(card), card)
     })
-    .then(function(player){
+    .spread(function(player, card){
       console.log('card moved to built cards (perm)!', player)
+      if (card.type === "Raw Resource" || card.type === "Processed Resource"){
+        resourceBuilder.buildPlayerResources(player, card.functionality);
+      }
       return player;
     })
   }
   
-  var payForCard = function (playerToCharge, cardToBuy) {
+  var payForCard = function (playerToChargeId, cardToBuy) {
     
     var price = cardToBuy.cost;
-    return Player.findOne({where: {id: playerToCharge.id}})
+    return Player.findOne({where: {id: playerToChargeId.id}})
     .then(function(player){
       var total = player.money - price;
       return player.update({money: total})
