@@ -27,7 +27,7 @@ module.exports = function () {
 
   var buildCard = function (playerToGiveCard, cardToBuild) {
 
-    return Player.findOne({where: {id: playerToGiveCard.id}})
+    return Player.find({where: {id: playerToGiveCard.id}})
     .then(function(player){
       return player.removeTemporary(cardToBuild)
     })
@@ -43,7 +43,7 @@ module.exports = function () {
   var payForCard = function (playerToCharge, cardToBuy) {
     
     var price = cardToBuy.cost;
-    return Player.findOne({where: {id: playerToCharge.id}})
+    return Player.find({where: {id: playerToCharge.id}})
     .then(function(player){
       var total = player.money - price;
       return player.update({money: total})
