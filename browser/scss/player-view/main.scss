@@ -74,8 +74,9 @@ li {
 	padding-left: 100px;
 	left: 0;
 	right: 0;
-    bottom: 100px;
+    bottom: 80px;
 	.pile {
+		transition: all 0.5s ease-in-out;
 		height: 200px;
 		width: $pile-width;
 		position:relative;
@@ -102,54 +103,65 @@ li {
 					width: 80px;
 				}
 				&:nth-of-type(1) img{
-						top: 0px;
-					}
-					&:nth-of-type(2) img {
-						top: $card-v-space;
-					}
-					&:nth-of-type(3) img {
-						top: 2*$card-v-space;
-					}
-					&:nth-of-type(4) img {
-						top: 3*$card-v-space;
-					}
-					&:nth-of-type(5) img {
-						top: 4*$card-v-space;
-					}
+					top: 0px;
+				}
+				&:nth-of-type(2) img {
+					top: $card-v-space;
+				}
+				&:nth-of-type(3) img {
+					top: 2*$card-v-space;
+				}
+				&:nth-of-type(4) img {
+					top: 3*$card-v-space;
+				}
+				&:nth-of-type(5) img {
+					top: 4*$card-v-space;
+				}
 			}
 		}	
 	}
 	.pile.expand {
+		transition: all 0.5s ease-in-out;
 		position: absolute;
 		left: 70px;
 		ul {
+			transition: all 0.5s ease-in-out;
 			width: 800px;
 			li {
 				width: 190px;
 				transform:scale(1.8,1.8);
 				z-index: 10;
 				bottom: 0px;
-				
+				transition: all 0.5s ease-in-out;
 				img{
+					transition: all 0.5s ease-in-out;
 					top: 0;
 				}
 			}
-		}
-			
+		}		
 	}
 }
 
 .wonders{
 	.test {
-		width: 120px;
-		height: 70px;
-		background-color: white;
+		transition: all 0.5s ease-in-out;
 		float: left;
+		img{
+			height: 50px;
+		}
 	}
+	.test.wonderexpand {
+		transition: all 0.5s ease-in-out;
+		transform:scale(1.8,1.8);
+		transform-origin:50% 100%;
+		bottom: 0;
+	}
+	transition: all 0.5s ease-in-out;
+	cursor: pointer;
 	position: absolute;
 	left: 50%;
 	margin-left: -230px;
-	bottom: 0px;
+	bottom: 0;
 	@include not-last-of-type('.test') {
 	    margin-right: 50px;
 	}

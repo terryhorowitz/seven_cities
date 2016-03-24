@@ -32,116 +32,14 @@
 				</li>
 			</ul>
 		</div>
-		<!-- <div id="processed-resources">
-			<ul>
-				<li ng-click="expandCard(resource)" ng-repeat="resource in processedResources" ng-class="{expand: resource === clickedCard}">
-					<img src='{{resource.image}}'>
-				</li>
-			</ul>
-		</div>
-		<div id="trade">
-			<ul>
-				<li >
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li class="card-2">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li class="card-3">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li class="card-4">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li class="card-5">
-					<img src='img/3_arena_3.png'>
-				</li>
-			</ul>
-		</div>
-		<div id="technology">
-			<ul>
-				<li >
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li  class="card-2">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li  class="card-3">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li  class="card-4">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li  class="card-5">
-					<img src='img/3_arena_3.png'>
-				</li>
-			</ul>
-		</div>
-		<div id="military">
-			<ul>
-				<li >
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li  class="card-2">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li  class="card-3">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li  class="card-4">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li  class="card-5">
-					<img src='img/3_arena_3.png'>
-				</li>
-			</ul>
-		</div>
-		<div id="victory">
-			<ul>
-				<li >
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li  class="card-2">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li  class="card-3">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li  class="card-4">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li  class="card-5">
-					<img src='img/3_arena_3.png'>
-				</li>
-			</ul>
-		</div>
-		<div id="guild">
-			<ul>
-				<li >
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li  class="card-2">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li  class="card-3">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li  class="card-4">
-					<img src='img/3_arena_3.png'>
-				</li>
-				<li  class="card-5">
-					<img src='img/3_arena_3.png'>
-				</li>
-			</ul>
-		</div> -->
 	</div>
 
 	<br style="clear:both" />
 
 	<div class='wonders'>
-		<div class="test"></div>
-		<div class="test"></div>
-		<div class="test"></div>
+		<div ng-click="expandPile(wonder)" ng-repeat="wonder in wonders" ng-class="{wonderexpand: wonder === clickedPile}" class="test">
+			<img src='{{wonder.image}}'>
+		</div>
 	</div>
 
 	<div class="chat-box pull-right"></div>

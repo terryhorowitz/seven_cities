@@ -150,6 +150,15 @@ app.controller('GameController', function ($scope, $state) {
         ]
       ]
 
+      $scope.wonders = [
+        {image: 'img/wonders/alexandria_1.png'},
+        {image: 'img/wonders/alexandria_2.png'},
+        {image: 'img/wonders/alexandria_3.png'}
+      ]
+
+
+        console.log($scope.wonders)
+
       $scope.clickedPile = false;
 
       $scope.expandPile = function (pile) {
