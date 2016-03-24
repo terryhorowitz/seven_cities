@@ -6,12 +6,13 @@ var Deck = require('../../db/models').Deck
 var Player = require('../../db/models').Player
 var Promise = require('bluebird');
 var _ = require('lodash');
-var gameResourcesObj = require('./game_resources.js');
+var Resources = require('./game_resources.js');
 
 module.exports = function () {
 
   var playersResources;
   var builtWonders = 0;
+  var gameResources = Resources.get();
 
   //after a card is selected by player - receive player & card?
 
@@ -23,7 +24,7 @@ module.exports = function () {
   // 4.1 can i buy remainder from neighbors?
 
   var buildResources = function(player, resources) {
-    playersResources = gameResourcesObj[newGame.id][player.id];
+    playersResources = gameResources[player.id];
     for (var i = 0; i < resources.length; i++) {
       //ore/wood(combo)-type logic
       if (resources[i].length > 5){
@@ -42,7 +43,7 @@ module.exports = function () {
   }
 
   var canIBuyFromMyNeighbors = function(player, cost) {
-    playersResources = gameResourcesObj[newGame.id][player.id];
+    playersResources = gameResources[player.id];
     var leftResourcesCopy = _.cloneDeep(playersResources.leftNeighbor);
     var rightResourcesCopy = _.cloneDeep(playersResources.rightNeighbor);
     var trade = {};

@@ -8,7 +8,7 @@ var _ = require('lodash');
 
 var gameResourcesObj = {};
 
-var getPlayersResources = function (gameId, playerId) {
+var getGameResources = function (gameId) {
   return gameResourcesObj[gameId]
 }
 
@@ -19,7 +19,7 @@ var addGameToResourcesObj = function (newGameId) {
     game.players.forEach(function(player){
       gameResourcesObj[game.id][player.id] = {};
     });
-    console.log(gameResourcesObj)
+    //need to do first build for each player
   })
 }
 
@@ -45,6 +45,6 @@ var firstBuild = function(player, gameId) {
 
 
 module.exports = {
-  getPlayersResources: getPlayersResources,
+  get: getGameResources,
   addGameToResourcesObj: addGameToResourcesObj
 };
