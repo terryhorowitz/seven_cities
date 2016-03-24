@@ -3,7 +3,7 @@ var Game = require('../../db/models').Game
 var Board = require('../../db/models').Board
 var Deck = require('../../db/models').Deck
 var Player = require('../../db/models').Player
-var gamePlay = require('./play_card_options.js')();
+var gameResources = require('./game_resources.js');
 var Promise = require('bluebird');
 var _ = require('lodash');
 // module.exports = function () {
@@ -33,8 +33,7 @@ var _ = require('lodash');
         return Promise.join(newGame, newGame.setPlayers(dbPlayers), newGame.setDecks(deck))
       })
       .spread(function(completeGame){
-          console.log('is this the product??', completeGame)
-        return gamePlay.addGameToResourcesObj(completeGame.id);  
+        return gameResources.addGameToResourcesObj(completeGame.id);  
       })
     }
     

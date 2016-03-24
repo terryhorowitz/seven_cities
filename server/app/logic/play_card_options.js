@@ -21,37 +21,6 @@ module.exports = function () {
     // 3.1. is free?
   // 4) how much of it can i buy myself?
   // 4.1 can i buy remainder from neighbors?
-  
-  //SHOULD MOVE THESE FUNCTIONS TO WHERE OBJ IS LOCATED
-  var addGameToResourcesObj = function (newGameId) {
-    return Game.findOne({where: {id: newGameId}, include: [{all: true}]})
-    .then(function(game){
-      gameResourcesObj[game.id] = {};
-      game.players.forEach(function(player){
-        gameResourcesObj[game.id][player.id] = {};
-      });
-    })
-  }
-  
-  var firstBuild = function(player, gameId) {
-    playersResources = gameResourcesObj[gameId][player.id];
-    return player.getBoard()
-    .then(function(board){
-      playersResources[player.id] = {};
-      playersResources[player.id][board.resource] = 1;
-      return Promise.join(player.getLeftNeighbor(), player.getRightNeighbor());
-    })
-    .spread(function(leftNeighbor, rightNeighbor) {
-      return Promise.join(leftNeighbor, rightNeighbor, leftNeighbor.getBoard(), rightNeighbor.getBoard())
-    })
-    .spread(function(leftNeighbor, rightNeighbor, leftNeighborBoard, rightNeighborBoard) {
-      playersResources.leftNeighbor = {};
-      playersResources.rightNeighbor = {};
-      playersResources.leftNeighbor[leftNeighborBoard.resource] = 1;
-      playersResources.rightNeighbor[rightNeighborBoard.resource] = 1;
-      console.log('IS THIS IT', gameResourcesObj[gameId])
-    })
-  }
 
   var buildResources = function(player, resources) {
     playersResources = gameResourcesObj[newGame.id][player.id];
