@@ -10,28 +10,28 @@ var _ = require('lodash');
 
 module.exports = function () {
 
-  var executeChoice = function (playerId, cardId, choice){
+  function executeChoice(playerId, cardId, choice){
     return Promise.join(Player.findOne({where: {id: playerId}}), Card.findOne({where: {id: cardId}}))
     .spread(function(player, card){
       if (choice === "get free" || choice === "upgrade" || choice === "paid by own resources"){
-        buildCard(player, card)
+        return buildCard(player, card)
       }
       if (choice === "pay money"){
-        payForCard(player, card); //then buildCard()
+        return payForCard(player, card); //then buildCard()
       }
       if (typeof choice === "object"){
-        tradeForCard(player, card, choice); //then buildCard()
+        return tradeForCard(player, card, choice); //then buildCard()
       }
       if (choice === "build wonder"){
-        buildWonder(player, card);
+        return buildWonder(player, card);
       }
       if (choice === "discard"){
-        discard(player, card);
+        return discard(player, card);
       }
     })
   }
 
-  var buildCard = function (playerBuildingCard, cardToBuild) {
+  function buildCard(playerBuildingCard, cardToBuild) {
 
     return playerBuildingCard.removeTemporary(cardToBuild)//do these save to DB?
     .then(function(player){
@@ -46,16 +46,11 @@ module.exports = function () {
     })
   }
   
-  var payForCard = function (playerToCharge, cardToBuy) {
-    
-    var price = cardToBuy.cost;
-    return Player.findOne({where: {id: playerToCharge.id}})
+  function payForCard(playerToCharge, cardToBuy) {
+    var total = player.money - cardToBuy.cost;
+    return player.update({money: total})
     .then(function(player){
-      var total = player.money - price;
-      return player.update({money: total})
-    })
-    .then(function(player){
-      console.log('charged player, building card!', player)
+//      console.log('charged player, building card!', player)
       return buildCard(player, cardToBuy);
     })
   }
@@ -66,5 +61,15 @@ module.exports = function () {
 //    
 //    
 //  }
+  
+  function discard(playerDiscarding, discardCard){
+    return Game.findOne({where: {id: playerDiscarding.gameId}})
+    .then(function(game){
+      return game.addDiscard(discardCard);
+    })
+    .then(function(){
+      return playerDiscarding.removeTemporary(discardCard);
+    })
+  }
 
 }
