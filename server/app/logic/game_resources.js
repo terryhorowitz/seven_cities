@@ -7,6 +7,7 @@ var Promise = require('bluebird');
 var _ = require('lodash');
 
 var gameResourcesObj = {};
+var playersResources;
 
 var getGameResources = function (gameId) {
   return gameResourcesObj[gameId]
@@ -20,6 +21,9 @@ var addGameToResourcesObj = function (newGameId) {
       gameResourcesObj[game.id][player.id] = {};
     });
     //need to do first build for each player
+    return Promise.each(game.players, function(player){
+      return firstBuild(player, newGameId)
+    })
   })
 }
 
@@ -27,8 +31,8 @@ var firstBuild = function(player, gameId) {
   playersResources = gameResourcesObj[gameId][player.id];
   return player.getBoard()
   .then(function(board){
-    playersResources[player.id] = {};
-    playersResources[player.id][board.resource] = 1;
+    playersResources.self = {};
+    playersResources.self[board.resource] = 1;
     return Promise.join(player.getLeftNeighbor(), player.getRightNeighbor());
   })
   .spread(function(leftNeighbor, rightNeighbor) {
@@ -39,7 +43,6 @@ var firstBuild = function(player, gameId) {
     playersResources.rightNeighbor = {};
     playersResources.leftNeighbor[leftNeighborBoard.resource] = 1;
     playersResources.rightNeighbor[rightNeighborBoard.resource] = 1;
-    console.log('IS THIS IT', gameResourcesObj[gameId])
   })
 }
 
