@@ -215,5 +215,12 @@ selected-card {
 }
 
 .token img{
-	max-width: 30px;
+	max-width: 40px;
+}
+
+.glyphicon.glyphicon-home, .glyphicon.glyphicon-circle-arrow-right {
+    font-size: 30px;
+    line-height: 50px;
+    margin: 0 20px;
+    color: white;
 }
