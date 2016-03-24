@@ -27,7 +27,7 @@ module.exports = function () {
 
   var buildCard = function (playerToGiveCard, cardToBuild) {
 
-    return Player.find({where: {id: playerToGiveCard.id}})
+    return Player.findOne({where: {id: playerToGiveCard.id}})
     .then(function(player){
       return player.removeTemporary(cardToBuild)
     })
