@@ -48,6 +48,7 @@ var firstBuild = function(player, gameId) {
   })
 }
 
+//use this everytime a player builds a resource card
   function buildPlayerResources(player, resources) {
     var gameResources = getGameResources(gameId);
     playersResources = gameResources[player.id];

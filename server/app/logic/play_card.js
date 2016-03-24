@@ -1,9 +1,10 @@
 'use strict';
 
-var Game = require('../../db/models').Game
-var Board = require('../../db/models').Board
-var Deck = require('../../db/models').Deck
-var Player = require('../../db/models').Player
+var Game = require('../../db/models').Game;
+var Board = require('../../db/models').Board;
+var Deck = require('../../db/models').Deck;
+var Player = require('../../db/models').Player;
+var resourceBuilder = require('./game_resources');
 var Promise = require('bluebird');
 var _ = require('lodash');
 
@@ -22,16 +23,19 @@ module.exports = function () {
     if (choice === "build wonder"){
       buildWonder(player, card);
     }
-    
+    if (choice === "discard"){
+      discard(player, card);
+    }
   }
 
-  var buildCard = function (playerToGiveCard, cardToBuild) {
+  var buildCard = function (playerBuildingCard, cardToBuild) {
 
-    return Player.find({where: {id: playerToGiveCard.id}})
+    return Player.find({where: {id: playerBuildingCard.id}})
     .then(function(player){
       return player.removeTemporary(cardToBuild)
     })
     .then(function(){
+      
       return player.addPermanent(cardToBuild)
     })
     .then(function(player){
