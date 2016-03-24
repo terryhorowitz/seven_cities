@@ -8,7 +8,7 @@ var Promise = require('bluebird');
 var _ = require('lodash');
 var Resources = require('./game_resources.js');
 
-module.exports = function (gameId) {//is this what i want?
+module.exports = function (gameId) {//this is possible?
 
   var playersResources;
   var builtWonders = 0;
@@ -22,27 +22,44 @@ module.exports = function (gameId) {//is this what i want?
     // 3.1. is free?
   // 4) how much of it can i buy myself?
   // 4.1 can i buy remainder from neighbors?
-
-  var buildPlayerResources = function(player, resources) {
-    playersResources = gameResources[player.id];
-    for (var i = 0; i < resources.length; i++) {
-      //ore/wood(combo)-type logic
-      if (resources[i].length > 5){
-        resources[i] = resources[i].split('/');
-        if (!playersResources[player.id].combo){
-            playersResources[player.id].combo = [];
+  
+  function checkSelectedCardOptions(player, card) {
+    return player.getPermanent()
+    .then(function(builtCards){
+      if (!builtCards.length) {
+        if (!card.cost) return "get free";
+        // if card cost is money value
+        else if (!!Number(card.cost[0])) {
+          if (player.money >= card.cost[0]) return "pay money";
+          else return "can't afford";
         }
-        playersResources[player.id].combo.push(resources[i])
       }
-      //
-      else if (!playersResources[player.id][resources[i]]){
-        playersResources[player.id][resources[i]] = 1;
-      } 
-      else playersResources[player.id][resources[i]]++;
-    }
+      else { 
+        for (var i = 0; i < builtCards.length; i++) {
+          // for (let i of builtCards) {}
+          if (builtCards[i].name === card.name) return "already have it";
+          else if (!card.cost) return "get free";
+          else if (builtCards[i].upgradeTo.indexOf(card.name)!==-1) return "upgrade";
+        }
+      }
+      return checkResourcePaymentMethods(player, card.cost)
+    })
   }
-
-  var canIBuyFromMyNeighbors = function(player, cost) {
+  
+  function checkResourcePaymentMethods(player, cost) {
+    var ownResourcesCopy = _.cloneDeep(playersResources[player.id])
+    for (var i = 0; i < cost.length; i++) {
+      if (ownResourcesCopy[cost[i]] && ownResourcesCopy[cost[i]] > 0) {
+        ownResourcesCopy[cost[i]]--;
+        _.pullAt(cost, i)
+      }
+    }
+    if (!cost.length) return 'paid by own resources';
+    else if (player.money == 0) return 'cant afford to buy anything';
+    else return canIBuyFromMyNeighbors(cost);
+  }
+  
+  function canIBuyFromMyNeighbors(player, cost) {
     playersResources = gameResources[player.id];
     var leftResourcesCopy = _.cloneDeep(playersResources.leftNeighbor);
     var rightResourcesCopy = _.cloneDeep(playersResources.rightNeighbor);
@@ -68,45 +85,27 @@ module.exports = function (gameId) {//is this what i want?
     if (trade.right === null && trade.left === null) return 'no trade available!'
     return trade;
   }
-  // cost = ['wood', 'clay']
-  // ownResources = {'wood': 2, 'glass': 5}
-  var checkResourcePaymentMethods = function(player, cost) {
-    var ownResourcesCopy = _.cloneDeep(playersResources[player.id])
-    for (var i = 0; i < cost.length; i++) {
-      if (ownResourcesCopy[cost[i]] && ownResourcesCopy[cost[i]] > 0) {
-        ownResourcesCopy[cost[i]]--;
-        _.pullAt(cost, i)
-      }
-    }
-    if (!cost.length) return 'paid by own resources';
-    else if (player.money == 0) return 'cant afford to buy anything';
-    else return canIBuyFromMyNeighbors(cost);
-  }
 
-  var checkSelectedCard = function(player, card) {
-    return player.getPermanent()
-    .then(function(builtCards){
-      if (!builtCards.length) {
-        if (!card.cost) return "get free";
-        // if card cost is money value
-        else if (!!Number(card.cost[0])) {
-          if (player.money >= card.cost[0]) return "pay money";
-          else return "can't afford";
+  function buildPlayerResources(player, resources) {
+    playersResources = gameResources[player.id];
+    for (var i = 0; i < resources.length; i++) {
+      //ore/wood(combo)-type logic
+      if (resources[i].length > 5){
+        resources[i] = resources[i].split('/');
+        if (!playersResources[player.id].combo){
+            playersResources[player.id].combo = [];
         }
+        playersResources[player.id].combo.push(resources[i])
       }
-      else { 
-        for (var i = 0; i < builtCards.length; i++) {
-          // for (let i of builtCards) {}
-          if (builtCards[i].name === card.name) return "already have it";
-          else if (!card.cost) return "get free";
-          else if (builtCards[i].upgradeTo.indexOf(card.name)!==-1) return "upgrade";
-        }
-      }
-      return checkResourcePaymentMethods(player, card.cost)
-    })
+      //
+      else if (!playersResources[player.id][resources[i]]){
+        playersResources[player.id][resources[i]] = 1;
+      } 
+      else playersResources[player.id][resources[i]]++;
+    }
   }
   
-  var checkIfPlayerCanBuildWonder = function (player){
+  function checkIfPlayerCanBuildWonder(player){
     return player.getBoard()
     .then(function(board){
       if (builtWonders === 0) return checkResourcePaymentMethods(player, board.wonder1Cost);
@@ -117,10 +116,8 @@ module.exports = function (gameId) {//is this what i want?
   }
   
   return {
-    addGameToResourcesObj: addGameToResourcesObj,
-    checkSelectedCard: checkSelectedCard,
-    buildPlayerResources: buildPlayerResources,
-    firstBuild: firstBuild
+    checkSelectedCardOptions: checkSelectedCardOptions,
+    buildPlayerResources: buildPlayerResources
   }
 
 }

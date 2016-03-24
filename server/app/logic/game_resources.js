@@ -27,6 +27,7 @@ var addGameToResourcesObj = function (newGameId) {
   })
 }
 
+//helper function (do not need to export):
 var firstBuild = function(player, gameId) {
   playersResources = gameResourcesObj[gameId][player.id];
   return player.getBoard()
@@ -43,6 +44,7 @@ var firstBuild = function(player, gameId) {
     playersResources.rightNeighbor = {};
     playersResources.leftNeighbor[leftNeighborBoard.resource] = 1;
     playersResources.rightNeighbor[rightNeighborBoard.resource] = 1;
+    console.log('the obj', gameResourcesObj[gameId])
   })
 }
 
