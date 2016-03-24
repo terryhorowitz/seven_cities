@@ -166,3 +166,4 @@ app.controller('GameController', function ($scope, $state) {
         else $scope.clickedPile = false;
       }
 });
+

@@ -20,7 +20,6 @@ router.get('/player', function(req, res, next){
 
   Player.findAll({})
   .then(function(players){
-    console.log('IS THIS ITTTTT', players)
       // console.log('type of getPermanent: ', typeof players[0].getPermanent)
       // console.log('type of getTemporary: ', typeof players[0].getTemporary )
     console.log('HOW MANY', players.length)
