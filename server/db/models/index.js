@@ -16,7 +16,9 @@ Card.belongsToMany(Player, {through: 'hand', timestamps: false});
 Player.belongsTo(Player, {as: "LeftNeighbor", timestamps: false});
 Player.belongsTo(Player, {as: "RightNeighbor", timestamps: false});
 
-Game.belongsToMany(Player, {through: "GamePlayers", timestamps: false});
+Game.belongsToMany(Player, {through: "game_players", timestamps: false});
+//Player.belongsToMany(Game, {through: "game_players", timestamps: false});
+
 Game.belongsToMany(Card, {through: "Discard", timestamps: false});
 Game.belongsToMany(Deck, {through: "GameDeck", timestamps: false});
 

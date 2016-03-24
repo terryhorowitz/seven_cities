@@ -35,15 +35,15 @@ module.exports = function (server) {
     		allPlayers[socket.id].push(data.playername);
 				currentRoom = data.roomname;
 				socket.join(data.roomname);
-    		if (data.localId) {
-    			allPlayers[socket.id].push(data.localId);
-    		} else {
-					Player.create({name: data.playername, money: 3})
-					.then(function(data) {
-						allPlayers[socket.id].push(data.dataValues.id);
-						socket.emit('your id', {id: data.dataValues.id})
-					})
-    		}
+    	// 	if (data.localId) {
+    	// 		allPlayers[socket.id].push(data.localId);
+    	// 	} else {
+					// Player.create({name: data.playername, money: 3})
+					// .then(function(data) {
+					// 	allPlayers[socket.id].push(data.dataValues.id);
+					// 	socket.emit('your id', {id: data.dataValues.id})
+					// })
+    	// 	}
 				clients = io.sockets.adapter.rooms[data.roomname];
 				for (var key in clients.sockets) {
 
@@ -107,9 +107,9 @@ module.exports = function (server) {
 					.then(function() {
 						for (var a = 0; a < players.length; a++) {
 							io.sockets.connected[players[a].socket].emit('your hand', hands[a])
-							players[a].hand = hands[a];
-							startGameFuncs.startGame(players, currentRoom);	
-						}		
+							players[a].hand = hands[a];	
+						}
+            startGameFuncs.startGame(players, currentRoom);	
 					})
 
     		}
