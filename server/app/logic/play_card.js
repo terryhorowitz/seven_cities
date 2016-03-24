@@ -9,37 +9,36 @@ var Promise = require('bluebird');
 var _ = require('lodash');
 
 module.exports = function () {
-  //discard is also an option not checked in our options logic
-  var executeChoice = function (playerId, card, choice){
-    if (choice === "get free" || choice === "upgrade" || choice === "paid by own resources"){
-      buildCard(playerId, card)
-    }
-    if (choice === "pay money"){
-      payForCard(playerId, card); //then buildCard()
-    }
-    if (typeof choice === "object"){
-      tradeForCard(playerId, card, choice); //then buildCard()
-    }
-    if (choice === "build wonder"){
-      buildWonder(playerId, card);
-    }
-    if (choice === "discard"){
-      discard(playerId, card);
-    }
+
+  var executeChoice = function (playerId, cardId, choice){
+    return Promise.join(Player.findOne({where: {id: playerId}}), Card.findOne({where: {id: cardId}}))
+    .spread(function(player, card){
+      if (choice === "get free" || choice === "upgrade" || choice === "paid by own resources"){
+        buildCard(player, card)
+      }
+      if (choice === "pay money"){
+        payForCard(player, card); //then buildCard()
+      }
+      if (typeof choice === "object"){
+        tradeForCard(player, card, choice); //then buildCard()
+      }
+      if (choice === "build wonder"){
+        buildWonder(player, card);
+      }
+      if (choice === "discard"){
+        discard(player, card);
+      }
+    })
   }
 
-  var buildCard = function (playerBuildingCardId, cardToBuildId) {
+  var buildCard = function (playerBuildingCard, cardToBuild) {
 
-    return Promise.join(Player.findOne({where: {id: playerBuildingCardId}}), Card.findOne({where: {id: cardToBuildId}}))
-    .spread(function(player, card){
-      return Promise.join(player.removeTemporary(card), card)
+    return playerBuildingCard.removeTemporary(cardToBuild)//do these save to DB?
+    .then(function(player){
+      return player.addPermanent(cardToBuild)
     })
-    .spread(function(player, card){
-      
-      return Promise.join(player.addPermanent(card), card)
-    })
-    .spread(function(player, card){
-      console.log('card moved to built cards (perm)!', player)
+    .then(function(player){
+//      console.log('card moved to built cards (perm)!', player)
       if (card.type === "Raw Resource" || card.type === "Processed Resource"){
         resourceBuilder.buildPlayerResources(player, card.functionality);
       }
@@ -47,10 +46,10 @@ module.exports = function () {
     })
   }
   
-  var payForCard = function (playerToChargeId, cardToBuy) {
+  var payForCard = function (playerToCharge, cardToBuy) {
     
     var price = cardToBuy.cost;
-    return Player.findOne({where: {id: playerToChargeId.id}})
+    return Player.findOne({where: {id: playerToCharge.id}})
     .then(function(player){
       var total = player.money - price;
       return player.update({money: total})
