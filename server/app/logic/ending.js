@@ -14,20 +14,19 @@ var calculatePoints = function (thisPlayer) {
 
 	//USE IIFE???
 
-	function getMilitaryPoints (thisPlayer) {
+	function getMilitaryAndMoneyPoints (thisPlayer) {
 		return Player.findOne({ where: { id: player.id }})
 		.then(function (player) {
-			return player.tokens;
+			let pointsCount = {
+				points: player.tokens + Math.floor(player.money),
+				money: player.money % 3
+			}
+			return pointsCount;
 		})
-		.then(function (tokens) {
-			totalPoints += tokens;
+		.then(function (pointsCount) {
+			totalPoints += pointsCount.points;
+			totalMoney += pointsCount.money;
 		});
-	}
-	
-	function getMoneyPoints () {
-		// totalMoney += player.money % 3;
-		// totalPoints += Math.floor(player.money);
-
 	}
 
 	function getWonderPoints () {
