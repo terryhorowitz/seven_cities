@@ -1,0 +1,226 @@
+html {
+  height: 100%;
+}
+
+body { 
+  background: url(img/background/olympia.png) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  min-height: 100%;
+}
+
+@mixin not-last-of-type($selector) {
+  & #{$selector}:not(:last-of-type) {
+    @content;
+  }
+}
+
+$card-v-space: 10px;
+$card-h-space: 5px;
+$card-h-space-expand: 120px;
+$pile-width: 115px;
+
+
+li {
+	list-style-type: none;
+}
+
+.board{
+	position: absolute;
+	left: 50%;
+  	margin-left: -250px;
+  	top: 50%;
+  	margin-top: -110px;
+}
+
+.player-view-container {
+	/*padding-top: 60px;*/
+	margin: 0 auto;
+}
+
+.hand {
+	
+	ul {
+		display: block; 
+		text-align:center;
+		li {
+			border-radius: 5px;
+			cursor: pointer;
+			float: left;
+			display: inline-block;
+			margin-right: 10px;
+			&:hover {
+				z-index: 10 !important;
+				box-shadow: 0px 12px 22px 1px #333;
+				transform:scale(1.3,1.3);
+				/*transform-origin:0 0;*/
+			}
+		}
+	}
+	margin: 0 auto;
+	/*overflow: auto;*/
+	img {
+		max-width: 80px;
+	}
+}
+
+
+#built-cards {
+	/*border: solid fuchsia 1px;*/
+	position: absolute;
+	display: flex;
+	padding-left: 100px;
+	left: 0;
+	right: 0;
+    bottom: 80px;
+	.pile {
+		transition: all 0.5s ease-in-out;
+		height: 200px;
+		width: $pile-width;
+		position:relative;
+		float: left;
+		ul {
+			display: flex;
+			justify-content: space-between;
+			padding: 0;
+			padding-right: 30px;
+			/*border: solid yellow 1px;*/
+			width: 70px;
+		    transition: all 0.5s ease-in-out;
+			li {
+				transition: all 0.5s ease-in-out;
+				cursor: pointer;
+				border-radius: 5px;
+				position: relative;
+				width: 5px;
+				height: 5px;
+
+				img {
+					transition: all 0.5s ease-in-out;
+					position: absolute;
+					width: 80px;
+				}
+				&:nth-of-type(1) img{
+					top: 0px;
+				}
+				&:nth-of-type(2) img {
+					top: $card-v-space;
+				}
+				&:nth-of-type(3) img {
+					top: 2*$card-v-space;
+				}
+				&:nth-of-type(4) img {
+					top: 3*$card-v-space;
+				}
+				&:nth-of-type(5) img {
+					top: 4*$card-v-space;
+				}
+			}
+		}	
+	}
+	.pile.expand {
+		transition: all 0.5s ease-in-out;
+		position: absolute;
+		left: 70px;
+		ul {
+			transition: all 0.5s ease-in-out;
+			width: 800px;
+			li {
+				width: 190px;
+				transform:scale(1.8,1.8);
+				z-index: 10;
+				bottom: 0px;
+				transition: all 0.5s ease-in-out;
+				img{
+					transition: all 0.5s ease-in-out;
+					top: 0;
+				}
+			}
+		}		
+	}
+}
+
+.wonders{
+	.test {
+		transition: all 0.5s ease-in-out;
+		float: left;
+		img{
+			height: 50px;
+		}
+	}
+	.test.wonderexpand {
+		transition: all 0.5s ease-in-out;
+		transform:scale(1.8,1.8);
+		transform-origin:50% 100%;
+		bottom: 0;
+	}
+	transition: all 0.5s ease-in-out;
+	cursor: pointer;
+	position: absolute;
+	left: 50%;
+	margin-left: -230px;
+	bottom: 0;
+	@include not-last-of-type('.test') {
+	    margin-right: 50px;
+	}
+}
+
+.other-player-icons {
+	width: 50px;
+	height: 50px;
+	border-radius: 50%;
+	border: solid yellow 1px;
+	background-color: white;
+	margin-right: 25px;
+	line-height: 60px;
+	vertical-align: middle;
+}
+
+.neighbor-icons {
+	width: 60px;
+	height: 60px;
+}
+
+.navbar-nav {
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+}
+
+selected-card {
+	h3 {
+		margin-top: -5px;
+	}
+	
+	img {
+		width: 100px;
+	}
+}
+
+.chat-box {
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	width: 200px;
+	height: 250px;
+	background-color: white;
+}
+
+.card-highlight {
+	&:hover {
+		z-index: 10;
+	}
+}
+
+.token img{
+	max-width: 40px;
+}
+
+.glyphicon.glyphicon-home, .glyphicon.glyphicon-circle-arrow-right {
+    font-size: 30px;
+    line-height: 50px;
+    margin: 0 20px;
+    color: white;
+}

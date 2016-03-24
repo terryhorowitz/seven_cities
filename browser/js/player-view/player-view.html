@@ -1,0 +1,58 @@
+<nav class="navbar navbar-static-top">
+	<a ui-sref="home"><span class="glyphicon glyphicon-home pull-left"></span></a>
+	<board-name class='pull-left'></board-name>
+	<other-players class="text-center"></other-players>
+	<tokens class="pull-right"></tokens>
+</nav>
+
+<div class="player-view-container container">
+
+	<div class="row">	
+		<div class="col-xs-8">
+			<div class='hand'>
+				<ul>
+					<li ng-repeat="card in hand">
+						<img src='{{card.image}}'>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<div class="col-xs-4">
+			<selected-card></selected-card>
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	<div id="built-cards">
+		<div ng-click="expandPile(pile)" ng-class="{expand: pile === clickedPile}" class="pile" ng-repeat="pile in builtCards" ng-click>
+			<ul>
+				<li ng-repeat="card in pile">
+					<img class="pile-card-img" src='{{card.image}}'>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+	<br style="clear:both" />
+
+	<div class='wonders'>
+		<div ng-click="expandPile(wonder)" ng-repeat="wonder in wonders" ng-class="{wonderexpand: wonder === clickedPile}" class="test">
+			<img src='{{wonder.image}}'>
+		</div>
+	</div>
+
+	<div class="chat-box pull-right"></div>
+
+</div>
+
+<!-- <div class='board text-center'>
+	<img src='img/b_olympia.png'>
+</div> -->
+
+<!-- <div class='wonders text-center'>
+	<img src='img/3_back.png'>
+	<img src='img/3_back.png'>
+	<img src='img/3_back.png'>
+</div>
