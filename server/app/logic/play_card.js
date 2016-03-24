@@ -10,21 +10,21 @@ var _ = require('lodash');
 
 module.exports = function () {
   //discard is also an option not checked in our options logic
-  var executeChoice = function (player, card, choice){
+  var executeChoice = function (playerId, card, choice){
     if (choice === "get free" || choice === "upgrade" || choice === "paid by own resources"){
-      buildCard(player, card)
+      buildCard(playerId, card)
     }
     if (choice === "pay money"){
-      payForCard(player, card); //then buildCard()
+      payForCard(playerId, card); //then buildCard()
     }
     if (typeof choice === "object"){
-      tradeForCard(player, card, choice); //then buildCard()
+      tradeForCard(playerId, card, choice); //then buildCard()
     }
     if (choice === "build wonder"){
-      buildWonder(player, card);
+      buildWonder(playerId, card);
     }
     if (choice === "discard"){
-      discard(player, card);
+      discard(playerId, card);
     }
   }
 
