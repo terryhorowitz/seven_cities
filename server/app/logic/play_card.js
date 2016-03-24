@@ -9,7 +9,7 @@ var resourceBuilder = require('./play_card_options')();
 var Promise = require('bluebird');
 var _ = require('lodash');
 
-//module.exports = function () {
+module.exports = function () {
 
   function executeChoice(playerId, cardId, choice){
     return Promise.join(Player.findOne({where: {id: playerId}, include: [{all:true}]}), Card.findOne({where: {id: cardId}, include: [{all:true}]}))
@@ -58,7 +58,7 @@ var _ = require('lodash');
     })
   }
   
-  var tradeForCard = function (playerTrading, cardToPayFor, tradeParams){
+  function tradeForCard(playerTrading, cardToPayFor, tradeParams){
     //need tradeParams to be an object containing player(s) we are trading with and what items we are trading with them (e.g. {left: ['wood', 'clay'], right: ['clay]} OR {left: ['ore']} etc).
     var raw = ['wood', 'clay', 'ore', 'stone'];
     var processed = ['glass', 'textile', 'papyrus'];
@@ -69,11 +69,12 @@ var _ = require('lodash');
     if (tradeParams.left !== null && tradeParams.right !== null) tradePromise = Promise.join(trade(playerTrading, tradeParams.left), trade(playerTrading, tradeParams.right))
     if (tradeParams.left) trade(playerTrading, tradeParams.left).then(dealWithTrade)
     if (tradeParams.right) tradePromise = trade(playerTrading, tradeParams.right).then(dealWithTrade)
-    
-//    return tradePromise.then()
-    
+    return tradePromise.then()
   }
   
+  function trade(activePlayer, trade){
+    //write this
+  }
   
   
   function buildWonder(playerBuilding, cardToUse){
@@ -89,7 +90,7 @@ var _ = require('lodash');
       return playerDiscarding.removeTemporary(discardCard);
     })
   }
-//  return executeChoice;
-//}
+  return executeChoice;
+}
 
-executeChoice(13,15,"get free");
+//executeChoice(13,15,"get free");
