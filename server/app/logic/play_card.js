@@ -44,7 +44,7 @@ module.exports = function () {
 //      console.log('card moved to built cards (perm)!', player)
       if (cardToBuild.type === "Raw Resource" || cardToBuild.type === "Processed Resource" || cardToBuild.name === "Forum" || cardToBuild.name === "Caravansery"){
         resourceBuilder.buildPlayerResources(playerBuildingCard, cardToBuild.functionality);
-      }
+      }//need to consider cards that give you money/change your player interactions
       return player;
     })
   }
