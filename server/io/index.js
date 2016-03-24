@@ -29,6 +29,7 @@ module.exports = function (server) {
   //hold the players objects for each game
 		var counter = 0;
 		var players = [];
+		var gameObject;
 
 		//join all players to the correct room
 		socket.on('create', function(data) {
@@ -109,8 +110,15 @@ module.exports = function (server) {
 						io.sockets.connected[players[a].socket].emit('your hand', hands[a]);
 						players[a].hand = hands[a];
 					}
-					var something = startGameFuncs.startGame(players, currentRoom);
-				});
+					gameObject = startGameFuncs.startGame(players, currentRoom);
+					return gameObject
+				})
+				.then(function(gameObject) {
+					console.log('this is gameObject', gameObject)
+					for (var r = 0; r < players.length; a++) {
+
+					}
+				})
 			}
 		});
 		socket.on('choice made', function(playerid, card) {
