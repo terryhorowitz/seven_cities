@@ -5,14 +5,11 @@ var Deck = require('../../db/models').Deck
 var Player = require('../../db/models').Player
 var Promise = require('bluebird');
 var _ = require('lodash');
-
 var gameResourcesObj = {};
 var playersResources;
-
 var getGameResources = function (gameId) {
   return gameResourcesObj[gameId]
 }
-
 var addGameToResourcesObj = function (newGameId) {
   return Game.findOne({where: {id: newGameId}, include: [{all: true}]})
   .then(function(game){
@@ -25,8 +22,13 @@ var addGameToResourcesObj = function (newGameId) {
       return firstBuild(player, newGameId)
     })
   })
+  .then(function(players){
+    return Game.findOne({where: {id: newGameId}, include: [{all: true}]})
+  })
+  .then(function(game){
+    return game;
+  })
 }
-
 //helper function (do not need to export):
 var firstBuild = function(player, gameId) {
   playersResources = gameResourcesObj[gameId][player.id];
@@ -45,10 +47,9 @@ var firstBuild = function(player, gameId) {
     playersResources.leftNeighbor[leftNeighborBoard.resource] = 1;
     playersResources.rightNeighbor[rightNeighborBoard.resource] = 1;
     console.log('the obj', gameResourcesObj[gameId])
+    return player
   })
 }
-
-//use this everytime a player builds a resource card
   function buildPlayerResources(player, resources) {
     var gameResources = getGameResources(gameId);
     playersResources = gameResources[player.id];
@@ -68,8 +69,6 @@ var firstBuild = function(player, gameId) {
       else playersResources[player.id][resources[i]]++;
     }
 }
-
-
 module.exports = {
   get: getGameResources,
   addGameToResourcesObj: addGameToResourcesObj,
