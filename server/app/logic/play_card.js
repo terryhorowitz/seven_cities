@@ -42,7 +42,7 @@ module.exports = function () {
     }) 
     .then(function(player){
 //      console.log('card moved to built cards (perm)!', player)
-      if (cardToBuild.type === "Raw Resource" || cardToBuild.type === "Processed Resource"){
+      if (cardToBuild.type === "Raw Resource" || cardToBuild.type === "Processed Resource" || cardToBuild.name === "Forum" || cardToBuild.name === "Caravansery"){
         resourceBuilder.buildPlayerResources(playerBuildingCard, cardToBuild.functionality);
       }
       return player;
@@ -60,11 +60,6 @@ module.exports = function () {
   
   function tradeForCard(playerTrading, cardToPayFor, tradeParams){
     //need tradeParams to be an object containing player(s) we are trading with and what items we are trading with them (e.g. {left: ['wood', 'clay'], right: ['clay]} OR {left: ['ore']} etc).
-    var raw = ['wood', 'clay', 'ore', 'stone'];
-    var processed = ['glass', 'textile', 'papyrus'];
-    //need to check if player has any trade cards built that change trade conditions
-    //need to see if they are trading left, right or both
-    //figure out how much to pay each player
     var tradePromise;
     if (tradeParams.left !== null && tradeParams.right !== null) tradePromise = Promise.join(trade(playerTrading, tradeParams.left), trade(playerTrading, tradeParams.right))
     if (tradeParams.left) trade(playerTrading, tradeParams.left).then(dealWithTrade)
@@ -73,7 +68,13 @@ module.exports = function () {
   }
   
   function trade(activePlayer, trade){
-    //write this
+    var raw = ['wood', 'clay', 'ore', 'stone'];
+    var processed = ['glass', 'textile', 'papyrus'];
+    //need to check if player has any trade cards built that change trade conditions
+    //need to see if they are trading left, right or both
+    //figure out how much to pay each player
+    
+    
   }
   
   
