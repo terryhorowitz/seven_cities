@@ -111,13 +111,15 @@ module.exports = function (server) {
 						players[a].hand = hands[a];
 					}
 					gameObject = startGameFuncs.startGame(players, currentRoom);
-					return gameObject
+					return gameObject;
 				})
 				.then(function(gameObject) {
-					console.log('this is gameObject', gameObject)
-					for (var r = 0; r < players.length; a++) {
-
-					}
+					players = players.map(function(player) {
+						var current = _.find(gameObject.GamePlayers, {'socket': player.socket})
+							player.playerId = current.id;
+							io.sockets.connected[player.socket].emit('your id', current.id);
+							return player;
+					})
 				})
 			}
 		});
