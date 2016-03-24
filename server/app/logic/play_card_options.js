@@ -47,6 +47,7 @@ module.exports = function (gameId) {//this is possible?
   }
   
   function checkResourcePaymentMethods(player, cost) {
+    playersResources = gameResources[player.id];
     var ownResourcesCopy = _.cloneDeep(playersResources[player.id])
     for (var i = 0; i < cost.length; i++) {
       if (ownResourcesCopy[cost[i]] && ownResourcesCopy[cost[i]] > 0) {
