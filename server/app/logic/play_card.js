@@ -6,6 +6,7 @@ var Board = require('../../db/models').Board;
 var Deck = require('../../db/models').Deck;
 var Player = require('../../db/models').Player;
 var resourceBuilder = require('./play_card_options')();
+var resourcesObj = require('./game_resources.js')()
 var Promise = require('bluebird');
 var _ = require('lodash');
 
@@ -22,7 +23,7 @@ module.exports = function () {
         choicePromise = payForCard(player, card); //then buildCard()
       }
       if (typeof choice === "object"){//indicates a trade option was selected
-        choicePromise =tradeForCard(player, card, choice); //then buildCard()
+        choicePromise = tradeForCard(player, card, choice); //then buildCard()
       }
       if (choice === "build wonder"){
         choicePromise = buildWonder(player, card);
@@ -61,19 +62,54 @@ module.exports = function () {
   function tradeForCard(playerTrading, cardToPayFor, tradeParams){
     //need tradeParams to be an object containing player(s) we are trading with and what items we are trading with them (e.g. {left: ['wood', 'clay'], right: ['clay]} OR {left: ['ore']} etc).
     var tradePromise;
-    if (tradeParams.left !== null && tradeParams.right !== null) tradePromise = Promise.join(trade(playerTrading, tradeParams.left), trade(playerTrading, tradeParams.right))
-    if (tradeParams.left) trade(playerTrading, tradeParams.left).then(dealWithTrade)
-    if (tradeParams.right) tradePromise = trade(playerTrading, tradeParams.right).then(dealWithTrade)
-    return tradePromise.then()
+    if (tradeParams.left !== null && tradeParams.right !== null) tradePromise = Promise.join(tradeLeft(playerTrading, tradeParams.left), tradeRight(playerTrading, tradeParams.right))
+    if (tradeParams.left) tradeLeft(playerTrading, tradeParams.left)
+    if (tradeParams.right) tradePromise = tradeRight(playerTrading, tradeParams.right)
+    
+    return tradePromise
+    .then(function(){
+      buildCard(playerTrading, cardToPayFor)
+    })
   }
   
-  function trade(activePlayer, trade){
-    var raw = ['wood', 'clay', 'ore', 'stone'];
-    var processed = ['glass', 'textile', 'papyrus'];
+  //there must be a better way...instead of making again for right?
+  function tradeLeft(activePlayer, trade){
+    var resourceTypeMap = {
+      wood: 'raw',
+      clay: 'raw',
+      ore: 'raw',
+      stone: 'raw',
+      glass: 'processed',
+      textile: 'processed',
+      papyrus: 'processed'
+    }
     //need to check if player has any trade cards built that change trade conditions
     //need to see if they are trading left, right or both
     //figure out how much to pay each player
-    
+//    var playerAndNeighborRsc = gameResources.getGameResources(activePlayer.gameId)[activePlayer];
+//    //{self: {}, left: {}, right:{}}
+    return Promise.join(activePlayer.getLeftNeighbor(), activePlayer.getPermanent({where: {type: 'Trading'}}))
+    .spread(function(leftNeighbor, builtTradeCards){
+      //make a function to check player trade options?
+      var cost = 0;
+      var opts = {raw: 2, processed: 2};
+      
+      if (builtTradeCards.length){
+        for (var i = 0; i < builtTradeCards.length; i++){
+          if (builtTradeCards[i].functionality[0] === 'left'){
+            if (builtTradeCards[i].functionality[2]) opts.processed = 1;
+            if (builtTradeCards[i].functionality[1] === "Raw Resource") opts.raw = 1;
+          }
+        }
+      }
+      
+      for (var i = 0; i < trade.length; i++){
+        cost += opts[resourceTypeMap[trade[i]]];
+      }
+      activePlayer.money = activePlayer.money - cost;
+      leftNeighbor.money = leftNeighbor.money + cost;
+      return Promise.join(activePlayer.save(), leftNeighbor.save())
+    })
     
   }
   
