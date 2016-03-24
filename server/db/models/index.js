@@ -17,6 +17,7 @@ Player.belongsTo(Player, {as: "LeftNeighbor", timestamps: false});
 Player.belongsTo(Player, {as: "RightNeighbor", timestamps: false});
 
 Game.hasMany(Player, {as: "GamePlayers", timestamps: false});
+
 //Player.belongsToOne
 //
 //Game.belongsToMany(Player, {through: "GamePlayers", timestamps: false});
