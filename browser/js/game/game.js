@@ -37,7 +37,7 @@ app.controller('GameController', function ($scope, $state) {
       socket.emit('create', {roomname: $scope.roomname, playername: $scope.playername, localId: tempId});
 
       socket.on('your id', function(data) {
-        localStorage.setItem('playerId', data.id)
+        localStorage.setItem('playerId', data)
       })
 
       socket.on('firstPlayer', function() {
@@ -46,9 +46,9 @@ app.controller('GameController', function ($scope, $state) {
       })
       //need to initiate game when all players are ready (create a game in the db)
       socket.on('game initialized', function(data) {
-        console.log('game started')
+        // console.log('game started')
         $scope.players = data;
-        console.log('players', $scope.players)
+        // console.log('players', $scope.players)
         for (var i = 0; i < data.length; i++) {
           if ($scope.players[i].name == $scope.playername) {
             $scope.me = $scope.players[i];
@@ -69,7 +69,7 @@ app.controller('GameController', function ($scope, $state) {
             $scope.players.splice(i,1);
           }
         }
-        console.log('players modified', $scope.players)
+        // console.log('players modified', $scope.players)
         $scope.$digest()
       })
 
@@ -157,7 +157,7 @@ app.controller('GameController', function ($scope, $state) {
       ]
 
 
-        console.log($scope.wonders)
+        // console.log($scope.wonders)
 
       $scope.clickedPile = false;
 

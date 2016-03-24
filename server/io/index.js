@@ -10,6 +10,7 @@ var Card = require('../db/models/index.js').Card;
 var startGameFuncs = require('../app/logic/startGame.js');
 var playCardOptions = require('../app/logic/play_card_options.js');
 var _ = require('lodash');
+// var playerReload = require('../app/logic/playerReload.js');
 
 
 module.exports = function (server) {
@@ -33,19 +34,24 @@ module.exports = function (server) {
 
 		//join all players to the correct room
 		socket.on('create', function(data) {
+
+
+			// if (data.localId) {
+			// 	playerReload.playerReload(data.localId, socket.id)
+			// 	allPlayers[socket.id].push(data.localId);
+			// } else {
+			// 	Player.create({name: data.playername, money: 3})
+			// 	.then(function(data) {
+			// 		allPlayers[socket.id].push(data.dataValues.id);
+			// 		socket.emit('your id', {id: data.dataValues.id})
+			// 	})
+			// }
+
+
 			allPlayers[socket.id] = [];
 			allPlayers[socket.id].push(data.playername);
 			currentRoom = data.roomname;
 			socket.join(data.roomname);
-		//	if (data.localId) {
-		//		allPlayers[socket.id].push(data.localId);
-		//	} else {
-				// Player.create({name: data.playername, money: 3})
-				// .then(function(data) {
-				//	allPlayers[socket.id].push(data.dataValues.id);
-				//	socket.emit('your id', {id: data.dataValues.id})
-				// })
-			// }
 			clients = io.sockets.adapter.rooms[data.roomname];
 			for (var key in clients.sockets) {
 				counter++;
