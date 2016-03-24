@@ -11,7 +11,7 @@ var _ = require('lodash');
 module.exports = function () {
 
   function executeChoice(playerId, cardId, choice){
-    return Promise.join(Player.findOne({where: {id: playerId}}), Card.findOne({where: {id: cardId}}))
+    return Promise.join(Player.findOne({where: {id: playerId}, include: [{all:true}]}), Card.findOne({where: {id: cardId}, include: [{all:true}]}))
     .spread(function(player, card){
       if (choice === "get free" || choice === "upgrade" || choice === "paid by own resources"){
         return buildCard(player, card)
@@ -19,7 +19,7 @@ module.exports = function () {
       if (choice === "pay money"){
         return payForCard(player, card); //then buildCard()
       }
-      if (typeof choice === "object"){
+      if (typeof choice === "object"){//indicates a trade option was selected
         return tradeForCard(player, card, choice); //then buildCard()
       }
       if (choice === "build wonder"){
@@ -55,12 +55,20 @@ module.exports = function () {
     })
   }
   
-//  var tradeForCard = function (playerTrading, cardToPayFor, tradeParams){
-//    
-//    //need tradeParams to be an object containing player(s) we are trading with and what items we are trading with them (e.g. {left: ['wood'], right: ['clay']} OR {left: 2} etc).
-//    
-//    
-//  }
+  var tradeForCard = function (playerTrading, cardToPayFor, tradeParams){
+    
+    //need tradeParams to be an object containing player(s) we are trading with and what items we are trading with them (e.g. {left: ['wood'], right: ['clay]} OR {left: ['ore']} etc).
+    var raw = ['wood', 'clay', 'ore', 'stone'];
+    var processed = ['glass', 'textile', 'papyrus'];
+    //need to check if player has any trade cards built that change trade conditions
+    //need to see if they are trading left, right or both
+    //figure out how much to pay each player
+    
+  }
+  
+  function buildWonder(playerBuilding, cardToUse){
+    //need to add a built wonders property somewhere (see play_card_options)
+  }
   
   function discard(playerDiscarding, discardCard){
     return Game.findOne({where: {id: playerDiscarding.gameId}})

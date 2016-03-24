@@ -10,6 +10,7 @@ module.exports = function (gameId) {//this is possible?
   var playersResources;
   var builtWonders = 0;
   var gameResources = Resources.get(gameId);
+  
   var addGameToResourcesStorage = function (game) {
     if (gamesStoredResources[game.id]) return 'already stored!'
     
