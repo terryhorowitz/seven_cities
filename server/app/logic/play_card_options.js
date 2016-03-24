@@ -10,7 +10,7 @@ var gameResourcesObj = require('./game_resources.js');
 
 module.exports = function () {
 
-  var playersResources = {};
+  var playersResources;
   var builtWonders = 0;
 
   //after a card is selected by player - receive player & card?
@@ -21,12 +21,20 @@ module.exports = function () {
     // 3.1. is free?
   // 4) how much of it can i buy myself?
   // 4.1 can i buy remainder from neighbors?
-  var addGameToResourcesObj = function (newGame) {
-    gameResourcesObj[newGame.id] = {};
-    
+  
+  //SHOULD MOVE THESE FUNCTIONS TO WHERE OBJ IS LOCATED
+  var addGameToResourcesObj = function (newGameId) {
+    return Game.findOne({where: {id: newGameId}, include: [{all: true}]})
+    .then(function(game){
+      gameResourcesObj[game.id] = {};
+      game.players.forEach(function(player){
+        gameResourcesObj[game.id][player.id] = {};
+      });
+    })
   }
   
-  var firstBuild = function() {
+  var firstBuild = function(player, gameId) {
+    playersResources = gameResourcesObj[gameId][player.id];
     return player.getBoard()
     .then(function(board){
       playersResources[player.id] = {};
@@ -41,10 +49,12 @@ module.exports = function () {
       playersResources.rightNeighbor = {};
       playersResources.leftNeighbor[leftNeighborBoard.resource] = 1;
       playersResources.rightNeighbor[rightNeighborBoard.resource] = 1;
+      console.log('IS THIS IT', gameResourcesObj[gameId])
     })
   }
 
   var buildResources = function(player, resources) {
+    playersResources = gameResourcesObj[newGame.id][player.id];
     for (var i = 0; i < resources.length; i++) {
       //ore/wood(combo)-type logic
       if (resources[i].length > 5){
@@ -63,6 +73,7 @@ module.exports = function () {
   }
 
   var canIBuyFromMyNeighbors = function(player, cost) {
+    playersResources = gameResourcesObj[newGame.id][player.id];
     var leftResourcesCopy = _.cloneDeep(playersResources.leftNeighbor);
     var rightResourcesCopy = _.cloneDeep(playersResources.rightNeighbor);
     var trade = {};
@@ -136,6 +147,7 @@ module.exports = function () {
   }
   
   return {
+    addGameToResourcesObj: addGameToResourcesObj,
     checkSelectedCard: checkSelectedCard,
     buildResources: buildResources,
     firstBuild: firstBuild
