@@ -110,10 +110,4 @@ module.exports = function (gameId) {//this is possible?
     checkSelectedCardOptions: checkSelectedCardOptions
   }
 
-  return {
-    checkSelectedCard: checkSelectedCard,
-    firstBuild: firstBuild,
-    buildResources: buildResources
-  }
-
 }

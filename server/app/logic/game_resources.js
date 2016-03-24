@@ -25,6 +25,12 @@ var addGameToResourcesObj = function (newGameId) {
       return firstBuild(player, newGameId)
     })
   })
+  .then(function(players){
+    return Game.findOne({where: {id: newGameId}, include: [{all: true}]})
+  })
+  .then(function(game){
+    return game;
+  })
 }
 
 //helper function (do not need to export):
@@ -45,6 +51,7 @@ var firstBuild = function(player, gameId) {
     playersResources.leftNeighbor[leftNeighborBoard.resource] = 1;
     playersResources.rightNeighbor[rightNeighborBoard.resource] = 1;
     console.log('the obj', gameResourcesObj[gameId])
+    return player
   })
 }
 
