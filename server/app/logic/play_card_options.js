@@ -8,11 +8,11 @@ var Promise = require('bluebird');
 var _ = require('lodash');
 var Resources = require('./game_resources.js');
 
-module.exports = function () {
+module.exports = function (gameId) {//is this what i want?
 
   var playersResources;
   var builtWonders = 0;
-  var gameResources = Resources.get();
+  var gameResources = Resources.get(gameId);
 
   //after a card is selected by player - receive player & card?
 
@@ -23,7 +23,7 @@ module.exports = function () {
   // 4) how much of it can i buy myself?
   // 4.1 can i buy remainder from neighbors?
 
-  var buildResources = function(player, resources) {
+  var buildPlayerResources = function(player, resources) {
     playersResources = gameResources[player.id];
     for (var i = 0; i < resources.length; i++) {
       //ore/wood(combo)-type logic
@@ -119,7 +119,7 @@ module.exports = function () {
   return {
     addGameToResourcesObj: addGameToResourcesObj,
     checkSelectedCard: checkSelectedCard,
-    buildResources: buildResources,
+    buildPlayerResources: buildPlayerResources,
     firstBuild: firstBuild
   }
 
