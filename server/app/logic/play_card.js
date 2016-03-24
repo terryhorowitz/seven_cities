@@ -1,14 +1,15 @@
 'use strict';
 
 var Game = require('../../db/models').Game;
+var Card = require('../../db/models').Card;
 var Board = require('../../db/models').Board;
 var Deck = require('../../db/models').Deck;
 var Player = require('../../db/models').Player;
-var resourceBuilder = require('./game_resources');
+var resourceBuilder = require('./play_card_options')();
 var Promise = require('bluebird');
 var _ = require('lodash');
 
-module.exports = function () {
+//module.exports = function () {
 
   function executeChoice(playerId, cardId, choice){
     return Promise.join(Player.findOne({where: {id: playerId}, include: [{all:true}]}), Card.findOne({where: {id: cardId}, include: [{all:true}]}))
@@ -36,13 +37,13 @@ module.exports = function () {
   function buildCard(playerBuildingCard, cardToBuild) {
 
     return playerBuildingCard.removeTemporary(cardToBuild)//do these save to DB?
-    .then(function(player){
-      return player.addPermanent(cardToBuild)
+    .then(function(){
+      return playerBuildingCard.addPermanent(cardToBuild)
     }) 
     .then(function(player){
 //      console.log('card moved to built cards (perm)!', player)
-      if (card.type === "Raw Resource" || card.type === "Processed Resource"){
-        resourceBuilder.buildPlayerResources(player, card.functionality);
+      if (cardToBuild.type === "Raw Resource" || cardToBuild.type === "Processed Resource"){
+        resourceBuilder.buildPlayerResources(playerBuildingCard, cardToBuild.functionality);
       }
       return player;
     })
@@ -88,5 +89,7 @@ module.exports = function () {
       return playerDiscarding.removeTemporary(discardCard);
     })
   }
+//  return executeChoice;
+//}
 
-}
+executeChoice(13,15,"get free");
