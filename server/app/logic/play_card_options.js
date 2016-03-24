@@ -6,6 +6,7 @@ var Deck = require('../../db/models').Deck
 var Player = require('../../db/models').Player
 var Promise = require('bluebird');
 var _ = require('lodash');
+var gameResourcesObj = require('./game_resources.js');
 
 module.exports = function () {
 
@@ -20,6 +21,10 @@ module.exports = function () {
     // 3.1. is free?
   // 4) how much of it can i buy myself?
   // 4.1 can i buy remainder from neighbors?
+  var addGameToResourcesObj = function (newGame) {
+    gameResourcesObj[newGame.id] = {};
+    
+  }
   
   var firstBuild = function() {
     return player.getBoard()
@@ -128,6 +133,12 @@ module.exports = function () {
       if (builtWonders === 2) return checkResourcePaymentMethods(player, board.wonder3Cost);
       if (builtWonders === 3) return 'all built';
     })
+  }
+  
+  return {
+    checkSelectedCard: checkSelectedCard,
+    buildResources: buildResources,
+    firstBuild: firstBuild
   }
 
 }
