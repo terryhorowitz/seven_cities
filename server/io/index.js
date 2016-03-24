@@ -35,30 +35,36 @@ module.exports = function (server) {
 		//join all players to the correct room
 		socket.on('create', function(data) {
 
-			//trying to deal with refreshing in the middle of a game...
-			// if (data.localId) {
-			// 	var thisGame;
-			// 	var thisHand;
-			// 	playerReload.playerReload(data.localId, socket.id)
-			// 	.then(function(game) {
-			// 	// allPlayers[socket.id].push(data.localId)
-			// 		thisGame = game;
-			// 		socket.join(game.name);
-					// // console.log('thisGame', thisGame.GamePlayers[0])
-					// for (var m = 0; m < thisGame.GamePlayers.length; m++) {
-					// 	var obj = {};
-					// 	obj.board = thisGame.GamePlayers.boardId;
-					// 	obj.money = thisGame.GamePlayers.money;
-					// 	obj.tokens = thisGame.GamePlayers.tokens;
-					// 	obj.built = [];
-					// 	obj.socket = Object.keys(io.sockets.adapter.rooms[currentRoom].sockets)[i];
-					// 	obj.name = allPlayers[obj.socket][0];
-					// 	players.push(obj);
-					// }
+			//this whole if is for dealing with a user refreshing during a game. local storage!
+			if (data.localId) {
+				var thisGame;
+				var thisHand;
+				playerReload.playerReload(data.localId, socket.id)
+				.then(function(game) {
+					allPlayers[socket.id] = [];
+					allPlayers[socket.id].push(data.localId)
+					thisGame = game;
+					socket.join(game.name);
+					for (var m = 0; m < thisGame.GamePlayers.length; m++) {
+						var obj = {};
+						obj.board = thisGame.GamePlayers[m].board;
+						obj.money = thisGame.GamePlayers[m].money;
+						obj.tokens = thisGame.GamePlayers[m].tokens;
+						obj.built = [];
+						obj.playerId = thisGame.GamePlayers[m].id;
+						obj.socket = thisGame.GamePlayers[m].socket;
+						obj.name = thisGame.GamePlayers[m].name;
+						obj.neighborL = thisGame.GamePlayers[m].LeftNeighbor.socket;
+						obj.neighborR = thisGame.GamePlayers[m].RightNeighbor.socket;
+						players.push(obj);
+					}
+					io.sockets.connected[socket.id].emit('game initialized', players);
+					var me = _.find(thisGame.GamePlayers, {'socket': socket.id})
+					io.sockets.connected[socket.id].emit('your hand', me.Temporary);
+					allPlayers[socket.id].push(me.playername);
+				})
 
-			// 	})
-
-			// }  else {
+			} else {
 
 				allPlayers[socket.id] = [];
 				allPlayers[socket.id].push(data.playername);
@@ -67,7 +73,7 @@ module.exports = function (server) {
 				clients = io.sockets.adapter.rooms[data.roomname];
 				for (var key in clients.sockets) {
 					counter++;
-				// }
+				}
 
 				// if player is first in room, allows them to start game
 				if (counter===1) {
