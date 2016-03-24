@@ -18,7 +18,7 @@ router.get('/board', function(req, res, next){
 
 router.get('/player', function(req, res, next){
 
-  Player.findAll({})
+  Player.findAll({include: [{all:true}]})
   .then(function(players){
       // console.log('type of getPermanent: ', typeof players[0].getPermanent)
       // console.log('type of getTemporary: ', typeof players[0].getTemporary )

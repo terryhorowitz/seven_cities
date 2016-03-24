@@ -13,21 +13,23 @@ module.exports = function () {
   function executeChoice(playerId, cardId, choice){
     return Promise.join(Player.findOne({where: {id: playerId}, include: [{all:true}]}), Card.findOne({where: {id: cardId}, include: [{all:true}]}))
     .spread(function(player, card){
+      var choicePromise;
       if (choice === "get free" || choice === "upgrade" || choice === "paid by own resources"){
-        return buildCard(player, card)
+        choicePromise = buildCard(player, card)
       }
       if (choice === "pay money"){
-        return payForCard(player, card); //then buildCard()
+        choicePromise = payForCard(player, card); //then buildCard()
       }
       if (typeof choice === "object"){//indicates a trade option was selected
-        return tradeForCard(player, card, choice); //then buildCard()
+        choicePromise =tradeForCard(player, card, choice); //then buildCard()
       }
       if (choice === "build wonder"){
-        return buildWonder(player, card);
+        choicePromise = buildWonder(player, card);
       }
       if (choice === "discard"){
-        return discard(player, card);
+        choicePromise = discard(player, card);
       }
+      return choicePromise;
     })
   }
 
@@ -36,7 +38,7 @@ module.exports = function () {
     return playerBuildingCard.removeTemporary(cardToBuild)//do these save to DB?
     .then(function(player){
       return player.addPermanent(cardToBuild)
-    })
+    }) 
     .then(function(player){
 //      console.log('card moved to built cards (perm)!', player)
       if (card.type === "Raw Resource" || card.type === "Processed Resource"){
