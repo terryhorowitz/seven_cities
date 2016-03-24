@@ -27,6 +27,11 @@ app.controller('GameController', function ($scope, $state) {
     $scope.leftNeighbor;
 
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
+
+    $scope.clearLocal = function() {
+      localStorage.clear();
+    }
+
     $scope.startGame = function() {
     	socket.emit('startGame')
     }
