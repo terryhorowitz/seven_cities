@@ -31,9 +31,6 @@ var _ = require('lodash');
       .spread(function(newGame, deck, dbPlayers){
         return Promise.join(newGame.setPlayers(dbPlayers),newGame.setDecks(deck))
       })
-      .then(function(game){
-          console.log(game)
-      })
     }
     
 module.exports = {
