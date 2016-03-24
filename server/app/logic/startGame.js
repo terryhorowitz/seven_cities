@@ -30,7 +30,7 @@ var _ = require('lodash');
         return Promise.join(Game.create({name: roomName}), Deck.findOne({where: {era: 1, numPlayers: playersArr.length}, include: [{all:true}]}), dbPlayers)
       })
       .spread(function(newGame, deck, dbPlayers){
-        return Promise.join(newGame, newGame.setPlayers(dbPlayers), newGame.setDecks(deck))
+        return Promise.join(newGame, newGame.setGamePlayers(dbPlayers), newGame.setDecks(deck))
       })
       .spread(function(completeGame){
         return gameResources.addGameToResourcesObj(completeGame.id);  

@@ -17,11 +17,11 @@ var addGameToResourcesObj = function (newGameId) {
   return Game.findOne({where: {id: newGameId}, include: [{all: true}]})
   .then(function(game){
     gameResourcesObj[game.id] = {};
-    game.players.forEach(function(player){
+    game.GamePlayers.forEach(function(player){
       gameResourcesObj[game.id][player.id] = {};
     });
     //need to do first build for each player
-    return Promise.each(game.players, function(player){
+    return Promise.each(game.GamePlayers, function(player){
       return firstBuild(player, newGameId)
     })
   })
@@ -48,7 +48,7 @@ var firstBuild = function(player, gameId) {
   })
 }
 
-  function buildPlayerResources(player, resources, gameId) {
+  function buildPlayerResources(player, resources) {
     var gameResources = getGameResources(gameId);
     playersResources = gameResources[player.id];
     for (var i = 0; i < resources.length; i++) {
