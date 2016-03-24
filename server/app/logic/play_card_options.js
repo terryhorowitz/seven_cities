@@ -86,25 +86,6 @@ module.exports = function (gameId) {//this is possible?
     if (trade.right === null && trade.left === null) return 'no trade available!'
     return trade;
   }
-
-  function buildPlayerResources(player, resources) {
-    playersResources = gameResources[player.id];
-    for (var i = 0; i < resources.length; i++) {
-      //ore/wood(combo)-type logic
-      if (resources[i].length > 5){
-        resources[i] = resources[i].split('/');
-        if (!playersResources[player.id].combo){
-            playersResources[player.id].combo = [];
-        }
-        playersResources[player.id].combo.push(resources[i])
-      }
-      //
-      else if (!playersResources[player.id][resources[i]]){
-        playersResources[player.id][resources[i]] = 1;
-      } 
-      else playersResources[player.id][resources[i]]++;
-    }
-  }
   
   function checkIfPlayerCanBuildWonder(player){
     return player.getBoard()
@@ -117,8 +98,7 @@ module.exports = function (gameId) {//this is possible?
   }
   
   return {
-    checkSelectedCardOptions: checkSelectedCardOptions,
-    buildPlayerResources: buildPlayerResources
+    checkSelectedCardOptions: checkSelectedCardOptions
   }
 
 }

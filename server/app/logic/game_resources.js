@@ -48,8 +48,29 @@ var firstBuild = function(player, gameId) {
   })
 }
 
+  function buildPlayerResources(player, resources, gameId) {
+    var gameResources = getGameResources(gameId);
+    playersResources = gameResources[player.id];
+    for (var i = 0; i < resources.length; i++) {
+      //ore/wood(combo)-type logic
+      if (resources[i].length > 5){
+        resources[i] = resources[i].split('/');
+        if (!playersResources[player.id].combo){
+            playersResources[player.id].combo = [];
+        }
+        playersResources[player.id].combo.push(resources[i])
+      }
+      //
+      else if (!playersResources[player.id][resources[i]]){
+        playersResources[player.id][resources[i]] = 1;
+      } 
+      else playersResources[player.id][resources[i]]++;
+    }
+}
+
 
 module.exports = {
   get: getGameResources,
-  addGameToResourcesObj: addGameToResourcesObj
+  addGameToResourcesObj: addGameToResourcesObj,
+  buildPlayerResources: buildPlayerResources
 };
