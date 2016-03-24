@@ -8,7 +8,7 @@ var Promise = require('bluebird');
 var _ = require('lodash');
 var Resources = require('./game_resources.js');
 
-module.exports = function (gameId) {//this is possible?
+module.exports = function (gameId) {
 
   var playersResources;
   var builtWonders = 0;
