@@ -8,7 +8,7 @@ var _ = require('lodash');
 var Resources = require('./game_resources.js');
 module.exports = function (gameId) {//this is possible?
   var playersResources;
-  var builtWonders = 0;
+  var builtWonders = {};
   var gameResources = Resources.get(gameId);
   
   var addGameToResourcesStorage = function (game) {

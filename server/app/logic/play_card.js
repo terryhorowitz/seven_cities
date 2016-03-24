@@ -56,15 +56,22 @@ module.exports = function () {
   }
   
   var tradeForCard = function (playerTrading, cardToPayFor, tradeParams){
-    
-    //need tradeParams to be an object containing player(s) we are trading with and what items we are trading with them (e.g. {left: ['wood'], right: ['clay]} OR {left: ['ore']} etc).
+    //need tradeParams to be an object containing player(s) we are trading with and what items we are trading with them (e.g. {left: ['wood', 'clay'], right: ['clay]} OR {left: ['ore']} etc).
     var raw = ['wood', 'clay', 'ore', 'stone'];
     var processed = ['glass', 'textile', 'papyrus'];
     //need to check if player has any trade cards built that change trade conditions
     //need to see if they are trading left, right or both
     //figure out how much to pay each player
+    var tradePromise;
+    if (tradeParams.left !== null && tradeParams.right !== null) tradePromise = Promise.join(trade(playerTrading, tradeParams.left), trade(playerTrading, tradeParams.right))
+    if (tradeParams.left) trade(playerTrading, tradeParams.left).then(dealWithTrade)
+    if (tradeParams.right) tradePromise = trade(playerTrading, tradeParams.right).then(dealWithTrade)
+    
+//    return tradePromise.then()
     
   }
+  
+  
   
   function buildWonder(playerBuilding, cardToUse){
     //need to add a built wonders property somewhere (see play_card_options)
