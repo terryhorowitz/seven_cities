@@ -55,7 +55,8 @@ app.controller('GameController', function ($scope, $state) {
         $scope.players = data;
         // console.log('players', $scope.players)
         for (var i = 0; i < data.length; i++) {
-          if ($scope.players[i].name == $scope.playername) {
+          var thisSocket = $scope.players[i].socket.slice(2)
+          if (thisSocket == socket.id) {
             $scope.me = $scope.players[i];
             if($scope.players[i+1]) {
               $scope.rightNeighbor = $scope.players[i+1];
