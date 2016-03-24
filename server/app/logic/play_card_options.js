@@ -1,5 +1,4 @@
 'use strict';
-
 var Game = require('../../db/models').Game
 var Board = require('../../db/models').Board
 var Deck = require('../../db/models').Deck
@@ -7,24 +6,16 @@ var Player = require('../../db/models').Player
 var Promise = require('bluebird');
 var _ = require('lodash');
 var Resources = require('./game_resources.js');
-
 module.exports = function (gameId) {//this is possible?
 
-
   var playersResources;
-
-  var builtWonders = 0;
+  var builtWonders = {};
   var gameResources = Resources.get(gameId);
-
-
+  
   var addGameToResourcesStorage = function (game) {
     if (gamesStoredResources[game.id]) return 'already stored!'
-
-    
-
   }
   //after a card is selected by player - receive player & card?
-
   // 1. do i already have the card?
   // 2. do i have an upgrade? (cards)
   // 3. check cost
@@ -109,5 +100,4 @@ module.exports = function (gameId) {//this is possible?
   return {
     checkSelectedCardOptions: checkSelectedCardOptions
   }
-
 }

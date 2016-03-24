@@ -5,7 +5,6 @@ var Deck = require('../../db/models').Deck
 var Player = require('../../db/models').Player
 var Promise = require('bluebird');
 var _ = require('lodash');
-
 var gameResourcesObj = {};
 var playersResources;
 
@@ -32,7 +31,6 @@ var addGameToResourcesObj = function (newGameId) {
     return game;
   })
 }
-
 //helper function (do not need to export):
 var firstBuild = function(player, gameId) {
   playersResources = gameResourcesObj[gameId][player.id];
@@ -54,27 +52,25 @@ var firstBuild = function(player, gameId) {
     return player
   })
 }
-
   function buildPlayerResources(player, resources) {
     var gameResources = getGameResources(gameId);
     playersResources = gameResources[player.id];
     for (var i = 0; i < resources.length; i++) {
       //ore/wood(combo)-type logic
-      if (resources[i].length > 5){
+      if (resources[i].length > 5){//if it is a slash resource
         resources[i] = resources[i].split('/');
-        if (!playersResources[player.id].combo){
-            playersResources[player.id].combo = [];
+        if (!playersResources.combo){
+            playersResources.combo = [];
         }
-        playersResources[player.id].combo.push(resources[i])
+        playersResources.combo.push(resources[i])
       }
       //
-      else if (!playersResources[player.id][resources[i]]){
-        playersResources[player.id][resources[i]] = 1;
+      else if (!playersResources[resources[i]]){
+        playersResources[resources[i]] = 1;
       } 
-      else playersResources[player.id][resources[i]]++;
+      else playersResources[resources[i]]++;
     }
-}
-
+  }
 
 module.exports = {
   get: getGameResources,
