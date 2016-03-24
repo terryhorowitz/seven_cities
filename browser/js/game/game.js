@@ -25,7 +25,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.myHand;
     $scope.rightNeighbor;
     $scope.leftNeighbor;
-    $scope.otherNeighbors = [];
+    $scope.nonNeighbors = [];
 
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
 
@@ -70,7 +70,7 @@ app.controller('GameController', function ($scope, $state) {
           } else if (thisSocket == $scope.me.neighborR && thisSocket !== socket.id) {
             $scope.rightNeighbor = $scope.players[i];
           } else if (thisSocket !== socket.id) {
-            $scope.otherNeighbors = $scope.players[i];
+            $scope.nonNeighbors = $scope.players[i];
           }
         }
         // console.log('players modified', $scope.players)
