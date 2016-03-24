@@ -32,9 +32,12 @@ module.exports = function (gameId) {//this is possible?
   // 4) how much of it can i buy myself?
   // 4.1 can i buy remainder from neighbors?
   
-  function checkSelectedCardOptions(player, card) {
-    return player.getPermanent()
-    .then(function(builtCards){
+  function checkSelectedCardOptions(playerId, cardId) {
+    return Player.findOne({where: {id: playerId}})
+    .then(function(player) {
+      return Promise.join(player.getPermanent(), Card.findOne({where: {id: cardId}}))
+    })
+    .spread(function(builtCards, card){
       if (!builtCards.length) {
         if (!card.cost) return "get free";
         // if card cost is money value
