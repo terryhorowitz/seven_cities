@@ -108,8 +108,8 @@ module.exports = function (server) {
 						for (var a = 0; a < players.length; a++) {
 							io.sockets.connected[players[a].socket].emit('your hand', hands[a])
 							players[a].hand = hands[a];
-							startGameFuncs.startGame(players, currentRoom);	
 						}		
+							startGameFuncs.startGame(players, currentRoom);	
 					})
 
     		}

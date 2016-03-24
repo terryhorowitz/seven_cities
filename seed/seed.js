@@ -70,7 +70,6 @@ var seedDeckToGame = function () {
     return Promise.join(game, Deck.findOne({where: {era: 1, numPlayers: 3}}))
   })
   .spread(function(game, deck){
-    console.log('DECK', deck)
     return game.setDecks(deck)
   })
 }
