@@ -9,42 +9,53 @@ var _ = require('lodash');
 var gameResourcesObj = {};
 
 module.exports = function () {
+  //rename: game_resource_initalize
+  var playersResources, newGame;
   
-  var playersResources;
-
-  var getGameResources = function (gameId) {
-    console.log('gameResourcesObj', gameResourcesObj)
-    return gameResourcesObj[gameId]
+  function gameResourcesOrchestrator(newGameId){
+    return getGame(newGameId)
+    .then(function(){
+      addGameToResourcesObj();
+      addPlayersToGameResourcesObj();
+      return loadPlayersResources();
+    })
+    .then(function(){
+      return game.GamePlayers
+    })
   }
-
-  var addGameToResourcesObj = function (newGameId) {
+  
+  function getGame (gameId){
     return Game.findOne({where: {id: newGameId}, include: [{all: true}]})
-    .then(function(game){
+  }
+
+  function addGameToResourcesObj () {
+      newGame = game;
       gameResourcesObj[game.id] = {};
-      game.GamePlayers.forEach(function(player){
+  }
+  
+  function addPlayersToGameResourcesObj (){
+    newGame.GamePlayers.forEach(function(player){
         gameResourcesObj[game.id][player.id] = {};
-      });
-      //need to do first build for each player
-      return Promise.each(game.GamePlayers, function(player){
-        return firstBuild(player, newGameId)
-      })
-    })
-    .then(function(players){
-      return Game.findOne({where: {id: newGameId}, include: [{all: true}]})
-    })
-    .then(function(game){
-      return game;
+      }); 
+  }
+  
+  function loadPlayersResources (){
+    return Promise.each(game.GamePlayers, function(player){
+        Promise.join(loadOwnResources(player), loadNeighborResources(player))
     })
   }
-  //helper function (do not need to export):
-  var firstBuild = function(player, gameId) {
-    playersResources = gameResourcesObj[gameId][player.id];
+
+  function loadOwnResources(player) {
+    playersResources = gameResourcesObj[game.id][player.id];
     return player.getBoard()
     .then(function(board){
       playersResources.self = {};
       playersResources.self[board.resource] = 1;
-      return Promise.join(player.getLeftNeighbor(), player.getRightNeighbor());
     })
+  }
+  
+  function loadNeighborResources(player){
+    return Promise.join(player.getLeftNeighbor(), player.getRightNeighbor())
     .spread(function(leftNeighbor, rightNeighbor) {
       return Promise.join(leftNeighbor, rightNeighbor, leftNeighbor.getBoard(), rightNeighbor.getBoard())
     })
@@ -53,35 +64,36 @@ module.exports = function () {
       playersResources.rightNeighbor = {};
       playersResources.leftNeighbor[leftNeighborBoard.resource] = 1;
       playersResources.rightNeighbor[rightNeighborBoard.resource] = 1;
-      console.log('the obj', gameResourcesObj[gameId])
-      return player
     })
   }
 
-  function buildPlayerResources(player, resources) {
-    console.log(gameResourcesObj)
-    var gameResources = getGameResources(player.gameId);
-    playersResources = gameResources[player.id].self;
-    for (var i = 0; i < resources.length; i++) {
-      //ore/wood(combo)-type logic
-      if (resources[i].indexOf('/') !== -1){//if it is a slash resource
-        resources[i] = resources[i].split('/');
-        if (!playersResources.combo){
-            playersResources.combo = [];
-        }
-        playersResources.combo.push(resources[i])
-      }
-      //
-      else if (!playersResources[resources[i]]){
-        playersResources[resources[i]] = 1;
-      } 
-      else playersResources[resources[i]]++;
-    }
+//  function buildPlayerResources(player, resources) {
+//
+//    var gameResources = getGameResources(player.gameId);
+//    playersResources = gameResources[player.id].self;
+//    for (var i = 0; i < resources.length; i++) {
+//      //ore/wood(combo)-type logic
+//      if (resources[i].indexOf('/') !== -1){//if it is a slash resource
+//        resources[i] = resources[i].split('/');
+//        if (!playersResources.combo){
+//            playersResources.combo = [];
+//        }
+//        playersResources.combo.push(resources[i])
+//      }
+//      //
+//      else if (!playersResources[resources[i]]){
+//        playersResources[resources[i]] = 1;
+//      } 
+//      else playersResources[resources[i]]++;
+//    }
+//  }
+  
+  function getGameResources(gameId) {
+    return gameResourcesObj[gameId]
   }
   
   return {
     getGameResources: getGameResources,
-    addGameToResourcesObj: addGameToResourcesObj,
-    buildPlayerResources: buildPlayerResources
+    orchestrator: gameResourcesOrchestrator
   }
 }
