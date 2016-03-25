@@ -26,6 +26,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.rightNeighbor;
     $scope.leftNeighbor;
     $scope.wonderOptions = [1, 2, 3];
+    $scope.nonNeighbors = [];
 
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
 
@@ -55,25 +56,22 @@ app.controller('GameController', function ($scope, $state) {
         // console.log('game started')
         $scope.players = data;
         // console.log('players', $scope.players)
+        //find myself
         for (var i = 0; i < data.length; i++) {
-          var thisSocket = $scope.players[i].socket.slice(2)
+          var thisSocket = $scope.players[i].socket.slice(2);
           if (thisSocket == socket.id) {
             $scope.me = $scope.players[i];
-            if($scope.players[i+1]) {
-              $scope.rightNeighbor = $scope.players[i+1];
-              $scope.players.splice(i+1,1);
-            } else {
-              $scope.rightNeighbor = $scope.players[0];
-              $scope.players.splice(0,1);
-            }
-            if($scope.players[i-1]) {
-              $scope.leftNeighbor = $scope.players[i-1];
-              $scope.players.splice(i-1,1);
-            } else {
-              $scope.leftNeighbor = $scope.players[$scope.players.length-1];
-              $scope.players.splice($scope.players.length-1,1);
-            }
-            $scope.players.splice(i,1);
+          }
+        }
+        //find my neighbors (need to find myself first!)
+        for (var i = 0; i < data.length; i++) {
+          var thisSocket = $scope.players[i].socket.slice(2);
+          if (thisSocket == $scope.me.neighborL && thisSocket !== socket.id) {
+            $scope.leftNeighbor = $scope.players[i];
+          } else if (thisSocket == $scope.me.neighborR && thisSocket !== socket.id) {
+            $scope.rightNeighbor = $scope.players[i];
+          } else if (thisSocket !== socket.id) {
+            $scope.nonNeighbors = $scope.players[i];
           }
         }
         // console.log('players modified', $scope.players)

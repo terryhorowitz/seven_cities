@@ -1,30 +1,18 @@
 'use strict';
-
 var Game = require('../../db/models').Game
 var Board = require('../../db/models').Board
 var Deck = require('../../db/models').Deck
 var Player = require('../../db/models').Player
 var Promise = require('bluebird');
 var _ = require('lodash');
-var Resources = require('./game_resources.js');
-
+var Resources = require('./game_resources.js')();
 module.exports = function (gameId) {//this is possible?
 
-
   var playersResources;
-
-  var builtWonders = 0;
-  var gameResources = Resources.get(gameId);
-
-
-  var addGameToResourcesStorage = function (game) {
-    if (gamesStoredResources[game.id]) return 'already stored!'
-
-    
-
-  }
+  var builtWonders = {};
+  var gameResources = Resources.getGameResources(gameId);
+  
   //after a card is selected by player - receive player & card?
-
   // 1. do i already have the card?
   // 2. do i have an upgrade? (cards)
   // 3. check cost
@@ -32,7 +20,29 @@ module.exports = function (gameId) {//this is possible?
   // 4) how much of it can i buy myself?
   // 4.1 can i buy remainder from neighbors?
   
-  function checkSelectedCardOptions(playerId, cardId) {
+
+  function buildPlayerResources(player, resources) {
+    console.log(gameResourcesObj)
+    var gameResources = getGameResources(player.gameId);
+    playersResources = gameResources[player.id];
+    for (var i = 0; i < resources.length; i++) {
+      //ore/wood(combo)-type logic
+      if (resources[i].length > 5){//if it is a slash resource
+        resources[i] = resources[i].split('/');
+        if (!playersResources.combo){
+            playersResources.combo = [];
+        }
+        playersResources.combo.push(resources[i])
+      }
+      //
+      else if (!playersResources[resources[i]]){
+        playersResources[resources[i]] = 1;
+      } 
+      else playersResources[resources[i]]++;
+    }
+  }
+  
+    function checkSelectedCardOptions(playerId, cardId) {
     return Player.findOne({where: {id: playerId}})
     .then(function(player) {
       return Promise.join(player.getPermanent(), Card.findOne({where: {id: cardId}}))
@@ -112,5 +122,4 @@ module.exports = function (gameId) {//this is possible?
   return {
     checkSelectedCardOptions: checkSelectedCardOptions
   }
-
 }
