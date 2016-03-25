@@ -6,7 +6,7 @@ module.exports = function(db) {
     name: Sequelize.STRING,
     money: Sequelize.INTEGER,
     socket: Sequelize.STRING,
-    tokens: Sequelize.INTEGER
+    tokens: Sequelize.ARRAY(Sequelize.INTEGER)
   }, {
     timestamps: true
   });
