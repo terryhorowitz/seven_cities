@@ -67,7 +67,7 @@ module.exports = function (server) {
 				counter++;
 			}
 			//change to limit min number of players
-			if (counter >= 0) {
+			if (counter >= 3) {
 				//make an object to hold all the data about a player and push it to the players array
 				Board.findAll({})
 				.then(function(allBoards) {
@@ -88,7 +88,6 @@ module.exports = function (server) {
 				})
 				.then(function(hands) {
 					for (var a = 0; a < players.length; a++) {
-						console.log(hands)
 						io.sockets.connected[players[a].socket].emit('your hand', hands[a]);
 						players[a].hand = hands[a];
 					}
@@ -103,6 +102,9 @@ module.exports = function (server) {
 							return player;
 					})
 				})
+			//handle error: not enough players
+			} else {
+				io.sockets.connected[socket.id].emit('err', {message: 'Need at least 3 players to play!'});
 			}
 		});
 		socket.on('choice made', function(data) {
@@ -110,11 +112,10 @@ module.exports = function (server) {
 		var cardId = data.card;
 		var playerId = data.player;
 		var response;
-		var options = ['discard'];
+		var options = ['Discard'];
 		return playCardOptions.checkSelectedCardOptions(playerId, cardId)
 		.then(function(res) {
 			options.push(res);
-			console.log('this is options', options)
 			io.sockets.connected[socket.id].emit('your options', options);
 			//check if player can build wonders
 		})
