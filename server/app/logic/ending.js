@@ -11,177 +11,181 @@ var _ = require('lodash');
 var calculatePoints = function (thisPlayer) {
 	var totalPoints = 0;
 	var totalMoney = 0;
-	var playerBoard;
-	var builtWonders = 0;
-	var leftNeighborCards;
-	var rightNeighborCards;
 
 	//USE Promise.map?
 
-	//this can be async
-	function getMilitaryAndMoneyPoints (thisPlayer) {
-		return Player.findOne({ where: { id: player.id }})
-		.then(function (player) {
-			let pointsCount = {
-				points: player.tokens[0] - player.tokens[1] + Math.floor(player.money),
-				money: player.money % 3
-			}
-			return pointsCount;
-		})
-		.then(function (pointsCount) {
-			totalPoints += pointsCount.points;
-			totalMoney += pointsCount.money;
-		});
-	}
+	// CANNOT USE GAME RESOURCES OBJECT
 
-	function getWonderPoints () {
-			return player.builtWonders()
-			.then(function (wonders) {
-				builtWonders = wonders;
-				return player.getBoard()
-				.then(function (board) {
-					playerBoard = board.name;
-					var built = builtWonders;
-					var count = 1;
-					while (built > 0) {
-						let thisWonder = `wonder${count}`;
-						if (Number(board[thisWonder][0])) {
-						 totalPoints += Number(board[thisWonder][0]);
-						}							
-						count++;
-						built--;
-					}
-			})
-		})
-	}
+	// async operations:
 
-	// need method sort cards by type - get cards by type and push them to array
+	// Player.findOne()
+
+	// player.builtWonders()
+	// player.getBoard()
+	// player.getPermanent()
 
 
-	//chain these two functions!!!!!!!!!!!!!!!!!!!!!!!
+	// player.getLeftNeighbor()
+	// player.getRightNeighbor()
+	
+	// leftNeighbor.getPermanent()
+	// rightNeighbor.getPermanent()
 
-	function getVictoryPoints (player) {
-		return player.getPermanent()
-		.then(function (builtCards) {
+	// leftNeighbor.builtWonder()
 
-			//Technology Cards helper variables:
-			let technologyCards = [0, 0, 0];//index 0 is tablet, index 1 is gear, index 2 is compass
-			let scientistsGuild = false;
+	return Player.findOne({ where: { id: thisPlayer.id }})
+	.then(function (player) {
 
-			//Trading Cards helper variables:
-			let tradingCards = [];
-			let processedCards = 0;
-			let rawCards = 0;
-			let guildCards = [];
-			
+		//calculate money and military points 
 
-			//implement map
+		totalPoints += player.tokens[0] - player.tokens[1] + Math.floor(player.money);
+		totalMoney += player.money % 3;
+		return player;
+	})
+	.then(function (player) {
 
-			for (let card of builtCards) {
-				//Victory Points
-				if (card.type === "Victory Points") {
-					totalPoints += Number(card.functionality[0])
-				}
-				//Technology Points
-				else if (card.type === "Technology") {
-					if (card.functionality[0] === "tablet") technologyCards[0]++;
-					else if (card.functionality[0] === "gear") technologyCards[1]++;
-					else if (card.functionality[0] === "compass") technologyCards[2]++;
-				}
-				else if (card.name === "Scientists Guild") scientistsGuild = true;
-				//Trading Points
-				else if (card.type === "Trading") {
-					tradingCards.push(card);
-				}
-				else if (card.type === "Processed Resource") {
-					processedCards++;
-				}
-				else if (card.type === "Raw Resource") {
-					rawCards++;
-				}
-				else if (card.type === "Guild") {
-					guildCards.push(card.functionality);
-				}
-			}
-
-			//after looping through all cards, add technology points to total points:
-			let max = Math.max(technologyCards);
-			let idx = technologyCards.indexOf(max);
-
-			if (scientistsGuild) technologyCards[idx]++;
-			if (playerBoard === "Babylon" && builtWonders > 1) technologyCards[idx]++;
-
-			totalPoints += Math.pow(technologyCards[0], 2) + Math.pow(technologyCards[1], 2) + Math.pow(technologyCards[2], 2);
-
-			//after looping through all cards, check the cards in the tradingCards array and add points to totalPoints if applicable:
-			for (let card of tradingCards) {
-				if (card.name === "Lighthouse") {
-					totalPoints += tradingCards.lenght();
-				}
-				else if (card.name === "Chamber of Commerce") {
-					totalPoints += processedCards.lenght() * 2;
-				}
-				else if (card.name === "Haven") {
-					totalPoints += rawCards.lenght();
-				}
-				else if (card.name === "Arena") {
-					totalPoints += wonders.lenght();
-				}
-			}
-		})
+		//calculate wonder points
 		
-	}
+		return Promise.join(player, player.builtWonders(), player.getBoard())
+	.spread(function(player, wonders, board) {
+		for (let i = 1; i < wonders+1; i--) {
+			//thisWonder will be a string such as 'wonder1'
+			let thisWonder = `wonder${i}`;
+			//check if board.wonder1 can be converted to number, then add that number to total points
+			if (Number(board[thisWonder][0])) {
+				totalPoints += Number(board[thisWonder][0]);
+			}							
+		}
 
+		//calculate points from built cards
 
-	function getGuildPoints () {
+		return Promise.join(player, wonders, board, player.getPermanent())
+	})
+	.spread(function(player, wonders, board, builtCards) {
+		//Technology Cards helper variables:
+		let technologyCards = [0, 0, 0];//index 0 is tablet, index 1 is gear, index 2 is compass
+		let scientistsGuild = false;
 
+		//Trading Cards helper variables:
+		let tradingCards = [];
+		let processedCards = 0;
+		let rawCards = 0;
+		var guildCards = [];//serves for trading and for guild points
+		let numGuildCards = 0;
 
+		//One of Guild Points helper variable:
+		let shipownersGuild = false;
+	
+		for (let card of builtCards) {
+			//count Victory Points
+			if (card.type === "Victory Points") {
+				totalPoints += Number(card.functionality[0])
+			}
+			//count Technology Cards
+			else if (card.type === "Technology") {
+				if (card.functionality[0] === "tablet") technologyCards[0]++;
+				else if (card.functionality[0] === "gear") technologyCards[1]++;
+				else if (card.functionality[0] === "compass") technologyCards[2]++;
+			}
+			//collect guild cards
+			else if (card.type === "Guild") {
+				numGuildCards++;
+				//check if the player has the scientists or the shipowners guild card:
+				if (card.name === "Scientists Guild") scientistsGuild = true;
+				else if (card.name === "Shipowners Guild") shipownersGuild = true;
+				//only need to save guild cards if they are not the types above -> other types depend on neighbor resources
+				else guildCards.push(card);
+			}
 
-		guildCards.forEach(function(card) {
-
-			if (card[1] !== 'left') { //specific to the scientists guild card
-				totalPoints += processedCards + rawCards + guildCards.lenght();
-			} else {
-				return player.getLeftNeighbor()
-				.then(function(leftNeighbor) {
-					return leftNeighbor.getPermanent();
-				})
-				.then(function(leftCards) {
-					leftNeighborCards = leftCards;
-					return player.getRightNeighbor()
-					.then(function(rightNeighbor) {
-						return leftNeighbor.getPermanent();
-					})
-					.then(function(rightCards) {
-						rightNeighborCards = rightCards;
-					})
-				})
+			//collect trading cards
+			else if (card.type === "Trading") {
+				tradingCards.push(card);
+			}
+			//count processed cards
+			else if (card.type === "Processed Resource") {
+				processedCards++;
+			}
+			//count raw cards
+			else if (card.type === "Raw Resource") {
+				rawCards++;
 			}
 			
-
-			// if (card.name === "Strategists Guild") {}
-
-			// if (card.name === "Workers Guild") {}
-
-			// if (card.name === "Spies Guild") {}
-
-			// if (card.name === "Magistrates Guild") {}
-
-			// if (card.name === "Craftsmens Guild") {}
-
-			// if (card.name === "Builders Guild") {}
-
-			// if (card.name === "Philosophers Guild") {}
-
-			// if (card.name === "Traders Guild") {}
-
-			// if (card.name === "Shipowners Guild") {}
-
-		})
+		}
 
 
-	}
+		// count Technology Points
 
-	return { points: totalPoints, money: totalMoney}
+		//find the technology card the user has most of
+		let max = Math.max(technologyCards);
+		let idx = technologyCards.indexOf(max);
+
+		//if the player has the scientists guild card and/or the second wonder built in the Babylon board, increment the number of the highest card
+		if (scientistsGuild) technologyCards[idx]++;
+		if (board.name === "Babylon" && wonders > 1) technologyCards[idx]++;
+
+		//add victory points for repeating cards
+		totalPoints += Math.pow(technologyCards[0], 2) + Math.pow(technologyCards[1], 2) + Math.pow(technologyCards[2], 2);
+
+		//find the minimum value of the technology cards
+		let min = Math.min(technologyCards);
+		//add 7 victory points for groups of 3 different symbols
+		totalPoints += min * 7;
+
+
+		// count Trading Points
+		for (let card of tradingCards) {
+			if (card.name === "Lighthouse") {
+				totalPoints += tradingCards.length;
+			}
+			else if (card.name === "Chamber of Commerce") {
+				totalPoints += processedCards.length * 2;
+			}
+			else if (card.name === "Haven") {
+				totalPoints += rawCards.length;
+			}
+			else if (card.name === "Arena") {
+				totalPoints += wonders.length;
+			}
+		}
+
+		// count points from the shipowners guild card
+		if (shipownersGuild) totalPoints += processedCards + rawCards + numGuildCards;
+
+
+		// if the player has other guild cards, execute this promise:
+
+		if (guildCards.length) {
+			return Promise.join(player, wonders, board, builtCards, guildCards, player.getLeftNeighbor(), player.getRightNeighbor())
+			.spread(function(player, wonders, board, builtCards, guildCards, leftNeighbor, rightNeighbor) {
+				return Promise.join(player, wonders, board, builtCards, guildCards, leftNeighbor, rightNeighbor, leftNeighbor.getPermanent(), rightNeighbor.getPermanent())
+			})
+			.spread(function(player, wonders, board, builtCards, guildCards, leftNeighbor, rightNeighbor, leftCards, rightCards) {
+				for (let card of guildCards) {
+					if (card.name === "Strategists Guild") {
+						totalPoints += leftNeighbor.tokens[2] * -1 + rightNeighbor.tokens[2] * -1;
+					} 
+					else if (card.name === "Builders Guild") {
+						return Promise.join(wonders, leftNeighbor.builtWonders(), rightNeighbor.builtWonders())
+						.spread(function(wonders, leftWonders, rightWonders) {
+							totalPoints += wonders + leftWonders +rightWonders;
+						})
+					} else {
+						let left = _.filter(leftCards, {type: card.functionality[3]});
+						let right = _.filter(rightCards, {type: card.functionality[3]});
+						totalPoints += (left.lenght + right.lenght) * card.functionality[0];
+					}
+
+				}
+
+			})	
+		}// end if guildCards
+
+		
+	})
+	.then(function() {
+		return { points: totalPoints, money: totalMoney}
+	})
+})
+
 
 }
