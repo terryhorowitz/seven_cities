@@ -8,34 +8,26 @@ var Player = require('../db/models/index.js').Player;
 var Deck = require('../db/models/index.js').Deck;
 var Card = require('../db/models/index.js').Card;
 var startGameFuncs = require('../app/logic/startGame.js');
-var playCardOptions = require('../app/logic/play_card_options.js');
+var playCardOptions = require('../app/logic/play_card_options.js')();
 var _ = require('lodash');
 var playerReload = require('../app/logic/playerReload.js');
 var createPlayers = require('../app/logic/createPlayersObject.js');
-
-
 module.exports = function (server) {
-
   if (io) return io;
   io = socketio(server);
-
   var currentRoom;
   var newGame;
   var socketId;
   var clients;
-
 	//hold all user socket ids with names and playerids (from db)
 	var allPlayers = {};
-
   io.sockets.on('connection', function (socket) {
   //hold the players objects for each game
 		var counter = 0;
 		var players = [];
 		var gameObject;
-
 		//join all players to the correct room
 		socket.on('create', function(data) {
-
 			//this whole if is for dealing with a user refreshing during a game. local storage!
 			if (data.localId) {
 				var thisGame;
@@ -52,7 +44,6 @@ module.exports = function (server) {
 					io.sockets.connected[socket.id].emit('your hand', me.Temporary);
 					allPlayers[socket.id].push(me.playername);
 				})
-
 			} else {
 				allPlayers[socket.id] = [];
 				allPlayers[socket.id].push(data.playername);
@@ -62,14 +53,12 @@ module.exports = function (server) {
 				for (var key in clients.sockets) {
 					counter++;
 				}
-
 				// if player is first in room, allows them to start game
 				if (counter===1) {
 					socket.emit('firstPlayer');
 				}
 			}
 		});
-
 		//when first player decides to start the game with the current num of players
 		socket.on('startGame', function() {
 			var hands = [];
@@ -91,7 +80,6 @@ module.exports = function (server) {
 					return Deck.findOne({where: {numPlayers: counter, era: 1}, include: [Card]});
 				})
 				.then(function(deck) {
-					console.log('our deck', deck)
 					deck.cards = _.shuffle(deck.cards);
 					for (var x = 0; x < counter; x++) {
 						hands.push(deck.cards.splice(0, 7));
@@ -127,16 +115,9 @@ module.exports = function (server) {
 			options.push(res);
 			console.log('this is options', options)
 			//check if player can build wonders
-
 		})
-
 	});
-
-
-
   });
   
   return io;
-
-
 };
