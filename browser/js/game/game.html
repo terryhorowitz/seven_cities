@@ -6,7 +6,7 @@
 <h4 ng-show="!firstPlayer">Waiting for first player to start game</h4>
 <h5>this is the room name: {{roomname}}</h5>
 
-<p>My name: {{playername}}</p>
+<p>My name: {{me.name}}</p>
 <p>My board: {{me.board.name}}</p>
 <p>My money: {{me.money}}</p>
 <p>My military tokens: {{me.military}}</p>
@@ -15,7 +15,7 @@
 </ul>
 
 <ul><p>My hand:</p>
-	<li ng-repeat='card in myHand'>{{card.name}}</li>
+	<li ng-repeat='card in myHand'><a ng-click='selectCard(card.id)'>{{card.name}}</a></li>
 </ul>
 
 <p>this is the players object: {{players}}</p>

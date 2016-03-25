@@ -210,7 +210,7 @@ module.exports = [//victory points
     picture: "3_siege_workshop_5.png"
   },//technology
   {
-    name: "Univeristy",
+    name: "University",
     cost: ["wood", "wood", "papyrus", "glass"],
     functionality: ["tablet"],
     type: "Technology",
@@ -220,7 +220,7 @@ module.exports = [//victory points
     picture: "3_university_4.png"
   },
   {
-    name: "Univeristy",
+    name: "University",
     cost: ["wood", "wood", "papyrus", "glass"],
     functionality: ["tablet"],
     type: "Technology",

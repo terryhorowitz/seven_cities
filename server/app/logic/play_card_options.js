@@ -10,7 +10,6 @@ module.exports = function () {
 
   var playersResources;
   var builtWonders = {};
-//  var gameResources = Resources.getGameResources(gameId);
   //after a card is selected by player - receive player & card?
   // 1. do i already have the card?
   // 2. do i have an upgrade? (cards)
@@ -19,6 +18,7 @@ module.exports = function () {
   // 4) how much of it can i buy myself?
   // 4.1 can i buy remainder from neighbors?
   
+
   function buildPlayerResources(player, resources) {
     playersResources = Resources.getGameResources(player.gameId)[player.id];
     for (var i = 0; i < resources.length; i++) {
