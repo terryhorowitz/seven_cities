@@ -19,16 +19,16 @@ module.exports = function () {
       if (choice === "get free" || choice === "upgrade" || choice === "paid by own resources"){
         choicePromise = buildCard(player, card)
       }
-      if (choice === "pay money"){
+      else if (choice === "pay money"){
         choicePromise = payForCard(player, card); //then buildCard()
       }
-      if (typeof choice === "object"){//indicates a trade option was selected
+      else if (typeof choice === "object"){//indicates a trade option was selected
         choicePromise = tradeForCard(player, card, choice); //then buildCard()
       }
-      if (choice === "build wonder"){
+      else if (choice === "build wonder"){
         choicePromise = buildWonder(player, card);
       }
-      if (choice === "discard"){
+      else if (choice === "discard"){
         choicePromise = discard(player, card);
       }
       return choicePromise;
@@ -48,11 +48,16 @@ module.exports = function () {
       }
       
       else if (cardToBuild.name === "Tavern") playerBuildingCard.money+=5;
-      else if(cardToBuild.name === "Vineyard" || cardToBuild.name === "Bazar") payForEachCardType(cardToBuild);
-      else if (cardToBuild.name === "Haven" || cardToBuild.name === "Chamber of Commerce") //???????
+      else if(cardToBuild.name === "Vineyard" || cardToBuild.name === "Bazar" || cardToBuild.name === "Haven" || cardToBuild.name === "Chamber of Commerce"){
+        payForEachItemListed(cardToBuild);
+      }
         
-      return player;
+      return player.save();
     })
+  }
+  
+  function payForEachItemListed(card){
+    
   }
   
   function payForCard(playerToCharge, cardToBuy) {

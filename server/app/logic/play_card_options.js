@@ -9,7 +9,6 @@ var Resources = require('./game_resources.js')();
 module.exports = function () {
 
   var playersResources;
-  var builtWonders = {};
   //after a card is selected by player - receive player & card?
   // 1. do i already have the card?
   // 2. do i have an upgrade? (cards)
