@@ -11,10 +11,6 @@ module.exports = function (gameId) {//this is possible?
   var playersResources;
   var builtWonders = {};
   var gameResources = Resources.getGameResources(gameId);
-  
-  var addGameToResourcesStorage = function (game) {
-    if (gamesStoredResources[game.id]) return 'already stored!'
-  }
   //after a card is selected by player - receive player & card?
   // 1. do i already have the card?
   // 2. do i have an upgrade? (cards)
@@ -24,7 +20,6 @@ module.exports = function (gameId) {//this is possible?
   // 4.1 can i buy remainder from neighbors?
   
   function buildPlayerResources(player, resources) {
-    console.log(gameResourcesObj)
     var gameResources = getGameResources(player.gameId);
     playersResources = gameResources[player.id];
     for (var i = 0; i < resources.length; i++) {
@@ -108,17 +103,18 @@ module.exports = function (gameId) {//this is possible?
     return trade;
   }
   
-  function checkIfPlayerCanBuildWonder(player){
-    return player.getBoard()
-    .then(function(board){
-      if (builtWonders === 0) return checkResourcePaymentMethods(player, board.wonder1Cost);
-      if (builtWonders === 1) return checkResourcePaymentMethods(player, board.wonder2Cost);
-      if (builtWonders === 2) return checkResourcePaymentMethods(player, board.wonder3Cost);
-      if (builtWonders === 3) return 'all built';
+  function checkIfPlayerCanBuildWonder(playerId){
+    return Player.findOne({id: playerId})
+    .then(function(player){
+      if (player.wondersBuilt === 0) return checkResourcePaymentMethods(player, board.wonder1Cost);
+      if (player.wondersBuilt === 1) return checkResourcePaymentMethods(player, board.wonder2Cost);
+      if (player.wondersBuilt === 2) return checkResourcePaymentMethods(player, board.wonder3Cost);
+      if (player.wondersBuilt === 3) return 'all built';
     })
   }
   
   return {
-    checkSelectedCardOptions: checkSelectedCardOptions
+    checkSelectedCardOptions: checkSelectedCardOptions,
+    checkIfPlayerCanBuildWonder: checkIfPlayerCanBuildWonder
   }
 }
