@@ -37,7 +37,7 @@ module.exports = function () {
 
   function buildCard(playerBuildingCard, cardToBuild) {
 
-    return playerBuildingCard.removeTemporary(cardToBuild)//do these save to DB?
+    return playerBuildingCard.removeTemporary(cardToBuild)
     .then(function(){
       return playerBuildingCard.addPermanent(cardToBuild)
     }) 
@@ -48,16 +48,43 @@ module.exports = function () {
       }
       
       else if (cardToBuild.name === "Tavern") playerBuildingCard.money+=5;
-      else if(cardToBuild.name === "Vineyard" || cardToBuild.name === "Bazar" || cardToBuild.name === "Haven" || cardToBuild.name === "Chamber of Commerce"){
-        payForEachItemListed(cardToBuild);
+      else if(cardToBuild.name === "Vineyard" || cardToBuild.name === "Bazar" || cardToBuild.name === "Haven" || cardToBuild.name === "Chamber of Commerce" || cardToBuild.name === "Lighthouse"){
+        getMoneyFrom(cardToBuild, playerBuildingCard);
+      }
+      else if (cardToBuild.name === "Arena") {
+        var moneyTotal = playerBuildingCard.money + (playerBuildingCard.wondersBuilt * 3);
+        return playerBuildingCard.update({money: moneyTotal});
       }
         
       return player.save();
     })
   }
   
-  function payForEachItemListed(card){
+  function getMoneyFrom(card, player){
     
+    cardToBePaidFor = card.functionality[card.functionality.length - 1];
+    if (card.functionality[0] === "left"){
+      return Promise.join(countNeighborCardsOfType(card.functionality, player), countOwnCardsOfType(card.functionality, player));
+    } else return countOwnCardsOfType(card.functionality, player);
+    
+  }
+  
+  function countNeighborCardsOfType(cardType, player){
+    
+    return Promise.join(player.getLeftNeighbor(), player.getRightNeighbor)
+    .spread(function(leftNeighbor, rightNeighbor){
+      return Promise.join(leftNeighbor.getPermanent({where: {type: cardType}}), rightNeighbor.getPermanent({where: {type: cardType}}))
+    })
+    .spread(function(leftCards, rightCards){
+      return leftCards.length + rightCards.length;
+    })
+  }
+  
+  function countOwnCardsOfType(cardType, player){
+    return player.getPermanent({where: {type: cardType}})
+    .then(function(cards){
+      return cards.length;
+    })
   }
   
   function payForCard(playerToCharge, cardToBuy) {
