@@ -60,6 +60,7 @@ app.controller('GameController', function ($scope, $state) {
         for (var i = 0; i < data.length; i++) {
           var thisSocket = $scope.players[i].socket.slice(2);
           if (thisSocket == socket.id) {
+            console.log('here')
             $scope.me = $scope.players[i];
           }
         }

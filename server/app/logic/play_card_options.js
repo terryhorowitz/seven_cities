@@ -3,12 +3,14 @@ var Game = require('../../db/models').Game
 var Board = require('../../db/models').Board
 var Deck = require('../../db/models').Deck
 var Player = require('../../db/models').Player
+var Card = require('../../db/models').Card
 var Promise = require('bluebird');
 var _ = require('lodash');
 var Resources = require('./game_resources.js')();
 module.exports = function () {
 
   var playersResources;
+//  var gameResources = Resources.getGameResources(gameId);
   //after a card is selected by player - receive player & card?
   // 1. do i already have the card?
   // 2. do i have an upgrade? (cards)
@@ -17,7 +19,6 @@ module.exports = function () {
   // 4) how much of it can i buy myself?
   // 4.1 can i buy remainder from neighbors?
   
-
   function buildPlayerResources(player, resources) {
     playersResources = Resources.getGameResources(player.gameId)[player.id];
     for (var i = 0; i < resources.length; i++) {
