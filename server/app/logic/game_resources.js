@@ -12,6 +12,7 @@ module.exports = function () {
   var playersResources;
 
   var getGameResources = function (gameId) {
+    console.log('gameResourcesObj', gameResourcesObj)
     return gameResourcesObj[gameId]
   }
 
