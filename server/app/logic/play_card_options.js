@@ -20,7 +20,7 @@ module.exports = function () {
   // 4.1 can i buy remainder from neighbors?
   
   function buildPlayerResources(player, resources) {
-    playersResources = getGameResources(player.gameId)[player.id];
+    playersResources = Resources.getGameResources(player.gameId)[player.id];
     for (var i = 0; i < resources.length; i++) {
       //ore/wood(combo)-type logic
       if (resources[i].length > 5){//if it is a slash resource
@@ -39,7 +39,7 @@ module.exports = function () {
   }
   
   function checkSelectedCardOptions(playerId, cardId) {
-    return Player.findOne({where: {id: playerId}})
+    return Player.findOne({where: {id: playerId}, include: [{all:true}]})
     .then(function(player){
       return Promise.join(player.getPermanent(), Card.findOne({where: {id: cardId}}), player);
     })
@@ -65,7 +65,7 @@ module.exports = function () {
   }
   
   function checkResourcePaymentMethods(player, cost) {
-    playersResources = getGameResources(player.gameId)[player.id];
+    playersResources = Resources.getGameResources(player.gameId)[player.id];
     var ownResourcesCopy = _.cloneDeep(playersResources[player.id])
     for (var i = 0; i < cost.length; i++) {
       if (ownResourcesCopy[cost[i]] && ownResourcesCopy[cost[i]] > 0) {
@@ -79,7 +79,7 @@ module.exports = function () {
   }
   
   function canIBuyFromMyNeighbors(player, cost) {
-    playersResources = getGameResources(player.gameId)[player.id];
+    playersResources = Resources.getGameResources(player.gameId)[player.id];
     var leftResourcesCopy = _.cloneDeep(playersResources.leftNeighbor);
     var rightResourcesCopy = _.cloneDeep(playersResources.rightNeighbor);
     var trade = {};
