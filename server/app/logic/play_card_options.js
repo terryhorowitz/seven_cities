@@ -10,7 +10,7 @@ module.exports = function () {//this is possible?
 
   var playersResources;
   var builtWonders = {};
-  var gameResources = Resources.getGameResources(gameId);
+//  var gameResources = Resources.getGameResources(gameId);
   //after a card is selected by player - receive player & card?
   // 1. do i already have the card?
   // 2. do i have an upgrade? (cards)
@@ -20,8 +20,7 @@ module.exports = function () {//this is possible?
   // 4.1 can i buy remainder from neighbors?
   
   function buildPlayerResources(player, resources) {
-    var gameResources = getGameResources(player.gameId);
-    playersResources = gameResources[player.id];
+    playersResources = getGameResources(player.gameId)[player.id];
     for (var i = 0; i < resources.length; i++) {
       //ore/wood(combo)-type logic
       if (resources[i].length > 5){//if it is a slash resource
@@ -39,9 +38,12 @@ module.exports = function () {//this is possible?
     }
   }
   
-  function checkSelectedCardOptions(player, card) {
-    return player.getPermanent()
-    .then(function(builtCards){
+  function checkSelectedCardOptions(playerId, card) {
+    return Player.findOne({where: {id: playerId}})
+    .then(function(player){
+      return Promise.join(player.getPermanent(),player);
+    })
+    .spread(function(builtCards, player){
       if (!builtCards.length) {
         if (!card.cost) return "get free";
         // if card cost is money value
@@ -63,7 +65,7 @@ module.exports = function () {//this is possible?
   }
   
   function checkResourcePaymentMethods(player, cost) {
-    playersResources = gameResources[player.id];
+    playersResources = getGameResources(player.gameId)[player.id];
     var ownResourcesCopy = _.cloneDeep(playersResources[player.id])
     for (var i = 0; i < cost.length; i++) {
       if (ownResourcesCopy[cost[i]] && ownResourcesCopy[cost[i]] > 0) {
@@ -73,11 +75,11 @@ module.exports = function () {//this is possible?
     }
     if (!cost.length) return 'paid by own resources';
     else if (player.money == 0) return 'cant afford to buy anything';
-    else return canIBuyFromMyNeighbors(cost);
+    else return canIBuyFromMyNeighbors(player, cost);
   }
   
   function canIBuyFromMyNeighbors(player, cost) {
-    playersResources = gameResources[player.id];
+    playersResources = getGameResources(player.gameId)[player.id];
     var leftResourcesCopy = _.cloneDeep(playersResources.leftNeighbor);
     var rightResourcesCopy = _.cloneDeep(playersResources.rightNeighbor);
     var trade = {};
