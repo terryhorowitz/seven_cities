@@ -6,7 +6,7 @@ var Player = require('../../db/models').Player
 var Promise = require('bluebird');
 var _ = require('lodash');
 var Resources = require('./game_resources.js')();
-module.exports = function () {//this is possible?
+module.exports = function () {
 
   var playersResources;
   var builtWonders = {};
@@ -38,12 +38,12 @@ module.exports = function () {//this is possible?
     }
   }
   
-  function checkSelectedCardOptions(playerId, card) {
+  function checkSelectedCardOptions(playerId, cardId) {
     return Player.findOne({where: {id: playerId}})
     .then(function(player){
-      return Promise.join(player.getPermanent(),player);
+      return Promise.join(player.getPermanent(), Card.findOne({where: {id: cardId}}), player);
     })
-    .spread(function(builtCards, player){
+    .spread(function(builtCards, card, player){
       if (!builtCards.length) {
         if (!card.cost) return "get free";
         // if card cost is money value
