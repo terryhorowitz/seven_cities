@@ -62,6 +62,16 @@ app.controller('GameController', function ($scope, $state) {
           var thisSocket = $scope.players[i].socket.slice(2);
           if (thisSocket == socket.id) {
             $scope.me = $scope.players[i];
+            $scope.minuses = [];
+            $scope.pluses = 0;
+            $scope.me.tokens.forEach(function(token) {
+              if (token === -1) {
+                $scope.minuses.push(token);
+              } else {
+                $scope.pluses += token;
+              }
+            });
+        
           }
         }
         //find my neighbors (need to find myself first!)
