@@ -17,8 +17,8 @@ var calculatePoints = function (thisPlayer) {
 
 		//calculate money and military points 
 
-		totalPoints += player.tokens[0] - player.tokens[1] + Math.floor(player.money);
-		totalMoney += player.money % 3;
+		totalPoints += player.tokens[0] - player.tokens[1] + Math.floor(player.money/3);
+		totalMoney = player.money;
 		return player;
 	})
 	.then(function (player) {
