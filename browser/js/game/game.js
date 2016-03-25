@@ -78,14 +78,16 @@ app.controller('GameController', function ($scope, $state) {
         //find my neighbors (need to find myself first!)
         for (var i = 0; i < data.length; i++) {
           var thisSocket = $scope.players[i].socket.slice(2);
-          if (thisSocket == $scope.me.neighborL && thisSocket !== socket.id) {
+          console.log('thisSocket', thisSocket, '$scope.me.neighborR', $scope.me.neighborR)
+          if ($scope.players[i].socket == $scope.me.neighborL && thisSocket !== socket.id) {
             $scope.leftNeighbor = $scope.players[i];
-          } else if (thisSocket == $scope.me.neighborR && thisSocket !== socket.id) {
+          } else if ($scope.players[i].socket == $scope.me.neighborR && thisSocket !== socket.id) {
             $scope.rightNeighbor = $scope.players[i];
           } else if (thisSocket !== socket.id) {
-            $scope.nonNeighbors = $scope.players[i];
+            $scope.nonNeighbors.push($scope.players[i]);
           }
         }
+        console.log('left', $scope.leftNeighbor, 'right', $scope.rightNeighbor, 'nonNeighbors', $scope.nonNeighbors)
         $scope.$digest()
       })
 
@@ -150,45 +152,9 @@ app.controller('GameController', function ($scope, $state) {
       //give player new cards
 
 
-      // socket.on('game started', function(data) {
-      //   if (counting === 0) {
-      //     socket.emit('create initial', data);
-      //     counting++;
-      //   }
-      //   $scope.origin = data.origin;
-      //   $scope.goal = data.goal;
-      //   $scope.curr = data.origin;
-      //   $scope.waiting = false;
-      //   $scope.getActorRoles($scope.origin)
-      // });
-      
-      // socket.on('opponent result', function(data) {
-      //   $scope.oppscore = data.degrees;
-      //   $scope.oppath = data.path;
-      //   $scope.$digest();
-      // })
     });
 
-      $scope.hand = [ {image: 'img/3_arena_3.png'},
-        {image: 'img/3_garden_3.png'},
-        {image: 'img/3_haven_3.png'},
-        {image: 'img/3_arsenal_3.png'},
-        {image: 'img/3_palace_3.png'}
-      ]
-
-      $scope.rawResources = [ {image: 'img/3_arena_3.png'},
-        {image: 'img/3_garden_3.png'},
-        {image: 'img/3_haven_3.png'},
-        {image: 'img/3_arsenal_3.png'},
-        {image: 'img/3_palace_3.png'}
-      ];
-
-      $scope.processedResources = [ {image: 'img/3_observatory_3.png'},
-        {image: 'img/3_pantheon_3.png'},
-        {image: 'img/3_study_3.png'},
-        {image: 'img/3_lodge_3.png'},
-        {image: 'img/3_fortifications_3.png'}
-      ];
+      
 
       $scope.builtCards = [
         [ {image: 'img/3_arena_3.png'},
