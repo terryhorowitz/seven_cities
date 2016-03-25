@@ -3,15 +3,15 @@ var Game = require('../../db/models').Game
 var Board = require('../../db/models').Board
 var Deck = require('../../db/models').Deck
 var Player = require('../../db/models').Player
+var Card = require('../../db/models').Card
 var Promise = require('bluebird');
 var _ = require('lodash');
 var Resources = require('./game_resources.js')();
-module.exports = function (gameId) {//this is possible?
+module.exports = function () {
 
   var playersResources;
   var builtWonders = {};
-  var gameResources = Resources.getGameResources(gameId);
-  
+//  var gameResources = Resources.getGameResources(gameId);
   //after a card is selected by player - receive player & card?
   // 1. do i already have the card?
   // 2. do i have an upgrade? (cards)
@@ -20,11 +20,8 @@ module.exports = function (gameId) {//this is possible?
   // 4) how much of it can i buy myself?
   // 4.1 can i buy remainder from neighbors?
   
-
   function buildPlayerResources(player, resources) {
-    console.log(gameResourcesObj)
-    var gameResources = getGameResources(player.gameId);
-    playersResources = gameResources[player.id];
+    playersResources = Resources.getGameResources(player.gameId)[player.id];
     for (var i = 0; i < resources.length; i++) {
       //ore/wood(combo)-type logic
       if (resources[i].length > 5){//if it is a slash resource
@@ -42,12 +39,12 @@ module.exports = function (gameId) {//this is possible?
     }
   }
   
-    function checkSelectedCardOptions(playerId, cardId) {
-    return Player.findOne({where: {id: playerId}})
-    .then(function(player) {
-      return Promise.join(player.getPermanent(), Card.findOne({where: {id: cardId}}))
+  function checkSelectedCardOptions(playerId, cardId) {
+    return Player.findOne({where: {id: playerId}, include: [{all: true}]})
+    .then(function(player){
+      return Promise.join(player.getPermanent(), Card.findOne({where: {id: cardId}}), player);
     })
-    .spread(function(builtCards, card){
+    .spread(function(builtCards, card, player){
       if (!builtCards.length) {
         if (!card.cost) return "get free";
         // if card cost is money value
@@ -69,7 +66,8 @@ module.exports = function (gameId) {//this is possible?
   }
   
   function checkResourcePaymentMethods(player, cost) {
-    playersResources = gameResources[player.id];
+    console.log('gameid', player.gameId)
+    playersResources = Resources.getGameResources(player.gameId)[player.id];
     var ownResourcesCopy = _.cloneDeep(playersResources[player.id])
     for (var i = 0; i < cost.length; i++) {
       if (ownResourcesCopy[cost[i]] && ownResourcesCopy[cost[i]] > 0) {
@@ -79,11 +77,11 @@ module.exports = function (gameId) {//this is possible?
     }
     if (!cost.length) return 'paid by own resources';
     else if (player.money == 0) return 'cant afford to buy anything';
-    else return canIBuyFromMyNeighbors(cost);
+    else return canIBuyFromMyNeighbors(player, cost);
   }
   
   function canIBuyFromMyNeighbors(player, cost) {
-    playersResources = gameResources[player.id];
+    playersResources = Resources.getGameResources(player.gameId)[player.id];
     var leftResourcesCopy = _.cloneDeep(playersResources.leftNeighbor);
     var rightResourcesCopy = _.cloneDeep(playersResources.rightNeighbor);
     var trade = {};
@@ -109,17 +107,18 @@ module.exports = function (gameId) {//this is possible?
     return trade;
   }
   
-  function checkIfPlayerCanBuildWonder(player){
-    return player.getBoard()
-    .then(function(board){
-      if (builtWonders === 0) return checkResourcePaymentMethods(player, board.wonder1Cost);
-      if (builtWonders === 1) return checkResourcePaymentMethods(player, board.wonder2Cost);
-      if (builtWonders === 2) return checkResourcePaymentMethods(player, board.wonder3Cost);
-      if (builtWonders === 3) return 'all built';
+  function checkIfPlayerCanBuildWonder(playerId){
+    return Player.findOne({id: playerId})
+    .then(function(player){
+      if (player.wondersBuilt === 0) return checkResourcePaymentMethods(player, board.wonder1Cost);
+      if (player.wondersBuilt === 1) return checkResourcePaymentMethods(player, board.wonder2Cost);
+      if (player.wondersBuilt === 2) return checkResourcePaymentMethods(player, board.wonder3Cost);
+      if (player.wondersBuilt === 3) return 'all built';
     })
   }
   
   return {
-    checkSelectedCardOptions: checkSelectedCardOptions
+    checkSelectedCardOptions: checkSelectedCardOptions,
+    checkIfPlayerCanBuildWonder: checkIfPlayerCanBuildWonder
   }
 }

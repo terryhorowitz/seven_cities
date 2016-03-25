@@ -8,7 +8,7 @@ var Player = require('../db/models/index.js').Player;
 var Deck = require('../db/models/index.js').Deck;
 var Card = require('../db/models/index.js').Card;
 var startGameFuncs = require('../app/logic/startGame.js');
-var playCardOptions = require('../app/logic/play_card_options.js');
+var playCardOptions = require('../app/logic/play_card_options.js')();
 var _ = require('lodash');
 var playerReload = require('../app/logic/playerReload.js');
 var createPlayers = require('../app/logic/createPlayersObject.js');
@@ -91,7 +91,6 @@ module.exports = function (server) {
 					return Deck.findOne({where: {numPlayers: counter, era: 1}, include: [Card]});
 				})
 				.then(function(deck) {
-					console.log('our deck', deck)
 					deck.cards = _.shuffle(deck.cards);
 					for (var x = 0; x < counter; x++) {
 						hands.push(deck.cards.splice(0, 7));

@@ -3,7 +3,7 @@ var Game = require('../../db/models').Game
 var Board = require('../../db/models').Board
 var Deck = require('../../db/models').Deck
 var Player = require('../../db/models').Player
-var gameResources = require('./game_resources.js');
+var gameResources = require('./game_resources.js')();
 var Promise = require('bluebird');
 var _ = require('lodash');
 // module.exports = function () {
@@ -12,7 +12,7 @@ var _ = require('lodash');
         //and also create a game and put the players in it and then maybe return the game?
     //{neighborR: socketthing, neighborL: sockething}
         return Promise.map(playersArr, function(player) {
-            return Player.create({name: player.name, money: 3, tokens: 0, socket: player.socket, wondersBuilt: 0})
+            return Player.create({name: player.name, money: 3, tokens: [], socket: player.socket, wondersBuilt: 0})
             .then(function(newPlayer){
               return newPlayer.setBoard(player.board)
             })
