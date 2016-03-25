@@ -150,7 +150,7 @@ var calculatePoints = function (thisPlayer) {
 					} else {
 						let left = _.filter(leftCards, {type: card.functionality[3]});
 						let right = _.filter(rightCards, {type: card.functionality[3]});
-						totalPoints += (left.lenght + right.lenght) * card.functionality[0];
+						totalPoints += (left.length + right.length) * card.functionality[0];
 					}
 				}
 			})	
