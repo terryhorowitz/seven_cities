@@ -10,7 +10,6 @@ var Resources = require('./game_resources.js')();
 module.exports = function () {
 
   var playersResources;
-  var builtWonders = {};
 //  var gameResources = Resources.getGameResources(gameId);
   //after a card is selected by player - receive player & card?
   // 1. do i already have the card?
@@ -40,7 +39,7 @@ module.exports = function () {
   }
   
   function checkSelectedCardOptions(playerId, cardId) {
-    return Player.findOne({where: {id: playerId}, include: [{all: true}]})
+    return Player.findOne({where: {id: playerId}, include: [{all:true}]})
     .then(function(player){
       return Promise.join(player.getPermanent(), Card.findOne({where: {id: cardId}}), player);
     })
@@ -66,7 +65,6 @@ module.exports = function () {
   }
   
   function checkResourcePaymentMethods(player, cost) {
-    console.log('gameid', player.gameId)
     playersResources = Resources.getGameResources(player.gameId)[player.id];
     var ownResourcesCopy = _.cloneDeep(playersResources[player.id])
     for (var i = 0; i < cost.length; i++) {

@@ -1,6 +1,7 @@
 'use strict'
 var Game = require('../../db/models').Game
 var Board = require('../../db/models').Board
+var Card = require('../../db/models').Card
 var Deck = require('../../db/models').Deck
 var Player = require('../../db/models').Player
 var Promise = require('bluebird');

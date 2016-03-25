@@ -35,6 +35,9 @@ var _ = require('lodash');
       .spread(function(completeGame){
         return gameResources.addGameToResourcesObj(completeGame.id);  
       })
+      .catch(function(err){
+        console.log('error making game on DB', err);
+      })
     }
     
 module.exports = {
