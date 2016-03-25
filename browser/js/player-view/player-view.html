@@ -11,15 +11,15 @@
 		<div class="col-xs-8">
 			<div class='hand'>
 				<ul>
-					<li ng-repeat="card in myHand">
+					<li ng-repeat="card in myHand" ng-click='selectCard(card)'>
 						<img src='img/{{card.picture}}'>
 					</li>
 				</ul>
 			</div>
 		</div>
 
-		<div class="col-xs-4">
-			<selected-card></selected-card>
+		<div ng-show='playOptions' class="col-xs-4">
+			<selected-card card='cardSelection' playOptions='playOptions'></selected-card>
 		</div>
 	</div>
 

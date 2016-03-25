@@ -2,15 +2,15 @@
     <ul class="nav navbar-nav">
         <li class="token coins">
             <div class="coin-placeholder"><img src="img/tokens/coin_1.png"></div>
-            x {{ coins }}
+            x {{ me.money }}
         </li>
         <li class="token military-loss">
             <div class="military-placeholder"><img src="img/tokens/war_minus.png"></div>
-            x {{ militaryLoss }}
+            x {{minuses.length}}
         </li>
         <li class="token military-victory">
             <div class="military-placeholder"><img src="img/tokens/war_one.png"></div>
-            x {{ militaryVictory }}
+            x {{ pluses }}
         </li>
     </ul>
 </div>

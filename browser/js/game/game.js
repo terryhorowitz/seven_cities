@@ -20,7 +20,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.builtCards;
     $scope.players;
     $scope.money;
-    $scope.currentlyPlaying;
+    $scope.currentlyPlaying = false;
     $scope.me;
     $scope.myHand;
     $scope.rightNeighbor;
@@ -44,6 +44,7 @@ app.controller('GameController', function ($scope, $state) {
       socket.emit('create', {roomname: $scope.roomname, playername: $scope.playername, localId: tempId});
 
       socket.on('your id', function(data) {
+        $scope.me.playerId = data;
         localStorage.setItem('playerId', data)
       })
 
@@ -53,6 +54,7 @@ app.controller('GameController', function ($scope, $state) {
       })
       //need to initiate game when all players are ready (create a game in the db)
       socket.on('game initialized', function(data) {
+        $scope.currentlyPlaying = true;
         // console.log('game started')
         $scope.players = data;
         // console.log('players', $scope.players)
@@ -60,8 +62,17 @@ app.controller('GameController', function ($scope, $state) {
         for (var i = 0; i < data.length; i++) {
           var thisSocket = $scope.players[i].socket.slice(2);
           if (thisSocket == socket.id) {
-            console.log('here')
             $scope.me = $scope.players[i];
+            $scope.minuses = [];
+            $scope.pluses = 0;
+            // $scope.me.tokens.forEach(function(token) {
+            //   if (token === -1) {
+            //     $scope.minuses.push(token);
+            //   } else {
+            //     $scope.pluses += token;
+            //   }
+            // });
+        
           }
         }
         //find my neighbors (need to find myself first!)
@@ -75,7 +86,6 @@ app.controller('GameController', function ($scope, $state) {
             $scope.nonNeighbors = $scope.players[i];
           }
         }
-        // console.log('players modified', $scope.players)
         $scope.$digest()
       })
 
@@ -84,13 +94,52 @@ app.controller('GameController', function ($scope, $state) {
         $scope.$digest();
       })
 
-      //send all players their cards
+      //{"left":null,"right":["ore"]}
+      //{"left":null,"right":["papyrus"]}
 
+      socket.on('your options', function(options) {
+        $scope.playOptions = options;
+        // $scope.playOptions.filter(function(option) {
+        //   if (typeof option !== 'string') {
+        //     var temp = 'Buy ';
+        //     if (option.left) {
+        //       option.left.forEach(function(resouce) {
+        //         temp += resource;
+        //         temp += ' and '
+        //       })
+        //       temp.slice
+        //       temp += 'from left neighbor';
+        //     }
+        //     if (option.right)
+        //   }
+        //   if (option === 'Discard') {
+        //     return option;
+        //   } else if (option === 'get free') {
+        //     return 'Build for free';
+        //   } else if (option === 'pay money') {
+        //     return "Pay 1 coin";
+        //   } 
+        //   if (option !== "no trade available!") {
+
+        //   }
+        // })
+        $scope.$digest();
+      })
+
+      socket.on('err', function(data) {
+        $scope.err = data.message;
+        $scope.$digest();
+      })
 
       //player submits their choice
-      $scope.selectCard = function(cardId) {
-	      socket.emit('choice made', {player: $scope.me.playerId, card: cardId});
+      $scope.selectCard = function(card) {
+        $scope.cardSelection = card;
+	      socket.emit('choice made', {player: $scope.me.playerId, card: card.id});
       };
+
+      $scope.dismiss = function() {
+        $scope.err = null;
+      }
 
       //waiting for other players
 
