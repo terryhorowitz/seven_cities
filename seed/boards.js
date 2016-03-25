@@ -61,7 +61,7 @@ module.exports = [
   },
   {
     name: "Olympia",
-    picture: "b_Olympia.png",
+    picture: "b_olympia.png",
     resource: "wood",
     wonder1: [3],
     wonder1Cost: ["wood", "wood"],
