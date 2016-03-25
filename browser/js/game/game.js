@@ -27,6 +27,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.leftNeighbor;
     $scope.wonderOptions = [1, 2, 3];
     $scope.nonNeighbors = [];
+    $scope.playOptions;
 
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
 
@@ -44,6 +45,7 @@ app.controller('GameController', function ($scope, $state) {
       socket.emit('create', {roomname: $scope.roomname, playername: $scope.playername, localId: tempId});
 
       socket.on('your id', function(data) {
+        $scope.me.playerId = data;
         localStorage.setItem('playerId', data)
       })
 
@@ -60,7 +62,6 @@ app.controller('GameController', function ($scope, $state) {
         for (var i = 0; i < data.length; i++) {
           var thisSocket = $scope.players[i].socket.slice(2);
           if (thisSocket == socket.id) {
-            console.log('here')
             $scope.me = $scope.players[i];
           }
         }
@@ -81,6 +82,11 @@ app.controller('GameController', function ($scope, $state) {
 
       socket.on('your hand', function(data) {
         $scope.myHand = data;
+        $scope.$digest();
+      })
+
+      socket.on('your options', function(options) {
+        $scope.playOptions = options;
         $scope.$digest();
       })
 

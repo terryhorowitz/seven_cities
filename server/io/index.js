@@ -114,6 +114,7 @@ module.exports = function (server) {
 		.then(function(res) {
 			options.push(res);
 			console.log('this is options', options)
+			io.sockets.connected[socket.id].emit('your options', options);
 			//check if player can build wonders
 		})
 	});
