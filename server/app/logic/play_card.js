@@ -45,7 +45,12 @@ module.exports = function () {
 //      console.log('card moved to built cards (perm)!', player)
       if (cardToBuild.type === "Raw Resource" || cardToBuild.type === "Processed Resource" || cardToBuild.name === "Forum" || cardToBuild.name === "Caravansery"){
         resourceBuilder.buildPlayerResources(playerBuildingCard, cardToBuild.functionality);
-      }//need to consider cards that give you money/change your player interactions
+      }
+      
+      else if (cardToBuild.name === "Tavern") playerBuildingCard.money+=5;
+      else if(cardToBuild.name === "Vineyard" || cardToBuild.name === "Bazar") payForEachCardType(cardToBuild);
+      else if (cardToBuild.name === "Haven" || cardToBuild.name === "Chamber of Commerce") //???????
+        
       return player;
     })
   }

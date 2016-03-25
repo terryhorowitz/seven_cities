@@ -6,7 +6,7 @@ var Player = require('../../db/models').Player
 var Promise = require('bluebird');
 var _ = require('lodash');
 var Resources = require('./game_resources.js')();
-module.exports = function (gameId) {//this is possible?
+module.exports = function () {//this is possible?
 
   var playersResources;
   var builtWonders = {};
