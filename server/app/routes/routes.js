@@ -18,7 +18,8 @@ router.get('/board', function(req, res, next){
 
 router.get('/player', function(req, res, next){
 
-  Player.findAll({})
+
+  Player.findAll({include: [{ all: true }]})
   .then(function(players){
       // console.log('type of getPermanent: ', typeof players[0].getPermanent)
       // console.log('type of getTemporary: ', typeof players[0].getTemporary )
@@ -28,7 +29,7 @@ router.get('/player', function(req, res, next){
 });
 
 router.get('/deck', function(req, res, next){
-  Deck.findAll({include: [Card], where: {numPlayers: 3, era: 1}})
+  Deck.findAll({include: [Card]})
   .then(function(deck){
     console.log('HOW MANY', deck.length)
     res.json(deck)

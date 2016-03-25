@@ -12,7 +12,7 @@ var _ = require('lodash');
         //and also create a game and put the players in it and then maybe return the game?
     //{neighborR: socketthing, neighborL: sockething}
         return Promise.map(playersArr, function(player) {
-            return Player.create({name: player.name, money: 3, tokens: 0, socket: player.socket})
+            return Player.create({name: player.name, money: 3, tokens: 0, socket: player.socket, wondersBuilt: 0})
             .then(function(newPlayer){
               return newPlayer.setBoard(player.board)
             })
@@ -20,7 +20,7 @@ var _ = require('lodash');
               return Promise.join(newPlayer, Player.findOne({where: {socket: player.neighborL}}), Player.findOne({where: {socket: player.neighborR}}))
             })
             .spread(function(newPlayer, leftNeighbor, rightNeighbor){
-              return Promise.join(newPlayer, newPlayer.setLeftNeighbor(leftNeighbor), newPlayer.setRightNeighbor(rightNeighbor))
+              return Promise.join(newPlayer, newPlayer.setLeftNeighbor(leftNeighbor), newPlayer.setRightNeighbor(rightNeighbor), newPlayer.setTemporary(player.hand))
             })
             .spread(function(newPlayer){
               return newPlayer;

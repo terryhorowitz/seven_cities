@@ -11,6 +11,7 @@ var startGameFuncs = require('../app/logic/startGame.js');
 var playCardOptions = require('../app/logic/play_card_options.js');
 var _ = require('lodash');
 var playerReload = require('../app/logic/playerReload.js');
+var createPlayers = require('../app/logic/createPlayersObject.js');
 
 
 module.exports = function (server) {
@@ -35,31 +36,24 @@ module.exports = function (server) {
 		//join all players to the correct room
 		socket.on('create', function(data) {
 
-			//trying to deal with refreshing in the middle of a game...
-			// if (data.localId) {
-			// 	var thisGame;
-			// 	var thisHand;
-			// 	playerReload.playerReload(data.localId, socket.id)
-			// 	.then(function(game) {
-			// 	// allPlayers[socket.id].push(data.localId)
-			// 		thisGame = game;
-			// 		socket.join(game.name);
-					// // console.log('thisGame', thisGame.GamePlayers[0])
-					// for (var m = 0; m < thisGame.GamePlayers.length; m++) {
-					// 	var obj = {};
-					// 	obj.board = thisGame.GamePlayers.boardId;
-					// 	obj.money = thisGame.GamePlayers.money;
-					// 	obj.tokens = thisGame.GamePlayers.tokens;
-					// 	obj.built = [];
-					// 	obj.socket = Object.keys(io.sockets.adapter.rooms[currentRoom].sockets)[i];
-					// 	obj.name = allPlayers[obj.socket][0];
-					// 	players.push(obj);
-					// }
+			//this whole if is for dealing with a user refreshing during a game. local storage!
+			if (data.localId) {
+				var thisGame;
+				var thisHand;
+				playerReload.playerReload(data.localId, socket.id)
+				.then(function(game) {
+					allPlayers[socket.id] = [];
+					allPlayers[socket.id].push(data.localId)
+					thisGame = game;
+					socket.join(game.name);
+					players = createPlayers.createPlayersObjectRefresh(thisGame.GamePlayers, players)
+					io.sockets.connected[socket.id].emit('game initialized', players);
+					var me = _.find(thisGame.GamePlayers, {'socket': socket.id})
+					io.sockets.connected[socket.id].emit('your hand', me.Temporary);
+					allPlayers[socket.id].push(me.playername);
+				})
 
-			// 	})
-
-			// }  else {
-
+			} else {
 				allPlayers[socket.id] = [];
 				allPlayers[socket.id].push(data.playername);
 				currentRoom = data.roomname;
@@ -67,7 +61,7 @@ module.exports = function (server) {
 				clients = io.sockets.adapter.rooms[data.roomname];
 				for (var key in clients.sockets) {
 					counter++;
-				// }
+				}
 
 				// if player is first in room, allows them to start game
 				if (counter===1) {
@@ -89,35 +83,15 @@ module.exports = function (server) {
 				Board.findAll({})
 				.then(function(allBoards) {
 					allBoards = _.shuffle(allBoards);
-					for (var i = 0; i < counter; i++) {
-						var obj = {};
-						obj.board = allBoards[i];
-						obj.money = 3;
-						obj.tokens = 0;
-						obj.built = [];
-						obj.socket = Object.keys(io.sockets.adapter.rooms[currentRoom].sockets)[i];
-						obj.name = allPlayers[obj.socket][0];
-						players.push(obj);
-					}
-					return players;
+					var allSockets = Object.keys(io.sockets.adapter.rooms[currentRoom].sockets);
+					players = createPlayers.createPlayersObject(allBoards, counter, allSockets, allPlayers)
 				})
 				.then(function() {
-					for (var x = 0; x < players.length; x++) {
-						if (players[x + 1]) {
-							players[x].neighborR = players[x + 1].socket;
-						} else {
-							players[x].neighborR = players[0].socket;
-						}
-						if (players[x - 1]) {
-							players[x].neighborL = players[x - 1].socket;
-						} else {
-							players[x].neighborL = players[players.length - 1].socket;
-						}
-					}
 					io.to(currentRoom).emit('game initialized', players);
 					return Deck.findOne({where: {numPlayers: counter, era: 1}, include: [Card]});
 				})
 				.then(function(deck) {
+					console.log('our deck', deck)
 					deck.cards = _.shuffle(deck.cards);
 					for (var x = 0; x < counter; x++) {
 						hands.push(deck.cards.splice(0, 7));
@@ -142,8 +116,20 @@ module.exports = function (server) {
 				})
 			}
 		});
-		socket.on('choice made', function(playerid, card) {
+		socket.on('choice made', function(data) {
 		//needs to check if the choice is ok and then emit
+		var cardId = data.card;
+		var playerId = data.player;
+		var response;
+		var options = ['discard'];
+		return playCardOptions.checkSelectedCardOptions(playerId, cardId)
+		.then(function(res) {
+			options.push(res);
+			console.log('this is options', options)
+			//check if player can build wonders
+
+		})
+
 	});
 
 

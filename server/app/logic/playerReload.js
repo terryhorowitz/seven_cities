@@ -21,4 +21,3 @@ var playerReload = function (playerId, socketId) {
 module.exports = {
     playerReload: playerReload
 }
-// }

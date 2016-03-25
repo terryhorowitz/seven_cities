@@ -11,8 +11,8 @@
 		<div class="col-xs-8">
 			<div class='hand'>
 				<ul>
-					<li ng-repeat="card in hand">
-						<img src='{{card.image}}'>
+					<li ng-repeat="card in myHand">
+						<img src='img/{{card.picture}}'>
 					</li>
 				</ul>
 			</div>
@@ -38,8 +38,8 @@
 	<br style="clear:both" />
 
 	<div class='wonders'>
-		<div ng-click="expandPile(wonder)" ng-repeat="wonder in wonders" ng-class="{wonderexpand: wonder === clickedPile}" class="test">
-			<img src='{{wonder.image}}'>
+		<div ng-click="expandPile(wonder)" ng-repeat="wonder in wonderOptions" ng-class="{wonderexpand: wonder === clickedPile}" class="test">
+			<img src='/img/wonders/{{me.board.name}}_{{wonder}}.png'>
 		</div>
 	</div>
 
