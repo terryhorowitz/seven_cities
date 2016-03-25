@@ -12,27 +12,6 @@ var calculatePoints = function (thisPlayer) {
 	var totalPoints = 0;
 	var totalMoney = 0;
 
-	//USE Promise.map?
-
-	// CANNOT USE GAME RESOURCES OBJECT
-
-	// async operations:
-
-	// Player.findOne()
-
-	// player.builtWonders()
-	// player.getBoard()
-	// player.getPermanent()
-
-
-	// player.getLeftNeighbor()
-	// player.getRightNeighbor()
-	
-	// leftNeighbor.getPermanent()
-	// rightNeighbor.getPermanent()
-
-	// leftNeighbor.builtWonder()
-
 	return Player.findOne({ where: { id: thisPlayer.id }})
 	.then(function (player) {
 
@@ -112,7 +91,6 @@ var calculatePoints = function (thisPlayer) {
 			
 		}
 
-
 		// count Technology Points
 
 		//find the technology card the user has most of
@@ -174,18 +152,12 @@ var calculatePoints = function (thisPlayer) {
 						let right = _.filter(rightCards, {type: card.functionality[3]});
 						totalPoints += (left.lenght + right.lenght) * card.functionality[0];
 					}
-
 				}
-
 			})	
 		}// end if guildCards
-
-		
+		})
+		.then(function() {
+			return { points: totalPoints, money: totalMoney}
+		})
 	})
-	.then(function() {
-		return { points: totalPoints, money: totalMoney}
-	})
-})
-
-
 }
