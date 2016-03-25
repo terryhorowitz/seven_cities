@@ -12,9 +12,6 @@ module.exports = function (gameId) {//this is possible?
   var builtWonders = {};
   var gameResources = Resources.getGameResources(gameId);
   
-  var addGameToResourcesStorage = function (game) {
-    if (gamesStoredResources[game.id]) return 'already stored!'
-  }
   //after a card is selected by player - receive player & card?
   // 1. do i already have the card?
   // 2. do i have an upgrade? (cards)
@@ -23,6 +20,7 @@ module.exports = function (gameId) {//this is possible?
   // 4) how much of it can i buy myself?
   // 4.1 can i buy remainder from neighbors?
   
+
   function buildPlayerResources(player, resources) {
     console.log(gameResourcesObj)
     var gameResources = getGameResources(player.gameId);
@@ -44,9 +42,12 @@ module.exports = function (gameId) {//this is possible?
     }
   }
   
-  function checkSelectedCardOptions(player, card) {
-    return player.getPermanent()
-    .then(function(builtCards){
+    function checkSelectedCardOptions(playerId, cardId) {
+    return Player.findOne({where: {id: playerId}})
+    .then(function(player) {
+      return Promise.join(player.getPermanent(), Card.findOne({where: {id: cardId}}))
+    })
+    .spread(function(builtCards, card){
       if (!builtCards.length) {
         if (!card.cost) return "get free";
         // if card cost is money value
