@@ -35,6 +35,9 @@ var _ = require('lodash');
       .spread(function(completeGame){
         return gameResources.addGameToResourcesObj(completeGame.id);  
       })
+      .catch(function(err){
+          console.error('problem setting up game', err)
+      })
     }
     
 module.exports = {
