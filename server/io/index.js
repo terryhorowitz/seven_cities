@@ -86,8 +86,9 @@ module.exports = function (server) {
 					}
 					return hands;
 				})
-				.then(function() {
+				.then(function(hands) {
 					for (var a = 0; a < players.length; a++) {
+						console.log(hands)
 						io.sockets.connected[players[a].socket].emit('your hand', hands[a]);
 						players[a].hand = hands[a];
 					}

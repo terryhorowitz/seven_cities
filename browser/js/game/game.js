@@ -27,7 +27,6 @@ app.controller('GameController', function ($scope, $state) {
     $scope.leftNeighbor;
     $scope.wonderOptions = [1, 2, 3];
     $scope.nonNeighbors = [];
-    $scope.playOptions;
 
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
 
@@ -94,8 +93,9 @@ app.controller('GameController', function ($scope, $state) {
 
 
       //player submits their choice
-      $scope.selectCard = function(cardId) {
-	      socket.emit('choice made', {player: $scope.me.playerId, card: cardId});
+      $scope.selectCard = function(card) {
+        $scope.cardSelection = card;
+	      socket.emit('choice made', {player: $scope.me.playerId, card: card.id});
       };
 
       //waiting for other players
