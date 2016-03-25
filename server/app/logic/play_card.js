@@ -64,7 +64,7 @@ module.exports = function () {
     
     cardToBePaidFor = card.functionality[card.functionality.length - 1];
     if (card.functionality[0] === "left"){
-      return Promise.join(countNeighborCardsOfType(card.functionality, player), countOwnCardsOfType(card.functionality, player));
+      return Promise.join(countNeighborCardsOfType(card.functionality, player), countOwnCardsOfType(card.functionality, player));//.then do money things
     } else return countOwnCardsOfType(card.functionality, player);
     
   }
