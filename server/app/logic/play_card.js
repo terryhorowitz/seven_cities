@@ -46,19 +46,28 @@ module.exports = function () {
   
   
   /////// Public API/////////////
-  function orchestrator(playerId, cardId, choice){
-    Promise.join(db_getters.getPlayer(playerId), db_getters.getCard(cardId))
-    .spread(function(_player, _card){
-      player = _player; 
-      card = _card; 
-      return executeChoice(choice)
+  function orchestrator(playersSelections){
+    //playerId, cardId, choice
+    return Promise.map(playersSelections, function(playerChoice){
+      var playerId = playerChoice.playerId;
+      var cardId = playerChoice.cardId;
+      var choice = playerChoice.choice;
+      
+      return Promise.join(db_getters.getPlayer(playerId), db_getters.getCard(cardId))
+      .spread(function(_player, _card){
+        player = _player; 
+        card = _card; 
+        return executeChoice(choice)
+      })
+      
     })
-    .then(function(){
-      return shiftHand();
-    })
-    .then(function(){
-      return returnUpdatedGame();
-    })
+    .then(function(response){
+      console.log('resssss', response)
+//      return shiftHand();
+    }).catch(function(err){ console.error('whoops', err) })
+//    .then(function(){
+////      return returnUpdatedGame();
+//    })
   }
   
   //////////////
@@ -74,8 +83,9 @@ module.exports = function () {
   
   ////// IN MAP
   function buildCard() {
-    doSomethingBasedOnBuildingACard()
+    return doSomethingBasedOnBuildingACard()
     .then(function(){
+      console.log('are we even here though?', card)
       return Promise.join(player.removeTemporary(card), player.addPermanent(card));
     })
   }

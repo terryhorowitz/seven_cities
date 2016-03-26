@@ -23,6 +23,7 @@ module.exports = function (server) {
   var newGame;
   var socketId;
   var clients;
+  var playersChoices = [];
 	//hold all user socket ids with names and playerids (from db)
 	var allPlayers = {};
   io.sockets.on('connection', function (socket) {
@@ -30,7 +31,6 @@ module.exports = function (server) {
 		var counter = 0;
 		var players = [];
 		var gameObject;
-		var playersChoices = [];
 		//join all players to the correct room
 		socket.on('create', function(data) {
 			//this whole if is for dealing with a user refreshing during a game. local storage!
@@ -126,8 +126,19 @@ module.exports = function (server) {
 	});
 
 	socket.on('submit choice', function(data) {
+        var peopleInRoom = 0;
+      
+        clients = io.sockets.adapter.rooms[currentRoom];
+        for (var key in clients.sockets) {
+            peopleInRoom++;
+        }
 		playersChoices.push(data)
-		console.log('this is players', players, 'this is counter', counter, 'this is data', data)
+        console.log('outside', playersChoices)
+        if (playersChoices.length === peopleInRoom){
+          console.log('inside', peopleInRoom)
+          playCard(playersChoices)
+        }
+        
 		// return playCard(data.playerId, data.cardId, data.selection)
 		// .then(function(game) {
 

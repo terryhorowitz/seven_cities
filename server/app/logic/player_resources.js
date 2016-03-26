@@ -18,6 +18,7 @@ function buildPlayerResources(player, resources) {
       } 
       else playersResources[resources[i]]++;
     }
+  console.log('about to save')
   return player.save();
 }
 
