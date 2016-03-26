@@ -26,7 +26,7 @@ module.exports = {
      return Promise.join(left.getPermanent(query), right.getPermanent(query))    
     }, 
                          
-    getTemporaryFor: function(query, left, right){
+    getTemporaryForLR: function(query, left, right){
      return Promise.join(left.getTemporary(query), right.getTemporary(query))    
     }
 }

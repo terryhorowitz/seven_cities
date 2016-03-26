@@ -8,6 +8,7 @@ var Player = require('../../db/models').Player;
 
 var db_getters = require('./db_getter');
 var addToPlayerResources = require('./player_resources');
+var playOptions = require('./player_card_options')();
 var resourcesObj = require('./game_resources.js')()
 
 var Promise = require('bluebird');
@@ -53,8 +54,10 @@ module.exports = function () {
       return executeChoice(choice)
     })
     .then(function(){
-      //retrieve player with all updates and send back to front?
-      return Player.findOne({where: {id: player.id}, include:[{all:true}]});
+      return shiftHand();
+    })
+    .then(function(){
+      return returnUpdatedGame();
     })
   }
   
@@ -83,8 +86,17 @@ module.exports = function () {
     return buildCard();
   }
   
-  function buildWonder(playerBuilding, cardToUse){
-    //need to add a built wonders property somewhere (see play_card_options)
+  function buildWonder(){
+    return playOptions.checkIfPlayerCanBuildWonder()
+    .then(function(response){
+      player.wondersBuilt++;
+      if (typeof response === 'string'){
+        return player.removeTemporary(card); //remove from player but do not include in game discard
+      }
+      else {
+        return tradeForCard(response);
+      }
+    })
   }
   
   function discard(){
@@ -191,6 +203,22 @@ module.exports = function () {
       totalPayment += tradeParams[resourceTypeMap[trade[i]]];
     }
     return totalPayment;
+  }
+    
+  function shiftHand(){
+    var newHand;
+    return db_getters.getNeighbors(player)
+    .spread(function(left, right){
+        return db_getters.getTemporaryForLR({}, left, right);
+    })
+    .then(function(leftHand, rightHand){
+      card.era === 2 ? newHand = leftHand : newHand = rightHand;
+      return player.setTemporary(newHand);
+    })
+  }
+  
+  function returnUpdatedGame () {
+    return Game.findOne({where: {id: player.gameId}});
   }
 
   // PUBLIC API: 
