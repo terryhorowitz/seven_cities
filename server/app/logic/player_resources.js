@@ -18,7 +18,7 @@ function buildPlayerResources(player, resources) {
       } 
       else playersResources[resources[i]]++;
     }
-  return Promise.resolve(player)
+  return player.save();
 }
 
 function updateResourceTradingParams(player, direction, resourceType) {

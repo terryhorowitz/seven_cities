@@ -50,7 +50,6 @@ module.exports = function () {
     .spread(function(_player, _card){
       player = _player; 
       card = _card; 
-      
       return executeChoice(choice)
     }) 
   }
@@ -69,12 +68,15 @@ module.exports = function () {
   ////// IN MAP
   function buildCard() {
     doSomethingBasedOnBuildingACard()
-    return Promise.join(player.removeTemporary(card), player.addPermanent(card))
+    .then(function(){
+      return Promise.join(player.removeTemporary(card), player.addPermanent(card));
+    })
   }
   
   function payForCard() {
     var total = player.money - card.cost;
-    return player.update({money: total});
+    player.money = total;
+    return buildCard();
   }
   
   function buildWonder(playerBuilding, cardToUse){
@@ -102,6 +104,7 @@ module.exports = function () {
       //functionality array indicates direction and type of resource
       addToPlayerResources.updateResourceTradingParams(player, card.functionality[0], card.functionality[card.functionality.length - 1])
     }
+    //some cards that do not have immediate effects will also pass through here
     else return increaseMoney(); 
   }
   
@@ -119,14 +122,16 @@ module.exports = function () {
     if (card.functionality[0] === "left"){
       return Promise.join(countNeighborCardsOfType(), countOwnCardsOfType())
       .spread(function(leftAmount, rightAmount){
-        //increase money this amount
+        player.money += leftAmount + rightAmount;
+        return buildCard();
       })
     } 
     // if first element in functionality array is not left, then you only have to update own resources 
     else {
       return countOwnCardsOfType()
       .then(function(amount){
-        //increase money this amount
+        player.money += amount;
+        return buildCard();
       })
     }  
   }
@@ -153,7 +158,7 @@ module.exports = function () {
   
   
   function tradeForCard(tradeParams){
-    //need tradeParams to be an object containing player(s) we are trading with and what items we are trading with them (e.g. {left: ['wood', 'clay'], right: ['clay]} OR {left: ['ore']} etc).
+    //obj that needs to be recieved: {left: ['wood', 'clay'], right: ['clay]} OR {left: ['ore'], right: null} etc).
     var payLeft = trade(tradeParams.left, 'leftNeighbor');
     var payRight = tradeParams(tradeParams.right, 'rightNeighbor')
     return db_getters.getNeighbors(player)
@@ -171,8 +176,7 @@ module.exports = function () {
         player.money -= payLeft;
         right.money += payLeft;
       }
-      buildCard();
-      return Promise.join(player.save(), left.save(), right.save())
+      return buildCard();
     })
   }
 
