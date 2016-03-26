@@ -13,10 +13,10 @@ module.exports = function () {
   //rename: game_resource_initalize
   var playersResources, newGame;
   
-  function gameResourcesOrchestrator(newGameId){
-    return db_getters.getGame(newGameId)
-    .then(function(){
-      addGameToResourcesObj();
+  function gameResourcesOrchestrator(gameId){
+    return db_getters.getGame(gameId)
+    .then(function(game){
+      addGameToResourcesObj(game)
       addPlayersToGameResourcesObj();
       loadPlayersResources();
       return loadTradeParams();
@@ -27,7 +27,7 @@ module.exports = function () {
   }
   
 
-  function addGameToResourcesObj () {
+  function addGameToResourcesObj (game) {
       newGame = game;
       gameResourcesObj[game.id] = {};
   }
