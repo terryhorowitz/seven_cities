@@ -6,9 +6,9 @@ var Board = require('../../db/models').Board;
 var Deck = require('../../db/models').Deck;
 var Player = require('../../db/models').Player;
 
-var db_getters = require('./db_getter');
+var db_getters = require('./db_getters');
 var addToPlayerResources = require('./player_resources');
-var playOptions = require('./player_card_options')();
+var playOptions = require('./play_card_options')();
 var resourcesObj = require('./game_resources.js')()
 
 var Promise = require('bluebird');

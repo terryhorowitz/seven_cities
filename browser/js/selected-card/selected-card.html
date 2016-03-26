@@ -5,11 +5,11 @@
     </div>
     <div class="col-xs-8">
         <div ng-repeat='option in playOptions'>
-            <a>{{option}}</a>
+            <a ng-click="submitChoice(option)">{{option}}</a>
         </div>
-        <div>
+        <<!-- div>
             <a>Confirm</a>
-        </div>
+        </div> -->
 
   <!--       <div>
             <a ng-hide="" class="card-actions" href="">Build Card</a>

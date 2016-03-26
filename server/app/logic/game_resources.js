@@ -11,18 +11,17 @@ var gameResourcesObj = {};
 
 module.exports = function () {
   //rename: game_resource_initalize
-  var playersResources, newGame;
+  var newGame;
   
   function gameResourcesOrchestrator(gameId){
     return db_getters.getGame(gameId)
     .then(function(game){
       addGameToResourcesObj(game)
       addPlayersToGameResourcesObj();
-      loadPlayersResources();
-      return loadTradeParams();
+      return loadPlayersResources();
     })
     .then(function(){
-      return game.GamePlayers
+      return db_getters.getGame(gameId);
     })
   }
   
@@ -34,18 +33,29 @@ module.exports = function () {
   
   function addPlayersToGameResourcesObj (){
     newGame.GamePlayers.forEach(function(player){
-        gameResourcesObj[game.id][player.id] = {};
+        gameResourcesObj[newGame.id][player.id] = {};
       }); 
+    return newGame;
   }
   
   function loadPlayersResources (){
-    return Promise.each(game.GamePlayers, function(player){
-        Promise.join(loadOwnResources(player), loadNeighborResources(player))
+//    Promise.map(newGame.GamePlayers, function(player){
+//      console.log('me', player.id)
+//        return Promise.join(loadOwnResources(player), loadNeighborResources(player))
+//    })
+    
+    return Promise.map(newGame.GamePlayers, function(player){
+      return loadOwnResources(player);
+    })
+    .then(function(players){
+      return Promise.map(newGame.GamePlayers, function(player){
+        return loadNeighborResources(player)
+      })
     })
   }
-
+  
   function loadOwnResources(player) {
-    playersResources = gameResourcesObj[game.id][player.id];
+    var playersResources = gameResourcesObj[newGame.id][player.id];
     return player.getBoard()
     .then(function(board){
       playersResources.self = {};
@@ -54,24 +64,30 @@ module.exports = function () {
   }
   
   function loadNeighborResources(player){
-    playersResources = gameResourcesObj[game.id][player.id];
-    return db_getters.getNeighbors(player)
+    var playersResources = gameResourcesObj[newGame.id][player.id];
+    return Promise.all([Player.findOne({where: {id: player.LeftNeighborId}}), Player.findOne({where: {id: player.RightNeighborId}})])//db_getters.getNeighbors(player)
+    
     .spread(function(leftNeighbor, rightNeighbor) {
-      return Promise.join(leftNeighbor, rightNeighbor, leftNeighbor.getBoard(), rightNeighbor.getBoard())
+      return Promise.join(leftNeighbor.getBoard(), rightNeighbor.getBoard())
     })
-    .spread(function(leftNeighbor, rightNeighbor, leftNeighborBoard, rightNeighborBoard) {
-      playersResources.leftNeighbor = {};
-      playersResources.rightNeighbor = {};
-      playersResources.leftNeighbor[leftNeighborBoard.resource] = 1;
-      playersResources.rightNeighbor[rightNeighborBoard.resource] = 1;
+    .spread(function(leftNeighborBoard, rightNeighborBoard) {
+      playersResources.left = {};
+      playersResources.right = {};
+      playersResources.left[leftNeighborBoard.resource] = 1;
+      playersResources.right[rightNeighborBoard.resource] = 1;
+      return loadTradeParams(player);
     })
   }
 
-  function loadTradeParams() {
-    playersResources = gameResourcesObj[game.id][player.id];
+  function loadTradeParams(player) {
+    var playersResources = gameResourcesObj[newGame.id][player.id];
     var initalTradeParams = {raw: 2, processed: 2}
-    playersResources.leftNeighbor.trade = initalTradeParams;
-    playersResources.rightNeighbor.trade = initalTradeParams;
+    playersResources.left.trade = {};
+    playersResources.right.trade = {}
+    console.log(playersResources.right)
+    playersResources.left.trade = initalTradeParams;
+    playersResources.right.trade = initalTradeParams;
+    return player;
   }
   
     

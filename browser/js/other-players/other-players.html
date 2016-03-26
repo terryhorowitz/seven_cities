@@ -3,17 +3,20 @@
 
 
         <li class="other-player-icons neighbor-icons">
-            {{left.name}}
+            <a ng-click='showNeighbor(left)'>{{left.name}}</a>
 <!--             <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
  -->        </li>
         <li class="other-player-icons" ng-repeat="player in other" ng-show="true">
-            {{player.name}}
+            <a ng-click='showNeighbor(player)'>{{player.name}}</a>
 <!--             <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
  -->        </li>
         <li class="other-player-icons neighbor-icons">
-            {{right.name}}
+            <a ng-click='showNeighbor(right)'>{{right.name}}</a>
 <!--             <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
  -->        </li>
     </ul>
 </div>
 <div ng-show="true">Waiting on {{  }}...</div>
+<div ng-show='neighborView'>
+    <view-neighbor neighbor='neighbor'></view-neighbor>
+</div>
