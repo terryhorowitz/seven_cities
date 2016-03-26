@@ -1,7 +1,7 @@
 module.exports = {
   
     getGame: function(gameId){
-        return Game.findOne({where: {id: updatedPlayer.gameId}, include: [{model: Deck}, {model: Player, as: 'GamePlayers', include: [{model: Card, as: 'Permanent'}, {model: Card, as: 'Temporary'}, {model: Player, as: 'LeftNeighbor'}, {model: Player, as: 'RightNeighbor'}, {model: Board}]}]});
+        return Game.findOne({where: {id: gameId}, include: [{model: Deck}, {model: Player, as: 'GamePlayers', include: [{model: Card, as: 'Permanent'}, {model: Card, as: 'Temporary'}, {model: Player, as: 'LeftNeighbor'}, {model: Player, as: 'RightNeighbor'}, {model: Board}]}]});
     }, 
   
     getNeighbors: function(player){
