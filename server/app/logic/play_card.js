@@ -123,7 +123,7 @@ module.exports = function () {
     }
     else if (tradePosts.indexOf(card.name) > -1){
       //functionality array indicates direction and type of resource
-      addToPlayerResources.updateResourceTradingParams(player, card.functionality[0], card.functionality[card.functionality.length - 1])
+      addToPlayerResources.updateResourceTradingParams(player, card.functionality[0], card.functionality[card.functionality.length - 1]);
     }
     //some cards that do not have immediate effects will also pass through here
     else return increaseMoney(); 
@@ -222,7 +222,7 @@ module.exports = function () {
   }
   
   function returnUpdatedGame () {
-    return Game.findOne({where: {id: player.gameId}});
+    return db_getters.getGame(player.gameId);
   }
 
   // PUBLIC API: 
