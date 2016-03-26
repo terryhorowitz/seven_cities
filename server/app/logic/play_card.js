@@ -31,6 +31,16 @@ module.exports = function () {
     "discard": discard
   }
   
+  var resourceTypeMap = {
+      "wood": 'raw',
+      "clay": 'raw',
+      "ore": 'raw',
+      "stone": 'raw',
+      "glass": 'processed',
+      "textile": 'processed',
+      "papyrus": 'processed'
+    }
+  
   /////////////////////////////////////
   
   
@@ -51,7 +61,7 @@ module.exports = function () {
 
   function executeChoice(choice){
     //if choice is not in map, an obj was returned, indicating trade options were selected
-    if (!choiceMap[choice]) tradeForCard(player, card, choice);
+    if (!choiceMap[choice]) tradeForCard(choice);
     else choiceMap[choice]();
   }
 
@@ -103,20 +113,25 @@ module.exports = function () {
   function getMoneyFromCard(){
     // this is weird because functionality array holds mixed types by design, don't worry about it 
     if (card.functionality[0] === "left"){
-      return Promise.join(countNeighborCardsOfType(), countOwnCardsOfType());//.then do money things
+      return Promise.join(countNeighborCardsOfType(), countOwnCardsOfType())
+      .spread(function(leftAmount, rightAmount){
+        //increase money this amount
+      })
     } 
     // if first element in functionality array is not left, then you only have to update own resources 
     else {
-      return countOwnCardsOfType();
+      return countOwnCardsOfType()
+      .then(function(amount){
+        //increase money this amount
+      })
     }  
   }
   
   function countNeighborCardsOfType(){
     var cardToBePaidFor = card.functionality[card.functionality.length - 1];
-    
     return db_getters.getNeighbors(player)
     .spread(function(leftNeighbor, rightNeighbor){
-      return db_getter.getPermanentForLR({where: {type: cardToBePaidFor}}, leftNeighbor, rightNeighbor)
+      return db_getters.getPermanentForLR({where: {type: cardToBePaidFor}}, leftNeighbor, rightNeighbor)
     })
     .spread(function(leftCards, rightCards){
       return leftCards.length + rightCards.length;
@@ -133,63 +148,38 @@ module.exports = function () {
   }
   
   
-  function tradeForCard(playerTrading, cardToPayFor, tradeParams){
+  function tradeForCard(tradeParams){
     //need tradeParams to be an object containing player(s) we are trading with and what items we are trading with them (e.g. {left: ['wood', 'clay'], right: ['clay]} OR {left: ['ore']} etc).
-    var tradePromise;
-    if (tradeParams.left !== null && tradeParams.right !== null) tradePromise = Promise.join(tradeLeft(playerTrading, tradeParams.left), tradeRight(playerTrading, tradeParams.right))
-    if (tradeParams.left) tradeLeft(playerTrading, tradeParams.left)
-    if (tradeParams.right) tradePromise = tradeRight(playerTrading, tradeParams.right)
-    
-    return tradePromise
-    .then(function(){
-      buildCard(playerTrading, cardToPayFor)
+    var payLeft = trade(tradeParams.left, 'leftNeighbor');
+    var payRight = tradeParams(tradeParams.right, 'rightNeighbor')
+    return db_getters.getNeighbors(player)
+    .then(function(left, right){
+      if (tradeParams.left !== null && tradeParams.right !== null){
+        player.money -= payLeft - payRight;
+        left.money += payLeft;
+        right.money += payRight;
+      }
+      else if (!tradeParams.right) {
+        player.money -= payLeft;
+        left.money += payLeft;
+      }
+      else if (!tradeParams.left) {
+        player.money -= payLeft;
+        right.money += payLeft;
+      }
+      buildCard();
+      return Promise.join(player.save(), left.save(), right.save())
     })
   }
-  
-  //there must be a better way...instead of making again for right?
-  function tradeLeft(activePlayer, trade){
-    var resourceTypeMap = {
-      wood: 'raw',
-      clay: 'raw',
-      ore: 'raw',
-      stone: 'raw',
-      glass: 'processed',
-      textile: 'processed',
-      papyrus: 'processed'
+
+  function trade(trade, tradeDirection){
+    var tradeParams = resourcesObj.getGameResources[player.gameId][player.id][tradeDirection].trade;
+    var totalPayment = 0;
+    for (var i = 0; i < trade.length; i++){
+      totalPayment += tradeParams[resourceTypeMap[trade[i]]];
     }
-    //need to check if player has any trade cards built that change trade conditions
-    //need to see if they are trading left, right or both
-    //figure out how much to pay each player
-//    var playerAndNeighborRsc = gameResources.getGameResources(activePlayer.gameId)[activePlayer];
-//    //{self: {}, left: {}, right:{}}
-    return Promise.join(activePlayer.getLeftNeighbor(), activePlayer.getPermanent({where: {type: 'Trading'}}))
-    .spread(function(leftNeighbor, builtTradeCards){
-      //make a function to check player trade options?
-      var cost = 0;
-      var opts = {raw: 2, processed: 2};
-      
-      if (builtTradeCards.length){
-        for (var i = 0; i < builtTradeCards.length; i++){
-          if (builtTradeCards[i].functionality[0] === 'left'){
-            if (builtTradeCards[i].functionality[2]) opts.processed = 1;
-            if (builtTradeCards[i].functionality[1] === "Raw Resource") opts.raw = 1;
-          }
-        }
-      }
-      
-      for (var i = 0; i < trade.length; i++){
-        cost += opts[resourceTypeMap[trade[i]]];
-      }
-      activePlayer.money = activePlayer.money - cost;
-      leftNeighbor.money = leftNeighbor.money + cost;
-      return Promise.join(activePlayer.save(), leftNeighbor.save())
-    })
-    
+    return totalPayment;
   }
-  
-  
-
-
 
   // PUBLIC API: 
   return orchestrator;
