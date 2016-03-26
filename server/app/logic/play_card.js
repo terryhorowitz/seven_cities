@@ -5,96 +5,131 @@ var Card = require('../../db/models').Card;
 var Board = require('../../db/models').Board;
 var Deck = require('../../db/models').Deck;
 var Player = require('../../db/models').Player;
-var resourceBuilder = require('./play_card_options')();
+var db_getter = require('./db_getter');
+
+var buildPlayerResources = require('./player_resources');
 var resourcesObj = require('./game_resources.js')()
 var Promise = require('bluebird');
 var _ = require('lodash');
 
 module.exports = function () {
-
-  function executeChoice(playerId, cardId, choice){
-    return Promise.join(Player.findOne({where: {id: playerId}, include: [{all:true}]}), Card.findOne({where: {id: cardId}, include: [{all:true}]}))
-    .spread(function(player, card){
-      var choicePromise;
-      if (choice === "get free" || choice === "upgrade" || choice === "paid by own resources"){
-        choicePromise = buildCard(player, card)
-      }
-      else if (choice === "pay money"){
-        choicePromise = payForCard(player, card); //then buildCard()
-      }
-      else if (typeof choice === "object"){//indicates a trade option was selected
-        choicePromise = tradeForCard(player, card, choice); //then buildCard()
-      }
-      else if (choice === "build wonder"){
-        choicePromise = buildWonder(player, card);
-      }
-      else if (choice === "discard"){
-        choicePromise = discard(player, card);
-      }
-      return choicePromise;
-    })
+  
+  
+  ////////////// STATE ////////////////
+  var player, card;
+  var newResources = ["Raw Resource", "Processed Resource", "Forum", "Caravansery"]; 
+  var tradingSites = ["Vineyard", "Bazar", "Haven", "Chamber of Commerce", "Lighthouse"];
+  
+  
+  var choiceMap = {
+    "get free": buildCard,
+    "upgrade": buildCard,
+    "paid by own resources": buildCard,
+    "pay money": payForCard,
+    "build wonder": buildWonder,
+    "discard": discard
   }
-
-  function buildCard(playerBuildingCard, cardToBuild) {
-
-    return playerBuildingCard.removeTemporary(cardToBuild)
-    .then(function(){
-      return playerBuildingCard.addPermanent(cardToBuild)
-    }) 
-    .then(function(player){
-//      console.log('card moved to built cards (perm)!', player)
-      if (cardToBuild.type === "Raw Resource" || cardToBuild.type === "Processed Resource" || cardToBuild.name === "Forum" || cardToBuild.name === "Caravansery"){
-        resourceBuilder.buildPlayerResources(playerBuildingCard, cardToBuild.functionality);
-      }
+  
+  /////////////////////////////////////
+  
+  
+  /////// Public API
+  function orchestrator(playerId, gameId, choice){
+    Promise.join(db_getters.getPlayer(playerId), db_getter.getCard(gameId))
+    .spread(function(_player, _card){
+      player = _player; 
+      card = _card; 
       
-      else if (cardToBuild.name === "Tavern") playerBuildingCard.money+=5;
-      else if(cardToBuild.name === "Vineyard" || cardToBuild.name === "Bazar" || cardToBuild.name === "Haven" || cardToBuild.name === "Chamber of Commerce" || cardToBuild.name === "Lighthouse"){
-        getMoneyFrom(cardToBuild, playerBuildingCard);
-      }
-      else if (cardToBuild.name === "Arena") {
-        var moneyTotal = playerBuildingCard.money + (playerBuildingCard.wondersBuilt * 3);
-        return playerBuildingCard.update({money: moneyTotal});
-      }
-        
-      return player.save();
+      return executeChoice(choice)
+    }) 
+  }
+  
+  ///////
+  
+
+
+  function executeChoice(choice){
+    if (!choiceMap[choice]) tradeForCard(player, card, choice);
+    else choiceMap[choice]();
+  }
+
+  
+  ////// IN MAP
+  function buildCard() {
+    doSomethingBasedOnBuildingACard()
+    return Promise.join(player.removeTemporary(card), player.addPermanent(card))
+  }
+  
+  function payForCard() {
+    var total = player.money - card.cost;
+    return player.update({money: total});
+  }
+  
+  function buildWonder(playerBuilding, cardToUse){
+    //need to add a built wonders property somewhere (see play_card_options)
+  }
+  
+  function discard(){
+    db_getter.getGame(player.gameId)
+    .then(function(game){
+      return Promise.join(game.addDiscard(discardCard), playerDiscarding.removeTemporary(discardCard));
     })
   }
   
-  function getMoneyFrom(card, player){
-    
-    cardToBePaidFor = card.functionality[card.functionality.length - 1];
-    if (card.functionality[0] === "left"){
-      return Promise.join(countNeighborCardsOfType(card.functionality, player), countOwnCardsOfType(card.functionality, player));//.then do money things
-    } else return countOwnCardsOfType(card.functionality, player);
-    
+  ///////
+  
+  function doSomethingBasedOnBuildingACard(){
+    if (newResources.indexOf(card.type) > -1 || newResources.indexOf(card.name) > -1){
+      return buildPlayerResources(player, card.functionality);
+    }
+
+    else if (tradingSites.indexOf(card.name) > -1){
+      return getMoneyFrom(cardToBuild, playerBuildingCard);
+    }
+    else return increaseMoney(); 
   }
   
-  function countNeighborCardsOfType(cardType, player){
+  
+
+  function increaseMoney(){
+    if (card.name === 'Tavern') player.money += 5;
+    else if (card.name === 'Arena') player.money += (player.wondersBuilt * 3)
+    return player.save()
+  }
+  
+  
+  function getMoneyFrom(){
+    // this is weird because functionality array holds mixed types by design, don't worry about it 
+    if (card.functionality[0] === "left"){
+      return Promise.join(countNeighborCardsOfType(), countOwnCardsOfType());//.then do money things
+    } 
+    // if first element in functionality array is not left, then you only have to update own resources 
+    else {
+      return countOwnCardsOfType();
+    }  
+  }
+  
+  function countNeighborCardsOfType(){
+    var cardToBePaidFor = card.functionality[card.functionality.length - 1];
     
-    return Promise.join(player.getLeftNeighbor(), player.getRightNeighbor)
+    return db_getter.getNeighbors(player)
     .spread(function(leftNeighbor, rightNeighbor){
-      return Promise.join(leftNeighbor.getPermanent({where: {type: cardType}}), rightNeighbor.getPermanent({where: {type: cardType}}))
+      return db_getter.getPermanentFor({where: {type: cardToBePaidFor}}, leftNeighbor, rightNeighbor)
     })
     .spread(function(leftCards, rightCards){
       return leftCards.length + rightCards.length;
     })
   }
   
-  function countOwnCardsOfType(cardType, player){
-    return player.getPermanent({where: {type: cardType}})
+  function countOwnCardsOfType(){
+    var cardToBePaidFor = card.functionality[card.functionality.length - 1];
+    
+    return player.getPermanent({where: {type: cardToBePaidFor}})
     .then(function(cards){
       return cards.length;
     })
   }
   
-  function payForCard(playerToCharge, cardToBuy) {
-    var total = player.money - cardToBuy.cost;
-    return player.update({money: total})
-    .then(function(player){
-//      console.log('charged player, building card!', player)
-      return buildCard(player, cardToBuy);
-    })
-  }
   
   function tradeForCard(playerTrading, cardToPayFor, tradeParams){
     //need tradeParams to be an object containing player(s) we are trading with and what items we are trading with them (e.g. {left: ['wood', 'clay'], right: ['clay]} OR {left: ['ore']} etc).
@@ -151,20 +186,12 @@ module.exports = function () {
   }
   
   
-  function buildWonder(playerBuilding, cardToUse){
-    //need to add a built wonders property somewhere (see play_card_options)
-  }
-  
-  function discard(playerDiscarding, discardCard){
-    return Game.findOne({where: {id: playerDiscarding.gameId}})
-    .then(function(game){
-      return game.addDiscard(discardCard);
-    })
-    .then(function(){
-      return playerDiscarding.removeTemporary(discardCard);
-    })
-  }
-  return executeChoice;
+
+
+
+  // PUBLIC API: 
+  return orchestrator;
+
 }
 
 //executeChoice(13,15,"get free");

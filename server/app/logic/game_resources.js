@@ -5,6 +5,7 @@ var Card = require('../../db/models').Card
 var Deck = require('../../db/models').Deck
 var Player = require('../../db/models').Player
 var Promise = require('bluebird');
+var db_getters = require('./db_getters'); 
 var _ = require('lodash');
 var gameResourcesObj = {};
 
@@ -13,7 +14,7 @@ module.exports = function () {
   var playersResources, newGame;
   
   function gameResourcesOrchestrator(newGameId){
-    return getGame(newGameId)
+    return db_getters.getGame(newGameId)
     .then(function(){
       addGameToResourcesObj();
       addPlayersToGameResourcesObj();
@@ -24,9 +25,6 @@ module.exports = function () {
     })
   }
   
-  function getGame (gameId){
-    return Game.findOne({where: {id: newGameId}, include: [{all: true}]})
-  }
 
   function addGameToResourcesObj () {
       newGame = game;
@@ -55,7 +53,7 @@ module.exports = function () {
   }
   
   function loadNeighborResources(player){
-    return Promise.join(player.getLeftNeighbor(), player.getRightNeighbor())
+    return db_getters.getNeighbors(player)
     .spread(function(leftNeighbor, rightNeighbor) {
       return Promise.join(leftNeighbor, rightNeighbor, leftNeighbor.getBoard(), rightNeighbor.getBoard())
     })
@@ -88,6 +86,7 @@ module.exports = function () {
 //    }
 //  }
   
+    
   function getGameResources(gameId) {
     return gameResourcesObj[gameId]
   }
