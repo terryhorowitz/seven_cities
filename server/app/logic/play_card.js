@@ -46,8 +46,8 @@ module.exports = function () {
   
   
   /////// Public API/////////////
-  function orchestrator(playerId, gameId, choice){
-    Promise.join(db_getters.getPlayer(playerId), db_getters.getCard(gameId))
+  function orchestrator(playerId, cardId, choice){
+    Promise.join(db_getters.getPlayer(playerId), db_getters.getCard(cardId))
     .spread(function(_player, _card){
       player = _player; 
       card = _card; 
@@ -96,6 +96,7 @@ module.exports = function () {
       else {
         return tradeForCard(response);
       }
+      //need to consider outcome(functionality) of building wonder
     })
   }
   
@@ -165,7 +166,6 @@ module.exports = function () {
   
   function countOwnCardsOfType(){
     var cardToBePaidFor = card.functionality[card.functionality.length - 1];
-    
     return player.getPermanent({where: {type: cardToBePaidFor}})
     .then(function(cards){
       return cards.length;
@@ -225,5 +225,3 @@ module.exports = function () {
   return orchestrator;
 
 }
-
-//executeChoice(13,15,"get free");
