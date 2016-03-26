@@ -13,6 +13,7 @@ app.config(function ($stateProvider) {
 app.controller('GameController', function ($scope, $state) {
 
     var socket = io(window.location.origin); 
+
     $scope.roomname = $state.params.roomname;
     $scope.playername = $state.params.playername;
 
@@ -186,5 +187,24 @@ app.controller('GameController', function ($scope, $state) {
         if (!$scope.clickedPile) $scope.clickedPile = pile;
         else $scope.clickedPile = false;
       }
+
+      // chat stuff
+      $scope.msgs = [];
+      $scope.sendMsg = function() {
+        $scope.msg.player = $scope.playername
+        $scope.msg.room = $scope.roomname
+        socket.emit('send msg', {'room': $scope.msg.room, 'player': $scope.msg.player, 'content': $scope.msg.text})
+        $scope.msg.text = ''
+      }
+
+      socket.on('get msg', function(data) {
+        $scope.msgs.push(data)
+        $scope.$digest()
+      })
+
 });
+
+
+
+
 

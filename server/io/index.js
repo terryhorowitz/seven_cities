@@ -120,6 +120,9 @@ module.exports = function (server) {
 			//check if player can build wonders
 		})
 	});
+	socket.on('send msg', function(data){
+		io.to(currentRoom).emit('get msg', data)
+	})
   });
   
   return io;
