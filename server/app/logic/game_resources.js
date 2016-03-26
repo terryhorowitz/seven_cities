@@ -21,7 +21,7 @@ module.exports = function () {
       return loadPlayersResources();
     })
     .then(function(){
-      return newGame.GamePlayers
+      return db_getters.getGame(gameId);
     })
   }
   

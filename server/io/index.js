@@ -99,7 +99,6 @@ module.exports = function (server) {
 					return startGameFuncs.startGame(players, currentRoom);
 				})
 				.then(function(gameObject) {
-					console.log('gameObject in socket then', gameObject)
 					players = players.map(function(player) {
 						var current = _.find(gameObject.GamePlayers, {'socket': player.socket})
 							player.playerId = current.id;
