@@ -75,6 +75,7 @@ module.exports = function () {
       }
     }
     if (!cost.length) return 'paid by own resources';
+    //change this to be for affording specific amount of resources left over!!
     else if (player.money == 0) return 'cant afford to buy anything';
     else return canIBuyFromMyNeighbors(player, cost);
   }
