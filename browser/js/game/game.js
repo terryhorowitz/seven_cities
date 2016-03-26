@@ -78,7 +78,6 @@ app.controller('GameController', function ($scope, $state) {
         //find my neighbors (need to find myself first!)
         for (var i = 0; i < data.length; i++) {
           var thisSocket = $scope.players[i].socket.slice(2);
-          console.log('thisSocket', thisSocket, '$scope.me.neighborR', $scope.me.neighborR)
           if ($scope.players[i].socket == $scope.me.neighborL && thisSocket !== socket.id) {
             $scope.leftNeighbor = $scope.players[i];
           } else if ($scope.players[i].socket == $scope.me.neighborR && thisSocket !== socket.id) {
@@ -87,7 +86,6 @@ app.controller('GameController', function ($scope, $state) {
             $scope.nonNeighbors.push($scope.players[i]);
           }
         }
-        console.log('left', $scope.leftNeighbor, 'right', $scope.rightNeighbor, 'nonNeighbors', $scope.nonNeighbors)
         $scope.$digest()
       })
 
@@ -141,7 +139,7 @@ app.controller('GameController', function ($scope, $state) {
 
       $scope.dismiss = function() {
         $scope.err = null;
-      }
+      };
 
       //waiting for other players
 

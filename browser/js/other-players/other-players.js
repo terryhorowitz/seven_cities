@@ -7,7 +7,14 @@ app.directive('otherPlayers', function ($rootScope, $state) {
             right: '=',
             other: '='
         },
-        templateUrl: 'js/other-players/other-players.html'
+        templateUrl: 'js/other-players/other-players.html',
+        link: function(scope){
+            var showNeighbor = function(neighbor) {
+                scope.neighborView = true;
+                console.log('this is neighbor', neighbor)
+                scope.neighbor = neighbor;
+            }
+        }
 
 
     };
