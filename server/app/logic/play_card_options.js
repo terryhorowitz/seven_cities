@@ -77,7 +77,7 @@ module.exports = function () {
         if (!ownResourcesCopy[cost[counter]]) counter++;
         else {
           ownResourcesCopy[cost[counter]]--;
-          _.pullAt(cost, i)
+          _.pullAt(cost, counter)
           counter++;
         }
       }
