@@ -24,9 +24,10 @@ function buildPlayerResources(player, resources) {
 }
 
 function updateResourceTradingParams(player, direction, resourceType) {
+  console.log('IN TRADE', player.id, direction, resourceType);
   var gameResources = getGameResources(player.gameId);
-  leftResourcesTradeParams = gameResources[player.id].leftNeighbor.trade;
-  rightResourcesTradeParams = gameResources[player.id].rightNeighbor.trade;
+  var leftResourcesTradeParams = gameResources[player.id].left.trade;
+  var rightResourcesTradeParams = gameResources[player.id].right.trade;
   if (resourceType === "Raw Resource" || direction === 'left'){
     leftResourcesTradeParams.raw = 1;
   } 
@@ -37,6 +38,8 @@ function updateResourceTradingParams(player, direction, resourceType) {
     leftResourcesTradeParams.processed = 1;
     rightResourcesTradeParams.processed = 1;
   }
+  console.log('does it change things?', gameResources[player.id])
+  return player;
 }
 
 module.exports = {

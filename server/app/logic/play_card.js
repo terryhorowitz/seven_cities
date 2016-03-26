@@ -86,7 +86,7 @@ module.exports = function () {
   ////// IN MAP
   function buildCard() {
     console.log('build')
-    return doSomethingBasedOnBuildingACard()
+    doSomethingBasedOnBuildingACard()
     .then(function(){
       console.log('are we even here though?', card)
       return Promise.join(player.removeTemporary(card), player.addPermanent(card));
@@ -127,9 +127,7 @@ module.exports = function () {
   ///////
   
   function doSomethingBasedOnBuildingACard(){
-    console.log('do it')
     if (newResources.indexOf(card.type) > -1 || newResources.indexOf(card.name) > -1){
-      console.log('here')
       return addToPlayerResources.buildPlayerResources(player, card.functionality);
     }
 
@@ -138,7 +136,7 @@ module.exports = function () {
     }
     else if (tradePosts.indexOf(card.name) > -1){
       //functionality array indicates direction and type of resource
-      addToPlayerResources.updateResourceTradingParams(player, card.functionality[0], card.functionality[card.functionality.length - 1]);
+      return addToPlayerResources.updateResourceTradingParams(player, card.functionality[0], card.functionality[card.functionality.length - 1]);
     }
     //some cards that do not have immediate effects will also pass through here
     else return increaseMoney(); 
@@ -149,6 +147,7 @@ module.exports = function () {
   function increaseMoney(){
     if (card.name === 'Tavern') player.money += 5;
     else if (card.name === 'Arena') player.money += (player.wondersBuilt * 3);
+    console.log('passing by')
     return player.save()
   }
   
