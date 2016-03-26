@@ -66,14 +66,21 @@ module.exports = function () {
   
   function checkResourcePaymentMethods(player, cost) {
     playersResources = Resources.getGameResources(player.gameId)[player.id];
-    var ownResourcesCopy = _.cloneDeep(playersResources.self)
-    for (var i = 0; i < cost.length; i++) {
-      console.log('ownResourcesCopy', ownResourcesCopy)
-      if (ownResourcesCopy[cost[i]] && ownResourcesCopy[cost[i]] > 0) {
-        ownResourcesCopy[cost[i]]--;
-        _.pullAt(cost, i)
+    var ownResourcesCopy = _.cloneDeep(playersResources.self);
+    var counter = 0;
+//    for (var i = 0; i < cost.length; i++) {
+//      if (ownResourcesCopy[cost[i]] && ownResourcesCopy[cost[i]] > 0) {
+//        ownResourcesCopy[cost[i]]--;
+//        _.pullAt(cost, i)
+//      }
+      while (counter < cost.length){
+        if (!ownResourcesCopy[cost[counter]]) counter++;
+        else {
+          ownResourcesCopy[cost[counter]]--;
+          _.pullAt(cost, i)
+          counter++;
+        }
       }
-    }
     if (!cost.length) return 'paid by own resources';
     //change this to be for affording specific amount of resources left over!!
     else if (player.money == 0) return 'cant afford to buy anything';
@@ -82,22 +89,42 @@ module.exports = function () {
   
   function canIBuyFromMyNeighbors(player, cost) {
     playersResources = Resources.getGameResources(player.gameId)[player.id];
-    var leftResourcesCopy = _.cloneDeep(playersResources.leftNeighbor);
-    var rightResourcesCopy = _.cloneDeep(playersResources.rightNeighbor);
+    var leftResourcesCopy = _.cloneDeep(playersResources.left);
+    var rightResourcesCopy = _.cloneDeep(playersResources.right);
     var trade = {};
     var leftContribution = [];
     var rightContribution = [];
+    var counter = 0;
     
-    for (var i = 0; i < cost.length; i++){
-      if (leftResourcesCopy[cost[i]] && leftResourcesCopy[cost[i]] > 0){
-        leftResourcesCopy[cost[i]]--;
-        leftContribution.push(cost[i]);
+//    for (var i = 0; i < cost.length; i++){
+//      if (!leftResourcesCopy[cost[i]]){
+//        leftContribution = leftContribution;
+//      }
+//      if (!rightResourcesCopy[cost[i]]){
+//        rightContribution = rightContribution;
+//      }
+//      else if (leftResourcesCopy[cost[i]] && leftResourcesCopy[cost[i]] > 0){
+//        leftResourcesCopy[cost[i]]--;
+//        leftContribution.push(cost[i]);
+//      }
+//      if (rightResourcesCopy[cost[i]] && rightResourcesCopy[cost[i]] > 0){
+//        rightResourcesCopy[cost[i]]--;
+//        rightContribution.push(cost[i]);
+//      }
+      while (counter < cost.length){
+        if (!leftResourcesCopy[cost[counter]] && !rightResourcesCopy[cost[counter]]) counter++;
+        else if (leftResourcesCopy[cost[counter]] && leftResourcesCopy[cost[counter]] > 0) {
+          leftResourcesCopy[cost[counter]]--;
+          leftContribution.push(cost[counter]);
+          counter++;
+        }
+        else if (rightResourcesCopy[cost[counter]] && rightResourcesCopy[cost[counter]] > 0){
+          rightResourcesCopy[cost[counter]]--;
+          rightContribution.push(cost[counter]);
+          counter++;
+        }
       }
-      if (rightResourcesCopy[cost[i]] && rightResourcesCopy[cost[i]] > 0){
-        rightResourcesCopy[cost[i]]--;
-        rightContribution.push(cost[i]);
-      }
-    }
+//    }
     
     if (leftContribution.length === cost.length) trade.left = leftContribution;
     else trade.left = null;
