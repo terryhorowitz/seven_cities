@@ -44,17 +44,21 @@ module.exports = function () {
   /////////////////////////////////////
   
   
-  /////// Public API
+  /////// Public API/////////////
   function orchestrator(playerId, gameId, choice){
     Promise.join(db_getters.getPlayer(playerId), db_getters.getCard(gameId))
     .spread(function(_player, _card){
       player = _player; 
       card = _card; 
       return executeChoice(choice)
-    }) 
+    })
+    .then(function(){
+      //retrieve player with all updates and send back to front?
+      return Player.findOne({where: {id: player.id}, include:[{all:true}]});
+    })
   }
   
-  ///////
+  //////////////
   
 
 
