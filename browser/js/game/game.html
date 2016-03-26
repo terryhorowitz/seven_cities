@@ -1,80 +1,86 @@
-<div ng-hide='currentlyPlaying' id='waiting-screen'>
-	<h2>7 Cities</h2>
+<div class="background" ng-style="background">
+	<div ng-hide='currentlyPlaying' id='waiting-screen'>
+		<h2>7 Cities</h2>
 
-	<h4 ng-show="firstPlayer"><a ng-click='startGame()'>Start game</a></h4>
-	<div ng-show='err' class="alert alert-warning alert-dismissible fade in col-sm-2" role="alert">
-	  <button type="button" ng-click='dismiss()' class="close" data-dismiss="alert" aria-label="Close">
-	    <span aria-hidden="true">&times;</span>
-	  </button>
-		<p>{{err}}</p>
-	</div>
-	<h4><a ng-click='clearLocal()'>Clear Local Storage</a></h4>
-	<a ui-sref="playerView">Go to player-view<span class="glyphicon glyphicon-circle-arrow-right"></span></a>
-	<h4 ng-show="!firstPlayer">Waiting for first player to start game</h4>
-	<h5>this is the room name: {{roomname}}</h5>
-
-	<p>My name: {{me.name}}</p>
-	<p>My board: {{me.board.name}}</p>
-	<p>My money: {{me.money}}</p>
-	<p>My military tokens: {{me.military}}</p>
-	<ul><p>My built cards:</p>
-		<li ng-repeat='card in me.built'>{{card.name}}</li>
-	</ul>
-
-	<ul><p>My hand:</p>
-		<li ng-repeat='card in myHand'><a ng-click='selectCard(card)'>{{card.name}}</a></li>
-	</ul>
-
-	<p>this is the players object: {{players}}</p>
-</div>
-<div ng-show='currentlyPlaying' id='player-view'>
-	<nav class="navbar navbar-static-top">
+		<h4 ng-show="firstPlayer"><a ng-click='startGame()'>Start game</a></h4>
+		<div ng-show='err' class="alert alert-warning alert-dismissible fade in col-sm-2" role="alert">
+		  <button type="button" ng-click='dismiss()' class="close" data-dismiss="alert" aria-label="Close">
+		    <span aria-hidden="true">&times;</span>
+		  </button>
+			<p>{{err}}</p>
+		</div>
 		<h4><a ng-click='clearLocal()'>Clear Local Storage</a></h4>
-		<a ui-sref="home"><span class="glyphicon glyphicon-home pull-left"></span></a>
-		<board-name class='pull-left'></board-name>
-		<other-players left='leftNeighbor' right='rightNeighbor' other='nonNeighbors' class="text-center"></other-players>
-		<tokens class="pull-right"></tokens>
-	</nav>
+		<a ui-sref="playerView">Go to player-view<span class="glyphicon glyphicon-circle-arrow-right"></span></a>
+		<h4 ng-show="!firstPlayer">Waiting for first player to start game</h4>
+		<h5>this is the room name: {{roomname}}</h5>
 
-	<div class="player-view-container container">
+		<p>My name: {{me.name}}</p>
+		<p>My board: {{me.board.name}}</p>
+		<p>My money: {{me.money}}</p>
+		<p>My military tokens: {{me.military}}</p>
+		<ul><p>My built cards:</p>
+			<li ng-repeat='card in me.built'>{{card.name}}</li>
+		</ul>
 
-		<div class="row">	
-			<div class="col-xs-8">
-				<div class='hand'>
+		<ul><p>My hand:</p>
+			<li ng-repeat='card in myHand'><a ng-click='selectCard(card)'>{{card.name}}</a></li>
+		</ul>
+
+		<p>this is the players object: {{players}}</p>
+	</div>
+	<div ng-show='currentlyPlaying' id='player-view'>
+		<nav class="navbar navbar-static-top">
+			<h4><a ng-click='clearLocal()'>Clear Local Storage</a></h4>
+			<a ui-sref="home"><span class="glyphicon glyphicon-home pull-left"></span></a>
+			<board-name class='pull-left'></board-name>
+			<other-players left='leftNeighbor' right='rightNeighbor' other='nonNeighbors' class="text-center"></other-players>
+			<tokens class="pull-right"></tokens>
+		</nav>
+
+		<div class="player-view-container container">
+
+			<div class="row">	
+				<div class="col-xs-8">
+					<div class='hand'>
+						<ul>
+							<li ng-repeat="card in myHand" ng-click='selectCard(card)'>
+								<img src='img/{{card.picture}}'>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<div ng-show='playOptions' class="col-xs-4">
+					<selected-card card='cardSelection' playOptions='playOptions'></selected-card>
+				</div>
+			</div>
+
+			<div class="clearfix"></div>
+
+			<div id="built-cards">
+				<div ng-click="expandPile(pile)" ng-class="{expand: pile === clickedPile}" class="pile" ng-repeat="pile in builtCards" ng-click>
 					<ul>
-						<li ng-repeat="card in myHand" ng-click='selectCard(card)'>
-							<img src='img/{{card.picture}}'>
+						<li ng-repeat="card in pile">
+							<img class="pile-card-img" src='{{card.image}}'>
 						</li>
 					</ul>
 				</div>
 			</div>
 
-			<div ng-show='playOptions' class="col-xs-4">
-				<selected-card card='cardSelection' playOptions='playOptions'></selected-card>
+			<br style="clear:both" />
+
+			<div class="resources pull-left">
+				<img src='/img/board_resources/{{me.board.name}}.png'>
 			</div>
-		</div>
 
-		<div class="clearfix"></div>
-
-		<div id="built-cards">
-			<div ng-click="expandPile(pile)" ng-class="{expand: pile === clickedPile}" class="pile" ng-repeat="pile in builtCards" ng-click>
-				<ul>
-					<li ng-repeat="card in pile">
-						<img class="pile-card-img" src='{{card.image}}'>
-					</li>
-				</ul>
+			<div class='wonders'>
+				<div ng-click="expandPile(wonder)" ng-repeat="wonder in wonderOptions" ng-class="{wonderexpand: wonder === clickedPile}" class="test">
+					<img src='/img/wonders/{{me.board.name}}_{{wonder}}.png'>
+				</div>
 			</div>
+
+			<div class="chat-box pull-right"></div>
+
 		</div>
-
-		<br style="clear:both" />
-
-		<div class='wonders'>
-			<div ng-click="expandPile(wonder)" ng-repeat="wonder in wonderOptions" ng-class="{wonderexpand: wonder === clickedPile}" class="test">
-				<img src='/img/wonders/{{me.board.name}}_{{wonder}}.png'>
-			</div>
-		</div>
-
-		<div class="chat-box pull-right"></div>
-
 	</div>
 </div>

@@ -2,15 +2,25 @@ html {
   height: 100%;
 }
 
-body { 
-  background: no-repeat center center fixed; 
-  background-image: url(img/background/Olympia.png);
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  min-height: 100%;
+body {
+	min-height: 100%;
 }
+
+.background { 
+  background: no-repeat center center fixed; 
+	position: absolute;
+	top: 0px;
+	bottom: 0;
+	width: 100%;
+  background-image: url(img/background/Olympia.png);
+  -webkit-background-size: contain;
+  -moz-background-size: contain;
+  -o-background-size: contain;
+  background-size: contain;
+  /*min-height: 100%;*/
+}
+
+
 
 @mixin not-last-of-type($selector) {
   & #{$selector}:not(:last-of-type) {
@@ -165,6 +175,15 @@ li {
 	bottom: 0;
 	@include not-last-of-type('.test') {
 	    margin-right: 50px;
+	}
+}
+
+.resources {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	img {
+		height: 50px;
 	}
 }
 

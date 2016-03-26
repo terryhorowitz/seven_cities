@@ -14,10 +14,10 @@ body {
   }
 }
 
-/*#main {
-  padding-top: 60px;
+#main {
+  height: 100%;
   margin: 0 auto;
-}*/
+}
 
 @import 'directives/main';
 @import 'home/main';
