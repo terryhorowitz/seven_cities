@@ -22,7 +22,7 @@ module.exports = {
       })
     }, 
   
-    getPermanentFor: function(query, left, right){
+    getPermanentForLR: function(query, left, right){
      return Promise.join(left.getPermanent(query), right.getPermanent(query))    
     }, 
                          

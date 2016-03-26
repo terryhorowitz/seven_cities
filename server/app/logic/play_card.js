@@ -5,10 +5,11 @@ var Card = require('../../db/models').Card;
 var Board = require('../../db/models').Board;
 var Deck = require('../../db/models').Deck;
 var Player = require('../../db/models').Player;
-var db_getter = require('./db_getter');
 
+var db_getters = require('./db_getter');
 var buildPlayerResources = require('./player_resources');
 var resourcesObj = require('./game_resources.js')()
+
 var Promise = require('bluebird');
 var _ = require('lodash');
 
@@ -35,7 +36,7 @@ module.exports = function () {
   
   /////// Public API
   function orchestrator(playerId, gameId, choice){
-    Promise.join(db_getters.getPlayer(playerId), db_getter.getCard(gameId))
+    Promise.join(db_getters.getPlayer(playerId), db_getters.getCard(gameId))
     .spread(function(_player, _card){
       player = _player; 
       card = _card; 
@@ -49,6 +50,7 @@ module.exports = function () {
 
 
   function executeChoice(choice){
+    //if choice is not in map, an obj was returned, indicating trade options were selected
     if (!choiceMap[choice]) tradeForCard(player, card, choice);
     else choiceMap[choice]();
   }
@@ -84,8 +86,8 @@ module.exports = function () {
     }
 
     else if (tradingSites.indexOf(card.name) > -1){
-      return getMoneyFrom(cardToBuild, playerBuildingCard);
-    }
+      return getMoneyFromCard();
+    }//add an else if for updating trade params with east/west trading post and marketplace
     else return increaseMoney(); 
   }
   
@@ -98,7 +100,7 @@ module.exports = function () {
   }
   
   
-  function getMoneyFrom(){
+  function getMoneyFromCard(){
     // this is weird because functionality array holds mixed types by design, don't worry about it 
     if (card.functionality[0] === "left"){
       return Promise.join(countNeighborCardsOfType(), countOwnCardsOfType());//.then do money things
@@ -112,9 +114,9 @@ module.exports = function () {
   function countNeighborCardsOfType(){
     var cardToBePaidFor = card.functionality[card.functionality.length - 1];
     
-    return db_getter.getNeighbors(player)
+    return db_getters.getNeighbors(player)
     .spread(function(leftNeighbor, rightNeighbor){
-      return db_getter.getPermanentFor({where: {type: cardToBePaidFor}}, leftNeighbor, rightNeighbor)
+      return db_getter.getPermanentForLR({where: {type: cardToBePaidFor}}, leftNeighbor, rightNeighbor)
     })
     .spread(function(leftCards, rightCards){
       return leftCards.length + rightCards.length;
