@@ -20,7 +20,7 @@ module.exports = function () {
   var player, card;
   var newResources = ["Raw Resource", "Processed Resource", "Forum", "Caravansery"]; 
   var tradingSites = ["Vineyard", "Bazar", "Haven", "Chamber of Commerce", "Lighthouse"];
-  
+  var tradePosts = ["East Trading Post", "West Trading Post", "Marketplace"]
   
   var choiceMap = {
     "get free": buildCard,
@@ -97,7 +97,11 @@ module.exports = function () {
 
     else if (tradingSites.indexOf(card.name) > -1){
       return getMoneyFromCard();
-    }//add an else if for updating trade params with east/west trading post and marketplace
+    }
+    else if (tradePosts.indexOf(card.name) > -1){
+      //functionality array indicates direction and type of resource
+      addToPlayerResources.updateResourceTradingParams(player, card.functionality[0], card.functionality[card.functionality.length - 1])
+    }
     else return increaseMoney(); 
   }
   
@@ -105,7 +109,7 @@ module.exports = function () {
 
   function increaseMoney(){
     if (card.name === 'Tavern') player.money += 5;
-    else if (card.name === 'Arena') player.money += (player.wondersBuilt * 3)
+    else if (card.name === 'Arena') player.money += (player.wondersBuilt * 3);
     return player.save()
   }
   

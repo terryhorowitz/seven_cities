@@ -28,9 +28,5 @@ module.exports = {
                          
     getTemporaryFor: function(query, left, right){
      return Promise.join(left.getTemporary(query), right.getTemporary(query))    
-    }, 
-                         
-                         
-
-  
+    }
 }
