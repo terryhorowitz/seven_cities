@@ -2,8 +2,9 @@
 var getGameResources = require('./game_resources')().getGameResources;
 
 function buildPlayerResources(player, resources) {
+  console.log('in build')
   var gameResources = getGameResources(player.gameId);
-  playersResources = gameResources[player.id].self;
+  var playersResources = gameResources[player.id].self;
     for (var i = 0; i < resources.length; i++) {
       //ore/wood(combo)-type logic
       if (resources[i].indexOf('/') !== -1){//if it is a slash resource

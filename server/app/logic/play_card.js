@@ -52,9 +52,10 @@ module.exports = function () {
       var playerId = playerChoice.playerId;
       var cardId = playerChoice.cardId;
       var choice = playerChoice.choice;
-      
+      console.log('pick', choice)
       return Promise.join(db_getters.getPlayer(playerId), db_getters.getCard(cardId))
       .spread(function(_player, _card){
+        console.log('who', _player.id)
         player = _player; 
         card = _card; 
         return executeChoice(choice)
@@ -76,6 +77,7 @@ module.exports = function () {
 
   function executeChoice(choice){
     //if choice is not in map, an obj was returned, indicating trade options were selected
+    console.log('execution', choice)
     if (!choiceMap[choice]) tradeForCard(choice);
     else choiceMap[choice]();
   }
@@ -83,6 +85,7 @@ module.exports = function () {
   
   ////// IN MAP
   function buildCard() {
+    console.log('build')
     return doSomethingBasedOnBuildingACard()
     .then(function(){
       console.log('are we even here though?', card)
@@ -124,7 +127,9 @@ module.exports = function () {
   ///////
   
   function doSomethingBasedOnBuildingACard(){
+    console.log('do it')
     if (newResources.indexOf(card.type) > -1 || newResources.indexOf(card.name) > -1){
+      console.log('here')
       return addToPlayerResources.buildPlayerResources(player, card.functionality);
     }
 
