@@ -29,7 +29,7 @@ module.exports = function () {
     "paid by own resources": buildCard,
     "pay money": payForCard,
     "build wonder": buildWonder,
-    "discard": discard
+    "Discard": discard
   }
   
   var resourceTypeMap = {
@@ -86,7 +86,7 @@ module.exports = function () {
   ////// IN MAP
   function buildCard() {
     console.log('build')
-    doSomethingBasedOnBuildingACard()
+    return doSomethingBasedOnBuildingACard()
     .then(function(){
       console.log('are we even here though?', card)
       return Promise.join(player.removeTemporary(card), player.addPermanent(card));
@@ -114,12 +114,14 @@ module.exports = function () {
   }
   
   function discard(){
-    db_getter.getGame(player.gameId)
+    return db_getters.getGame(player.gameId)
     .then(function(game){
-      return Promise.join(game.addDiscard(discardCard), playerDiscarding.removeTemporary(discardCard));
+      console.log('si this game?', game.id)
+      return Promise.join(game.addDiscard(card), player.removeTemporary(card));
     })
     .then(function(){
       player.money+=3;
+      console.log('$$$$',player.money)
       return player.save();
     })
   }

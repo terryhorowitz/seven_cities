@@ -39,7 +39,7 @@ function updateResourceTradingParams(player, direction, resourceType) {
     rightResourcesTradeParams.processed = 1;
   }
   console.log('does it change things?', gameResources[player.id])
-  return player;
+  return player.save();
 }
 
 module.exports = {
