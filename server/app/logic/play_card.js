@@ -105,6 +105,10 @@ module.exports = function () {
     .then(function(game){
       return Promise.join(game.addDiscard(discardCard), playerDiscarding.removeTemporary(discardCard));
     })
+    .then(function(){
+      player.money+=3;
+      return player.save();
+    })
   }
   
   ///////
