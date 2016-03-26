@@ -8,10 +8,10 @@ body {
 
 .background { 
   background: no-repeat center center fixed; 
-	position: absolute;
-	top: 0px;
-	bottom: 0;
-	width: 100%;
+  position: absolute;
+  top: 0px;
+  bottom: 0;
+  width: 100%;
   background-image: url(img/background/Olympia.png);
   -webkit-background-size: contain;
   -moz-background-size: contain;
@@ -187,20 +187,29 @@ li {
 	}
 }
 
-.other-player-icons {
-	width: 50px;
-	height: 50px;
-	border-radius: 50%;
-	border: solid yellow 1px;
-	background-color: white;
-	margin-right: 25px;
-	line-height: 60px;
-	vertical-align: middle;
-}
+nav {
+	li.other-player-icons {
+		width: 50px;
+		height: 50px;
+		border-radius: 50%;
+		border: solid rgba(255, 255, 255, 0.7) 3px;
+		margin-right: 25px;
+		line-height: 60px;
+		vertical-align: middle;
+		background-size: cover !important;
+		a {
+			border-radius: 50%;
+			color: #fff;
+			&:hover{
+				background-color: rgba(255, 255, 255, 0.3);
+			}
+		}
+	}
 
-.neighbor-icons {
-	width: 60px;
-	height: 60px;
+	.neighbor-icons {
+		width: 60px;
+		height: 60px;
+	}
 }
 
 .navbar-nav {

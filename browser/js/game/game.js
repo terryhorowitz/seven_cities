@@ -90,10 +90,10 @@ app.controller('GameController', function ($scope, $state) {
           }
         }
 
-        console.log('left', $scope.leftNeighbor, 'right', $scope.rightNeighbor, 'nonNeighbors', $scope.nonNeighbors)
-        console.log('me',$scope.me)
+        // console.log('left', $scope.leftNeighbor, 'right', $scope.rightNeighbor, 'nonNeighbors', $scope.nonNeighbors)
+        // console.log('me',$scope.me)
         $scope.background = {background: 'url(img/background/' + $scope.me.board.name + '.png)'};
-            console.log('backgd',$scope.background)
+            // console.log('backgd',$scope.background)
 
         $scope.$digest()
       })
