@@ -28,6 +28,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.wonderOptions = [1, 2, 3];
     $scope.nonNeighbors = [];
 
+
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
 
     $scope.clearLocal = function() {
@@ -44,6 +45,7 @@ app.controller('GameController', function ($scope, $state) {
       socket.emit('create', {roomname: $scope.roomname, playername: $scope.playername, localId: tempId});
 
       socket.on('your id', function(data) {
+        console.log('inside your id event')
         $scope.me.playerId = data;
         localStorage.setItem('playerId', data)
       })
@@ -63,6 +65,7 @@ app.controller('GameController', function ($scope, $state) {
           var thisSocket = $scope.players[i].socket.slice(2);
           if (thisSocket == socket.id) {
             $scope.me = $scope.players[i];
+            
             $scope.minuses = [];
             $scope.pluses = 0;
             // $scope.me.tokens.forEach(function(token) {
@@ -88,6 +91,9 @@ app.controller('GameController', function ($scope, $state) {
           }
         }
         console.log('left', $scope.leftNeighbor, 'right', $scope.rightNeighbor, 'nonNeighbors', $scope.nonNeighbors)
+        console.log('me',$scope.me)
+        $scope.background = {background: 'url(img/background/' + $scope.me.board.name + '.png)'};
+            console.log('backgd',$scope.background)
         $scope.$digest()
       })
 
