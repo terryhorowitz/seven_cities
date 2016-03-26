@@ -7,7 +7,7 @@ var Deck = require('../../db/models').Deck;
 var Player = require('../../db/models').Player;
 
 var db_getters = require('./db_getter');
-var buildPlayerResources = require('./player_resources');
+var addToPlayerResources = require('./player_resources');
 var resourcesObj = require('./game_resources.js')()
 
 var Promise = require('bluebird');
@@ -82,7 +82,7 @@ module.exports = function () {
   
   function doSomethingBasedOnBuildingACard(){
     if (newResources.indexOf(card.type) > -1 || newResources.indexOf(card.name) > -1){
-      return buildPlayerResources(player, card.functionality);
+      return addToPlayerResources.buildPlayerResources(player, card.functionality);
     }
 
     else if (tradingSites.indexOf(card.name) > -1){
