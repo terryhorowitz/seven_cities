@@ -33,7 +33,7 @@ var _ = require('lodash');
         return Promise.join(newGame, newGame.setGamePlayers(dbPlayers), newGame.setDecks(deck))
       })
       .spread(function(completeGame){
-        return gameResources.addGameToResourcesObj(completeGame.id);  
+        return gameResources.orchestrator(completeGame.id);  
       })
       .catch(function(err){
         console.log('error making game on DB', err);
