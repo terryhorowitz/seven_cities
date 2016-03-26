@@ -12,6 +12,10 @@ var playCardOptions = require('../app/logic/play_card_options.js')();
 var _ = require('lodash');
 var playerReload = require('../app/logic/playerReload.js');
 var createPlayers = require('../app/logic/createPlayersObject.js');
+var playCard = require('../app/logic/play_card.js')();
+
+
+
 module.exports = function (server) {
   if (io) return io;
   io = socketio(server);
@@ -26,6 +30,7 @@ module.exports = function (server) {
 		var counter = 0;
 		var players = [];
 		var gameObject;
+		var playersChoices = [];
 		//join all players to the correct room
 		socket.on('create', function(data) {
 			//this whole if is for dealing with a user refreshing during a game. local storage!
@@ -91,10 +96,10 @@ module.exports = function (server) {
 						io.sockets.connected[players[a].socket].emit('your hand', hands[a]);
 						players[a].hand = hands[a];
 					}
-					gameObject = startGameFuncs.startGame(players, currentRoom);
-					return gameObject;
+					return startGameFuncs.startGame(players, currentRoom);
 				})
 				.then(function(gameObject) {
+					console.log('gameObject in socket then', gameObject)
 					players = players.map(function(player) {
 						var current = _.find(gameObject.GamePlayers, {'socket': player.socket})
 							player.playerId = current.id;
@@ -120,6 +125,16 @@ module.exports = function (server) {
 			//check if player can build wonders
 		})
 	});
+
+	socket.on('submit choice', function(data) {
+		playersChoices.push(data)
+		console.log('this is players', players, 'this is counter', counter, 'this is data', data)
+		// return playCard(data.playerId, data.cardId, data.selection)
+		// .then(function(game) {
+
+		// })
+	})
+
   });
   
   return io;

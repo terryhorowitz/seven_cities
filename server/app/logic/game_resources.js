@@ -14,15 +14,19 @@ module.exports = function () {
   var playersResources, newGame;
   
   function gameResourcesOrchestrator(gameId){
+    console.log('gameid', gameId)
     return db_getters.getGame(gameId)
     .then(function(game){
       addGameToResourcesObj(game)
       addPlayersToGameResourcesObj();
-      loadPlayersResources();
+      return loadPlayersResources();
+    })
+    .then(function(){
       return loadTradeParams();
     })
     .then(function(){
-      return game.GamePlayers
+      console.log('ame.GamePlayers', newGame.GamePlayers)
+      return newGame.GamePlayers
     })
   }
   
@@ -34,18 +38,20 @@ module.exports = function () {
   
   function addPlayersToGameResourcesObj (){
     newGame.GamePlayers.forEach(function(player){
-        gameResourcesObj[game.id][player.id] = {};
+        gameResourcesObj[newGame.id][player.id] = {};
       }); 
+    return newGame;
   }
   
   function loadPlayersResources (){
-    return Promise.each(game.GamePlayers, function(player){
+    console.log('here')
+    return Promise.each(newGame.GamePlayers, function(player){
         Promise.join(loadOwnResources(player), loadNeighborResources(player))
     })
   }
 
   function loadOwnResources(player) {
-    playersResources = gameResourcesObj[game.id][player.id];
+    playersResources = gameResourcesObj[newGame.id][player.id];
     return player.getBoard()
     .then(function(board){
       playersResources.self = {};
@@ -54,7 +60,7 @@ module.exports = function () {
   }
   
   function loadNeighborResources(player){
-    playersResources = gameResourcesObj[game.id][player.id];
+    playersResources = gameResourcesObj[newGame.id][player.id];
     return db_getters.getNeighbors(player)
     .spread(function(leftNeighbor, rightNeighbor) {
       return Promise.join(leftNeighbor, rightNeighbor, leftNeighbor.getBoard(), rightNeighbor.getBoard())
@@ -68,10 +74,13 @@ module.exports = function () {
   }
 
   function loadTradeParams() {
-    playersResources = gameResourcesObj[game.id][player.id];
+    console.log('still here')
+    console.log('loadTradeParams', newGame)
+    playersResources = gameResourcesObj[newGame.id][player.id];
     var initalTradeParams = {raw: 2, processed: 2}
     playersResources.leftNeighbor.trade = initalTradeParams;
     playersResources.rightNeighbor.trade = initalTradeParams;
+    return;
   }
   
     

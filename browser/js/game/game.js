@@ -97,6 +97,10 @@ app.controller('GameController', function ($scope, $state) {
       //{"left":null,"right":["ore"]}
       //{"left":null,"right":["papyrus"]}
 
+        $scope.submitChoice = function(selection){
+          socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId})
+        }
+
       socket.on('your options', function(options) {
         $scope.playOptions = options;
         // $scope.playOptions.filter(function(option) {
