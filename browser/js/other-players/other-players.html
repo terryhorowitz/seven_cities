@@ -20,6 +20,38 @@
     </ul>
 </div>
 <div ng-show="true">Waiting on {{  }}...</div>
-<div ng-show='neighborView'>
-    <view-neighbor neighbor='neighbor'></view-neighbor>
-</div>
+<!-- <div ng-show='neighborView'> -->
+    <!-- <view-neighbor></view-neighbor> -->
+    <script type="text/ng-template" id="myModalContent">
+ 
+	    <div ng-style="background" class="modal-body modal-background">
+	       <h1 class="pull-left"> {{neighbor.board.name}} </h1>
+	       <tokens class="pull-right"></tokens>
+
+	      <!--  <div class='wonders'>
+				<div ng-click="expandPile(wonder)" ng-repeat="wonder in wonderOptions" ng-class="{wonderexpand: wonder === clickedPile}" class="test">
+					<img src='/img/wonders/{{me.board.name}}_{{wonder}}.png'>
+				</div>
+			</div> -->
+
+
+			<div id="built-cards">
+				<div ng-click="expandPile(pile)" ng-class="{expand: pile === clickedPile}" class="pile" ng-repeat="pile in neighbor.builtView">
+					<ul>
+						<li ng-repeat="card in pile">
+							<img class="pile-card-img" src='{{card}}'>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class='wonders'>
+				<div class="test" ng-repeat="wonder in neighborWonders">
+					<img src='/img/wonders/{{neighbor.board.name}}_{{wonder}}.png'>
+				</div>
+			</div>
+
+	    </div>
+	 
+	</script>
+<!-- </div> -->
