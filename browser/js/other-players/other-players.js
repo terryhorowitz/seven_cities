@@ -12,13 +12,14 @@ app.directive('otherPlayers', function ($rootScope, $state, $uibModal) {
             scope.showNeighbor = function(neighbor) {
                 $uibModal.open({
                     animation: scope.animationsEnabled,
-                    templateUrl: 'myModalContent.html',
+                    templateUrl: 'myModalContent',
                     size: 'large',
+                    scope: scope
                 })
                 scope.neighborView = true;
-                console.log('this is neighbor', neighbor)
-                
+
                 scope.neighbor = neighbor;
+                console.log('this is neighbor', scope.neighbor)
             }
 
             // console.log('left',scope.left);
