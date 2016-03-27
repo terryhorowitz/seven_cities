@@ -39,7 +39,8 @@ var createPlayersObjectRefresh = function(GamePlayers) {
 		var obj = {};
 		obj.board = GamePlayers[m].board;
 		obj.money = GamePlayers[m].money;
-		obj.tokens = GamePlayers[m].tokens;
+		obj.pluses = sortTokens(GamePlayers[m].tokens).plus;
+		obj.minuses = sortTokens(GamePlayers[m].tokens).min;
 		obj.built = GamePlayers[m].Permanent;
 		obj.playerId = GamePlayers[m].id;
 		obj.socket = GamePlayers[m].socket;
@@ -71,6 +72,19 @@ function sortBuiltCards (cards){
 	console.log('did i organize?', sorted)
 	return sorted;
 
+}
+
+function sortTokens(tokensArr) {
+	var pluses = 0;
+	var minuses = 0;
+	tokensArr.forEach(function(token) {
+		if (token === -1) {
+			minuses += 1;
+		} else {
+			pluses += token;
+		}
+	})
+	return {plus: pluses, min: minuses}
 }
     
 module.exports = {
