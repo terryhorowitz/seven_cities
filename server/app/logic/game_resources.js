@@ -62,17 +62,17 @@ module.exports = function () {
     var playersResources = gameResourcesObj[newGame.id][player.id];
     playersResources.left = gameResourcesObj[player.gameId][player.LeftNeighborId].self;
     playersResources.right = gameResourcesObj[player.gameId][player.RightNeighborId].self;
-    return Promise.resolve();
+    return loadTradeParams(player);
   }
 
   function loadTradeParams(player) {
     var playersResources = gameResourcesObj[newGame.id][player.id];
-    var initalTradeParams = {raw: 2, processed: 2}
-    playersResources.left.trade = {};
-    playersResources.right.trade = {}
-    playersResources.left.trade = initalTradeParams;
-    playersResources.right.trade = initalTradeParams;
-    return player;
+    var initalTradeParamsL = {raw: 2, processed: 2}
+    var initalTradeParamsR = {raw: 2, processed: 2}
+    playersResources.trade = {};
+    playersResources.trade.left = initalTradeParamsL;
+    playersResources.trade.right = initalTradeParamsR;
+    return Promise.resolve();
   }
   
     

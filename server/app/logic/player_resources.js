@@ -22,21 +22,10 @@ function buildPlayerResources(player, resources) {
   return player.save();
 }
 
-//function updateNeighborsResources(player){
-//    var gameResources = getGameResources(player.gameId);
-//    var leftResources = gameResources[player.LeftNeighborId];
-//    var rightResources = gameResources[player.RightNeighborId];
-//    
-//    gameResources[player.id].left = leftResources;
-//    gameResources[player.id].right = rightResources;
-//    console.log('complete updates?', gameResources)
-//    return player;
-//}
-
 function updateResourceTradingParams(player, direction, resourceType) {
   var gameResources = getGameResources(player.gameId);
-  var leftResourcesTradeParams = gameResources[player.id].left.trade;
-  var rightResourcesTradeParams = gameResources[player.id].right.trade;
+  var leftResourcesTradeParams = gameResources[player.id].trade.left;
+  var rightResourcesTradeParams = gameResources[player.id].trade.right;
   if (resourceType === "Raw Resource" && direction === 'left'){
     leftResourcesTradeParams.raw = 1;
   } 
@@ -47,7 +36,6 @@ function updateResourceTradingParams(player, direction, resourceType) {
     leftResourcesTradeParams.processed = 1;
     rightResourcesTradeParams.processed = 1;
   }
-  console.log('does it change things?', gameResources[player.id])
   return player.save();
 }
 

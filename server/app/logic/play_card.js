@@ -123,7 +123,6 @@ module.exports = function () {
   
   function doSomethingBasedOnBuildingACard(){
     if (newResources.indexOf(card.type) > -1 || newResources.indexOf(card.name) > -1){
-      console.log('need to added to server', card.type)
       return addToPlayerResources.buildPlayerResources(player, card.functionality);
     }
     if (tradingSites.indexOf(card.name) > -1){
@@ -210,7 +209,9 @@ module.exports = function () {
   }
 
   function trade(trade, tradeDirection){
-    var tradeParams = resourcesObj.getGameResources[player.gameId][player.id][tradeDirection].trade;
+    console.log('go', trade, tradeDirection)
+    var tradeParams = resourcesObj.getGameResources(player.gameId)[player.id].trade[tradeDirection];
+    console.log('dir', tradeDirection, 'params',tradeParams)
     var totalPayment = 0;
     for (var i = 0; i < trade.length; i++){
       totalPayment += tradeParams[resourceTypeMap[trade[i]]];
