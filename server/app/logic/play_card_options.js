@@ -52,14 +52,7 @@ module.exports = function () {
         ownResourcesCopy[cost[i]]--;
         _.pullAt(cost, i)
       }
-//      while (counter < cost.length){
-//        if (!ownResourcesCopy[cost[counter]]) counter++;
-//        else {
-//          ownResourcesCopy[cost[counter]]--;
-//          _.pullAt(cost, counter)
-//          counter++;
-//        }
-      }
+    }
     if (!cost.length) return 'paid by own resources';
     else return canIBuyFromMyNeighbors(player, cost);
   }
@@ -71,15 +64,8 @@ module.exports = function () {
     var trade = {};
     var leftContribution = [];
     var rightContribution = [];
-//    var counter = 0;
-    
+
     for (var i = 0; i < cost.length; i++){
-//      if (!leftResourcesCopy[cost[i]]){
-//        leftContribution = leftContribution;
-//      }
-//      if (!rightResourcesCopy[cost[i]]){
-//        rightContribution = rightContribution;
-//      }
       if (leftResourcesCopy[cost[i]] && leftResourcesCopy[cost[i]] > 0){
         leftResourcesCopy[cost[i]]--;
         leftContribution.push(cost[i]);
@@ -88,19 +74,6 @@ module.exports = function () {
         rightResourcesCopy[cost[i]]--;
         rightContribution.push(cost[i]);
       }
-//      while (counter < cost.length){
-//        if (!leftResourcesCopy[cost[counter]] && !rightResourcesCopy[cost[counter]]) counter++;
-//        else if (leftResourcesCopy[cost[counter]] && leftResourcesCopy[cost[counter]] > 0) {
-//          leftResourcesCopy[cost[counter]]--;
-//          leftContribution.push(cost[counter]);
-//          counter++;
-//        }
-//        else if (rightResourcesCopy[cost[counter]] && rightResourcesCopy[cost[counter]] > 0){
-//          rightResourcesCopy[cost[counter]]--;
-//          rightContribution.push(cost[counter]);
-//          counter++;
-//        }
-//      }
     }
     //check if a player can AFFORD!!!!
     if (leftContribution.length === cost.length) trade.left = leftContribution;
@@ -112,7 +85,7 @@ module.exports = function () {
   }
   
   function checkIfPlayerCanBuildWonder(playerId){
-    return Player.findOne({id: playerId})
+    return db_getters.getPlayer(playerId)
     .then(function(player){
       if (player.wondersBuilt === 0) return checkResourcePaymentMethods(player, board.wonder1Cost);
       if (player.wondersBuilt === 1) return checkResourcePaymentMethods(player, board.wonder2Cost);
