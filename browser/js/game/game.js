@@ -155,6 +155,7 @@ app.controller('GameController', function ($scope, $state) {
           var thisSocket = $scope.players[i].socket.slice(2);
           if (thisSocket == socket.id) {
             $scope.me = $scope.players[i];
+            $scope.money = $scope.me.money;
             $scope.pluses = $scope.players[i].pluses;
             $scope.minuses = $scope.players[i].minuses;
         
