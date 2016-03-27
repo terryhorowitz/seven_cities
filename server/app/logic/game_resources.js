@@ -39,11 +39,6 @@ module.exports = function () {
   }
   
   function loadPlayersResources (){
-//    Promise.map(newGame.GamePlayers, function(player){
-//      console.log('me', player.id)
-//        return Promise.join(loadOwnResources(player), loadNeighborResources(player))
-//    })
-    
     return Promise.map(newGame.GamePlayers, function(player){
       return loadOwnResources(player);
     })
@@ -65,18 +60,9 @@ module.exports = function () {
   
   function loadNeighborResources(player){
     var playersResources = gameResourcesObj[newGame.id][player.id];
-    return Promise.all([Player.findOne({where: {id: player.LeftNeighborId}}), Player.findOne({where: {id: player.RightNeighborId}})])//db_getters.getNeighbors(player)
-    
-    .spread(function(leftNeighbor, rightNeighbor) {
-      return Promise.join(leftNeighbor.getBoard(), rightNeighbor.getBoard())
-    })
-    .spread(function(leftNeighborBoard, rightNeighborBoard) {
-      playersResources.left = {};
-      playersResources.right = {};
-      playersResources.left[leftNeighborBoard.resource] = 1;
-      playersResources.right[rightNeighborBoard.resource] = 1;
-      return loadTradeParams(player);
-    })
+    playersResources.left = gameResourcesObj[player.gameId][player.LeftNeighborId].self;
+    playersResources.right = gameResourcesObj[player.gameId][player.RightNeighborId].self;
+    return Promise.resolve();
   }
 
   function loadTradeParams(player) {

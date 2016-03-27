@@ -1,8 +1,6 @@
 #home {
   text-align: center;
-  font-family: 'Cinzel Decorative', cursive;
   h1 {
-  	font-family: 'Cinzel Decorative', cursive;
   	font-weight: bold;
   	font-size: 60px;
     margin-top: 40px;
@@ -10,9 +8,6 @@
 	  margin-top: 3em;
 	  text-shadow: 0 0 3px #DEB887;
 
-  }
-  h3 {
-  	font-family: 'Cinzel Decorative', cursive;
   }
   #inputs {
   	float: left;
@@ -39,12 +34,8 @@ width: 100%;
     background-image: url('/img/map.jpg');
   }
 
-
-@import url(https://fonts.googleapis.com/css?family=Patrick+Hand+SC);
-
-
      button{
-     	font-family: 'Cinzel Decorative', cursive;
+      font-family: 'Cinzel Decorative', cursive;
       align-self:center;
       background:transparent;
       padding: 0 1rem;
@@ -104,5 +95,3 @@ width: 100%;
     }
   }
 }
-
-@import url(https://fonts.googleapis.com/css?family=Cinzel+Decorative:400,900,700);
