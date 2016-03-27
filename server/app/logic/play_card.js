@@ -54,7 +54,6 @@ module.exports = function () {
           return Promise.join(db_getters.getPlayer(playerChoice.playerId), db_getters.getCard(playerChoice.cardId))
         })
         .spread(function(_player, _card){
-        console.log('pre exec')
           player = _player;
           card = _card;
           return executeChoice(playerChoice.choice);
@@ -73,7 +72,6 @@ module.exports = function () {
 
   function executeChoice(choice){
     //if choice is not in map, an obj was returned, indicating trade options were selected
-    console.log('executeChoice', choice)
     if (!choiceMap[choice]) return tradeForCard(choice);
     else return choiceMap[choice]();
   }
@@ -189,7 +187,6 @@ module.exports = function () {
   
   function tradeForCard(tradeParams){
     //obj that needs to be recieved: {left: ['wood', 'clay'], right: ['clay]} OR {left: ['ore'], right: null} etc).
-    console.log('init trade', tradeParams)
     var payLeft = trade(tradeParams.left, 'leftNeighbor');
     var payRight = tradeParams(tradeParams.right, 'rightNeighbor')
     return db_getters.getNeighbors(player)
