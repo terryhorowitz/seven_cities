@@ -271,3 +271,34 @@ selected-card {
 .modal-dialog.modal-large {
 	width: 60%;
 }
+
+
+#waiting-screen {
+  text-align: center;
+  font-family: 'Cinzel Decorative', cursive;
+  h1 {
+  	font-family: 'Cinzel Decorative', cursive;
+  	font-weight: bold;
+  	font-size: 60px;
+    margin-top: 40px;
+    text-align: center;
+	  margin-top: 3em;
+	  text-shadow: 0 0 3px #DEB887;
+
+  }
+  h3 {
+  	font-family: 'Cinzel Decorative', cursive;
+  }
+
+  background-color: rgba(255, 255, 255,0.7);
+
+}
+
+#wait-container {
+width: 100%; 
+    height: 100%; 
+    position: fixed; 
+    left: 0px; 
+    top: 0px;
+    background-image: url('/img/map.jpg');
+  }
