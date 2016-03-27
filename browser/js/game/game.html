@@ -1,32 +1,24 @@
 <div class="background" ng-style="background">
-	<div ng-hide='currentlyPlaying' id='waiting-screen'>
-		<h2>7 Cities</h2>
+	<div id='wait-container'>
+		<div ng-hide='currentlyPlaying' id='waiting-screen'>
+			<h1>Seven Cities</h2>
 
-		<h4 ng-show="firstPlayer"><a ng-click='startGame()'>Start game</a></h4>
-		<div ng-show='err' class="alert alert-warning alert-dismissible fade in col-sm-2" role="alert">
-		  <button type="button" ng-click='dismiss()' class="close" data-dismiss="alert" aria-label="Close">
-		    <span aria-hidden="true">&times;</span>
-		  </button>
-			<p>{{err}}</p>
+			<h4 ng-show="firstPlayer"><a ng-click='startGame()'>Start game</a></h4>
+			<div ng-show='err' class="alert alert-warning alert-dismissible fade in col-sm-2" role="alert">
+			  <button type="button" ng-click='dismiss()' class="close" data-dismiss="alert" aria-label="Close">
+			    <span aria-hidden="true">&times;</span>
+			  </button>
+				<p>{{err}}</p>
+			</div>
+			<h4><a ng-click='clearLocal()'>Clear Local Storage</a></h4>
+			<h4 ng-show="!firstPlayer">Waiting for first player to start game</h4>
+			<h4>In room {{roomname}}</h5>
+
+			<p>My name: {{me.name}}</p>
+			<div id='loading-img'>
+				<img src='img/loading.gif'>
+			</div>
 		</div>
-		<h4><a ng-click='clearLocal()'>Clear Local Storage</a></h4>
-		<a ui-sref="playerView">Go to player-view<span class="glyphicon glyphicon-circle-arrow-right"></span></a>
-		<h4 ng-show="!firstPlayer">Waiting for first player to start game</h4>
-		<h5>this is the room name: {{roomname}}</h5>
-
-		<p>My name: {{me.name}}</p>
-		<p>My board: {{me.board.name}}</p>
-		<p>My money: {{me.money}}</p>
-		<p>My military tokens: {{me.military}}</p>
-		<ul><p>My built cards:</p>
-			<li ng-repeat='card in me.built'>{{card.name}}</li>
-		</ul>
-
-		<ul><p>My hand:</p>
-			<li ng-repeat='card in myHand'><a ng-click='selectCard(card)'>{{card.name}}</a></li>
-		</ul>
-
-		<p>this is the players object: {{players}}</p>
 	</div>
 	<div ng-show='currentlyPlaying' id='player-view'>
 		<nav class="navbar navbar-static-top">
