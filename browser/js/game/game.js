@@ -27,6 +27,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.leftNeighbor;
     $scope.wonderOptions = [1, 2, 3];
     $scope.nonNeighbors = [];
+    
 
 
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
@@ -58,12 +59,14 @@ app.controller('GameController', function ($scope, $state) {
         $scope.currentlyPlaying = true;
         // console.log('game started')
         $scope.players = data;
-        // console.log('players', $scope.players)
+        console.log('players', $scope.players)
         //find myself
         for (var i = 0; i < data.length; i++) {
           var thisSocket = $scope.players[i].socket.slice(2);
           if (thisSocket == socket.id) {
             $scope.me = $scope.players[i];
+            $scope.money = $scope.players[i].money;
+
             if ($scope.players[i].pluses) {
               $scope.pluses = $scope.players[i].pluses;
             } else {
@@ -91,7 +94,7 @@ app.controller('GameController', function ($scope, $state) {
 
         // console.log('left', $scope.leftNeighbor, 'right', $scope.rightNeighbor, 'nonNeighbors', $scope.nonNeighbors)
         // console.log('me',$scope.me)
-        $scope.background = {background: 'url(img/background/' + $scope.me.board.name + '.png)'};
+        $scope.background = {background: 'url(img/background/' + $scope.me.board.name + '.png) no-repeat center center fixed', 'background-size': 'cover', 'min-height': '100%'};
             // console.log('backgd',$scope.background)
 
         $scope.$digest()
