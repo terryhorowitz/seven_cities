@@ -254,3 +254,16 @@ selected-card {
     margin: 0 20px;
     color: white;
 }
+
+.modal-background {
+	background: no-repeat center center fixed; 
+	position: absolute;
+	top: 0px;
+	bottom: 0;
+	width: 100%;
+	background-image: url(img/background/Olympia.png);
+	-webkit-background-size: contain;
+	-moz-background-size: contain;
+	-o-background-size: contain;
+	background-size: contain;
+}

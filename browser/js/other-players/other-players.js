@@ -17,10 +17,11 @@ app.directive('otherPlayers', function ($rootScope, $state, $uibModal) {
                 })
                 scope.neighborView = true;
                 console.log('this is neighbor', neighbor)
+                
                 scope.neighbor = neighbor;
             }
 
-            console.log(scope.left);
+            // console.log('left',scope.left);
         }
 
 
