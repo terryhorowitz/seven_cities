@@ -115,30 +115,36 @@ app.controller('GameController', function ($scope, $state) {
 
       socket.on('your options', function(options) {
         $scope.playOptions = options;
-        // $scope.playOptions.filter(function(option) {
-        //   if (typeof option !== 'string') {
-        //     var temp = 'Buy ';
-        //     if (option.left) {
-        //       option.left.forEach(function(resouce) {
-        //         temp += resource;
-        //         temp += ' and '
-        //       })
-        //       temp.slice
-        //       temp += 'from left neighbor';
-        //     }
-        //     if (option.right)
-        //   }
-        //   if (option === 'Discard') {
-        //     return option;
-        //   } else if (option === 'get free') {
-        //     return 'Build for free';
-        //   } else if (option === 'pay money') {
-        //     return "Pay 1 coin";
-        //   } 
-        //   if (option !== "no trade available!") {
+        $scope.playOptions.forEach(function(option) {
+          if (typeof option !== 'string') {
+            var needed = [];
+            if (option.left && option.left[0]) {
+              needed.push({});
+              needed[0].left = ['left'];
+            }
+            if (option.right && option.right[0]) {
+              needed.push({});
+              needed[0].right = ['right'];
+            }
+            console.log('this is playoptions', $scope.playOptions)
+          } else if (option === 'Discard') {
+            option = option;
+          } else if (option === 'get free' || option === 'paid by own resources') {
+            option = 'Build for free';
+          } else if (option === 'pay money') {
+            option = "Pay 1 coin";
+          } else if (option === 'upgrade') {
+            option = 'Upgrade for free'
+          } else if (option === 'build wonder') {
+            option = 'Build wonder';
+          } else if (option !== "can't afford") {
 
-        //   }
-        // })
+          } else if (option !== "already have it") {
+
+          } else if (option !== "no trade available!") {
+
+          }
+        })
         $scope.$digest();
       })
 
