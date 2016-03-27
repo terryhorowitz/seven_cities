@@ -2,8 +2,17 @@
   box-sizing: border-box;
 }
 
+@import url(https://fonts.googleapis.com/css?family=Cinzel+Decorative:400,900,700);
+@import url(https://fonts.googleapis.com/css?family=Julius+Sans+One);
+
 body {
   background: #fdfdfd;
+  font-family: 'Julius Sans One', sans-serif;
+  font-weight: bold;
+}
+
+h1, h2, h3 {
+	font-family: 'Cinzel Decorative', cursive;
 }
 
 @mixin clearfix {

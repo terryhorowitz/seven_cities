@@ -1,12 +1,97 @@
 #home {
-  fullstack-logo {
-    padding-top: 30px;
-    width: 150px;
-    margin: 0 auto;
-  }
+  text-align: center;
   h1 {
+  	font-weight: bold;
+  	font-size: 60px;
     margin-top: 40px;
     text-align: center;
+	  margin-top: 3em;
+	  text-shadow: 0 0 3px #DEB887;
+
   }
+  #inputs {
+  	float: left;
+  	text-align: right;
+  }
+  #allthings {
+  	margin: 0 auto;
+  	width: 500px;
+  	height: 100px;
+  }
+  #joinbox {
+  	float: left;
+  }
+  background-color: rgba(255, 255, 255,0.7);
+
 }
 
+#container {
+width: 100%; 
+    height: 100%; 
+    position: fixed; 
+    left: 0px; 
+    top: 0px;
+    background-image: url('/img/map.jpg');
+  }
+
+     button{
+      font-family: 'Cinzel Decorative', cursive;
+      align-self:center;
+      background:transparent;
+      padding: 0 1rem;
+      margin:0 1rem;
+      transition:all .5s ease;
+      color:#41403E;
+      font-size:10em;
+      font-weight: bold;
+      letter-spacing:1px;
+      outline:none;
+      margin-bottom: 1rem;
+      box-shadow: 20px 38px 34px -26px hsla(0,0%,0%,.2);
+      border-radius: 255px 15px 225px 15px/15px 225px 15px 255px;
+      /*
+      Above is shorthand for:
+      border-top-left-radius: 255px 15px;
+      border-top-right-radius: 15px 225px;
+      border-bottom-right-radius: 225px 15px;
+      border-bottom-left-radius:15px 255px;
+      */
+       &:hover{
+         box-shadow:2px 8px 4px -6px hsla(0,0%,0%,.3);
+      } 
+      &.lined.thick{
+         border:solid 7px #41403E;
+      }
+      &.dotted.thick{
+         border:dotted 5px #41403E;
+      }
+      &.dashed.thick{
+        border:dashed 5px #41403E;
+      }
+       &.lined.thin{
+         border:solid 2px #41403E;
+      }
+      &.dotted.thin{
+         border:dotted 2px #41403E;
+      }
+      &.dashed.thin{
+        border:dashed 2px #41403E;
+      }
+    }
+@media (max-width:620px){
+  body{
+    h1{
+      margin-top:2rem;
+    }
+    & section{
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      margin-bottom:1rem;
+      & button{
+        align-self:center;
+        margin-bottom:2rem;
+      }
+    }
+  }
+}
