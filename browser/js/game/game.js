@@ -64,16 +64,16 @@ app.controller('GameController', function ($scope, $state) {
           var thisSocket = $scope.players[i].socket.slice(2);
           if (thisSocket == socket.id) {
             $scope.me = $scope.players[i];
-            
-            $scope.minuses = [];
-            $scope.pluses = 0;
-            // $scope.me.tokens.forEach(function(token) {
-            //   if (token === -1) {
-            //     $scope.minuses.push(token);
-            //   } else {
-            //     $scope.pluses += token;
-            //   }
-            // });
+            if ($scope.players[i].pluses) {
+              $scope.pluses = $scope.players[i].pluses;
+            } else {
+              $scope.pluses = 0;
+            }
+            if ($scope.players[i].minuses) {
+              $scope.minuses = $scope.players[i].minuses;
+            } else {
+              $scope.minuses = 0;
+            }
         
           }
         }
@@ -152,6 +152,8 @@ app.controller('GameController', function ($scope, $state) {
           var thisSocket = $scope.players[i].socket.slice(2);
           if (thisSocket == socket.id) {
             $scope.me = $scope.players[i];
+            $scope.pluses = $scope.players[i].pluses;
+            $scope.minuses = $scope.players[i].minuses;
         
           }
         }
