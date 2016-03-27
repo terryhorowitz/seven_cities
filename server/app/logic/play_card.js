@@ -47,25 +47,36 @@ module.exports = function () {
   
   /////// Public API/////////////
   function orchestrator(playersSelections){
+    console.log('here they are', playersSelections)
     //playerId, cardId, choice
-    return Promise.map(playersSelections, function(playerChoice){
-      var playerId = playerChoice.playerId;
-      var cardId = playerChoice.cardId;
-      var choice = playerChoice.choice;
-      console.log('pick', choice)
-      return Promise.join(db_getters.getPlayer(playerId), db_getters.getCard(cardId))
-      .spread(function(_player, _card){
-        console.log('who', _player.id)
-        player = _player; 
-        card = _card; 
-        return executeChoice(choice)
-      })
-      
-    })
-    .then(function(response){
-      console.log('resssss', response)
+    return playersSelections.reduce(function(promiseAccumulator, playerChoice){
+      return promiseAccumulator
+        .then(function(){
+          return Promise.join(db_getters.getPlayer(playerChoice.playerId), db_getters.getCard(playerChoice.cardId))
+        })
+        .spread(function(_player, _card){
+          player = _player;
+          card = _card;
+          return executeChoice(playerChoice.choice);
+        })
+    }, Promise.resolve())
+    .catch(function(err){ console.error('error executing', err) })
+//    return Promise.map(playersSelections, function(playerChoice){
+//      
+//      return Promise.join(db_getters.getPlayer(playerChoice.playerId), db_getters.getCard(playerChoice.cardId))
+//      .spread(function(_player, _card){
+//        console.log('the guy', _player.id)
+//        player = _player; 
+//        console.log('the guy saved', player.id)
+//        console.log('the things', _card.id, playerChoice.choice)
+//        card = _card; 
+//        return executeChoice(playerChoice.choice)
+//      })
+//      
+//    })
+//    .then(function(){
 //      return shiftHand();
-    }).catch(function(err){ console.error('whoops', err) })
+//    })
 //    .then(function(){
 ////      return returnUpdatedGame();
 //    })
@@ -77,20 +88,21 @@ module.exports = function () {
 
   function executeChoice(choice){
     //if choice is not in map, an obj was returned, indicating trade options were selected
-    console.log('execution', choice)
-    if (!choiceMap[choice]) tradeForCard(choice);
-    else choiceMap[choice]();
+    if (!choiceMap[choice]) return tradeForCard(choice);
+    else return choiceMap[choice]();
   }
 
   
   ////// IN MAP
   function buildCard() {
-    console.log('build')
     return doSomethingBasedOnBuildingACard()
     .then(function(){
-      console.log('are we even here though?', card)
+      console.log('moving card to perm')
       return Promise.join(player.removeTemporary(card), player.addPermanent(card));
     })
+    .catch(function(err){
+      console.log(err, 'error!');
+    });
   }
   
   function payForCard() {
@@ -116,12 +128,11 @@ module.exports = function () {
   function discard(){
     return db_getters.getGame(player.gameId)
     .then(function(game){
-      console.log('si this game?', game.id)
+      console.log('discard this one', card.id)
       return Promise.join(game.addDiscard(card), player.removeTemporary(card));
     })
     .then(function(){
       player.money+=3;
-      console.log('$$$$',player.money)
       return player.save();
     })
   }
@@ -130,13 +141,16 @@ module.exports = function () {
   
   function doSomethingBasedOnBuildingACard(){
     if (newResources.indexOf(card.type) > -1 || newResources.indexOf(card.name) > -1){
+      console.log('build in server', card.id)
       return addToPlayerResources.buildPlayerResources(player, card.functionality);
     }
 
     else if (tradingSites.indexOf(card.name) > -1){
+      console.log('get money from random trading cards', card.id)
       return getMoneyFromCard();
     }
     else if (tradePosts.indexOf(card.name) > -1){
+      console.log('update trading params', card.id)
       //functionality array indicates direction and type of resource
       return addToPlayerResources.updateResourceTradingParams(player, card.functionality[0], card.functionality[card.functionality.length - 1]);
     }
@@ -149,7 +163,7 @@ module.exports = function () {
   function increaseMoney(){
     if (card.name === 'Tavern') player.money += 5;
     else if (card.name === 'Arena') player.money += (player.wondersBuilt * 3);
-    console.log('passing by')
+    else return Promise.resolve();
     return player.save()
   }
   
