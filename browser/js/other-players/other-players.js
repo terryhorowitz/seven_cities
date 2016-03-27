@@ -25,7 +25,7 @@ app.directive('otherPlayers', function ($rootScope, $state, $uibModal) {
                 scope.pluses = neighbor.pluses;
                 scope.money = neighbor.money;
 
-                scope.background = {'background-color': 'blue', 'background': 'url(img/background/' + scope.neighbor.board.name + '.png)'}
+                scope.background = {'background': 'url(img/background/' + scope.neighbor.board.name + '.png) no-repeat center center', 'background-size': 'cover'}
 
                 // $scope.background = {background: 'url(img/background/' + $scope.me.board.name + '.png) no-repeat center center fixed', 'background-size': 'cover', 'min-height': '100%'};
                 scope.expandPile = function (pile) {
