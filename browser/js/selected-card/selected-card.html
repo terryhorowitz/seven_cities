@@ -5,7 +5,7 @@
     </div>
     <div class="col-xs-8">
         <div ng-repeat='option in playOptions'>
-            <a ng-click="submitChoice(option)">{{option}}</a>
+            <a ng-click="submitChoice(option)">{{option.msg || option}}</a>
         </div>
         <<!-- div>
             <a>Confirm</a>
