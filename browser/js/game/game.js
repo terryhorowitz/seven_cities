@@ -28,7 +28,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.wonderOptions = [1, 2, 3];
     $scope.nonNeighbors = [];
     
-
+    $scope.background = {background: 'url(/img/map.jpg) no-repeat center center fixed', 'background-size': 'cover', 'min-height': '100%'};
 
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
 
