@@ -25,10 +25,10 @@ function updateResourceTradingParams(player, direction, resourceType) {
   var gameResources = getGameResources(player.gameId);
   var leftResourcesTradeParams = gameResources[player.id].left.trade;
   var rightResourcesTradeParams = gameResources[player.id].right.trade;
-  if (resourceType === "Raw Resource" || direction === 'left'){//this is likely off - see cards
+  if (resourceType === "Raw Resource" && direction === 'left'){
     leftResourcesTradeParams.raw = 1;
   } 
-  else if (resourceType === "Raw Resource" || direction === 'right'){
+  else if (resourceType === "Raw Resource" && direction === 'right'){
     rightResourcesTradeParams.raw = 1;
   }
   else {
