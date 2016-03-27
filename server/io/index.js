@@ -102,6 +102,7 @@ module.exports = function (server) {
 					players = players.map(function(player) {
 						var current = _.find(gameObject.GamePlayers, {'socket': player.socket})
 							player.playerId = current.id;
+							console.log('!!!!!!! right before emitting')
 							io.sockets.connected[player.socket].emit('your id', current.id);
 							return player;
 					})

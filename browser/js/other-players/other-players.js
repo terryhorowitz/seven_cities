@@ -1,4 +1,4 @@
-app.directive('otherPlayers', function ($rootScope, $state) {
+app.directive('otherPlayers', function ($rootScope, $state, $uibModal) {
 
     return {
         restrict: 'E',
@@ -9,11 +9,18 @@ app.directive('otherPlayers', function ($rootScope, $state) {
         },
         templateUrl: 'js/other-players/other-players.html',
         link: function(scope){
-            var showNeighbor = function(neighbor) {
+            scope.showNeighbor = function(neighbor) {
+                $uibModal.open({
+                    animation: scope.animationsEnabled,
+                    templateUrl: 'myModalContent.html',
+                    size: 'large',
+                })
                 scope.neighborView = true;
                 console.log('this is neighbor', neighbor)
                 scope.neighbor = neighbor;
             }
+
+            console.log(scope.left);
         }
 
 
