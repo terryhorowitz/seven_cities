@@ -38,7 +38,7 @@ router.get('/deck', function(req, res, next){
 
 router.get('/game', function(req, res, next){
 
-  Game.findAll({include: [{ all: true }]})
+  Game.findAll({include: [{all: true}]})
 
   .then(function(games){
     console.log('HOW MANY', games.length)

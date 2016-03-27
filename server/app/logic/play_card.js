@@ -47,8 +47,6 @@ module.exports = function () {
   
   /////// Public API/////////////
   function orchestrator(playersSelections){
-    console.log('here they are', playersSelections)
-    //playerId, cardId, choice
     return playersSelections.reduce(function(promiseAccumulator, playerChoice){
       return promiseAccumulator
         .then(function(){
@@ -60,6 +58,13 @@ module.exports = function () {
           return executeChoice(playerChoice.choice);
         })
     }, Promise.resolve())
+    .then(function(){
+      //rotate hands
+      return shiftHandFromPlayers(playersSelections[0].playerId)
+    })
+    .then(function(){
+      return returnUpdatedGame();
+    })
     .catch(function(err){ console.error('error executing', err) })
 //    return Promise.map(playersSelections, function(playerChoice){
 //      
@@ -97,7 +102,6 @@ module.exports = function () {
   function buildCard() {
     return doSomethingBasedOnBuildingACard()
     .then(function(){
-      console.log('moving card to perm')
       return Promise.join(player.removeTemporary(card), player.addPermanent(card));
     })
     .catch(function(err){
@@ -128,7 +132,6 @@ module.exports = function () {
   function discard(){
     return db_getters.getGame(player.gameId)
     .then(function(game){
-      console.log('discard this one', card.id)
       return Promise.join(game.addDiscard(card), player.removeTemporary(card));
     })
     .then(function(){
@@ -141,16 +144,13 @@ module.exports = function () {
   
   function doSomethingBasedOnBuildingACard(){
     if (newResources.indexOf(card.type) > -1 || newResources.indexOf(card.name) > -1){
-      console.log('build in server', card.id)
       return addToPlayerResources.buildPlayerResources(player, card.functionality);
     }
 
     else if (tradingSites.indexOf(card.name) > -1){
-      console.log('get money from random trading cards', card.id)
       return getMoneyFromCard();
     }
     else if (tradePosts.indexOf(card.name) > -1){
-      console.log('update trading params', card.id)
       //functionality array indicates direction and type of resource
       return addToPlayerResources.updateResourceTradingParams(player, card.functionality[0], card.functionality[card.functionality.length - 1]);
     }
@@ -239,15 +239,24 @@ module.exports = function () {
     return totalPayment;
   }
     
-  function shiftHand(){
-    var newHand;
-    return db_getters.getNeighbors(player)
-    .spread(function(left, right){
-        return db_getters.getTemporaryForLR({}, left, right);
+  function shiftHandFromPlayers(startPlayerId){
+    return db_getters.getPlayer(startPlayerId)
+    .then(function(player){
+      return db_getters.getGame(player.gameId)
     })
-    .then(function(leftHand, rightHand){
-      card.era === 2 ? newHand = leftHand : newHand = rightHand;
-      return player.setTemporary(newHand);
+    .then(function(game){
+      var playerSwapping = _.find(game.GamePlayers, {id: startPlayerId});
+      var lastPass = playerSwapping.Temporary;
+      var newTempCards = {};
+      while (playerSwapping.RightNeighborId !== startPlayerId){
+        newTempCards[playerSwapping.id] = _.find(game.GamePlayers, {id: playerSwapping.RightNeighborId}).Temporary;
+        playerSwapping = _.find(game.GamePlayers, {id: playerSwapping.RightNeighborId});
+      }
+      var lastPlayer = _.find(game.GamePlayers, {RightNeighborId: startPlayerId});
+      newTempCards[lastPlayer.id] = lastPass;
+      return Promise.map(game.GamePlayers, function(player){
+        return player.setTemporary(newTempCards[player.id])
+      })
     })
   }
   
