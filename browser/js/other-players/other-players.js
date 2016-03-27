@@ -21,16 +21,9 @@ app.directive('otherPlayers', function ($rootScope, $state, $uibModal) {
                 scope.neighbor = neighbor;
                 scope.neighborWonders = [1, 2, 3];
                 console.log('this is neighbor', scope.neighbor)
-                scope.minuses = [];
-                scope.pluses = 0;
-                scope.coin = neighbor.money;
-
-                //duplicate logic in game.js, ideally we could put these values in the player object in the backend
-                scope.neighbor.tokens.forEach(function(token) {
-                    if (token === -1) {
-                        scope.minuses.push(token);
-                    } else scope.pluses.push(token);
-                });
+                scope.minuses = neighbor.minuses;
+                scope.pluses = neighbor.pluses;
+                scope.money = neighbor.money;
 
                 scope.background = {'background-color': 'blue', 'background': 'url(img/background/' + scope.neighbor.board.name + '.png)'}
 

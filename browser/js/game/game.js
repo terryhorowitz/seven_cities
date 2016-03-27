@@ -59,12 +59,13 @@ app.controller('GameController', function ($scope, $state) {
         $scope.currentlyPlaying = true;
         // console.log('game started')
         $scope.players = data;
-        // console.log('players', $scope.players)
+        console.log('players', $scope.players)
         //find myself
         for (var i = 0; i < data.length; i++) {
           var thisSocket = $scope.players[i].socket.slice(2);
           if (thisSocket == socket.id) {
             $scope.me = $scope.players[i];
+            $scope.money = $scope.players[i].money;
 
             if ($scope.players[i].pluses) {
               $scope.pluses = $scope.players[i].pluses;
