@@ -108,7 +108,6 @@ app.controller('GameController', function ($scope, $state) {
         $scope.submitChoice = function(selection){
           socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
           $scope.playOptions = null;
-          $scope.$digest();
         }
 
       socket.on('your options', function(options) {

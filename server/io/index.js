@@ -140,6 +140,7 @@ module.exports = function (server) {
           console.log('inside', peopleInRoom)
           return playCard(playersChoices)
           .then(function(game) {
+          	playersChoices = [];
           	players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
           	io.to(currentRoom).emit('new round', players);
           	game.GamePlayers.forEach(function(player) {
