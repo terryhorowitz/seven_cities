@@ -144,6 +144,7 @@ module.exports = function () {
   
   function doSomethingBasedOnBuildingACard(){
     if (newResources.indexOf(card.type) > -1 || newResources.indexOf(card.name) > -1){
+      console.log('need to add to server', card.type)
       return addToPlayerResources.buildPlayerResources(player, card.functionality);
     }
 

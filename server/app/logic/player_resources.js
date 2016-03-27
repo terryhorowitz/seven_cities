@@ -2,6 +2,7 @@
 var getGameResources = require('./game_resources')().getGameResources;
 
 function buildPlayerResources(player, resources) {
+  console.log('adding')
   var gameResources = getGameResources(player.gameId);
   var playersResources = gameResources[player.id].self;
     for (var i = 0; i < resources.length; i++) {
@@ -18,6 +19,7 @@ function buildPlayerResources(player, resources) {
       } 
       else playersResources[resources[i]]++;
     }
+    console.log('should be inside', gameResources)
   return player.save();
 }
 
