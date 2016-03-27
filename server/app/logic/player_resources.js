@@ -34,9 +34,10 @@ function buildPlayerResources(player, resources) {
 //}
 
 function updateResourceTradingParams(player, direction, resourceType) {
+  console.log('are we updating???')
   var gameResources = getGameResources(player.gameId);
-  var leftResourcesTradeParams = gameResources[player.id].left.trade;
-  var rightResourcesTradeParams = gameResources[player.id].right.trade;
+  var leftResourcesTradeParams = gameResources[player.id].trade.left;
+  var rightResourcesTradeParams = gameResources[player.id].trade.right;
   if (resourceType === "Raw Resource" && direction === 'left'){
     leftResourcesTradeParams.raw = 1;
   } 
