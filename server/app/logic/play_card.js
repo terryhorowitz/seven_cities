@@ -62,9 +62,9 @@ module.exports = function () {
       //rotate hands
       return shiftHandFromPlayers(playersSelections[0].playerId)
     })
-    .then(function(){
-      return returnUpdatedGame();
-    })
+//    .then(function(){
+//      return returnUpdatedGame(playersSelections[0].playerId);
+//    })
     .catch(function(err){ console.error('error executing', err) })
 //    return Promise.map(playersSelections, function(playerChoice){
 //      
@@ -240,9 +240,11 @@ module.exports = function () {
   }
     
   function shiftHandFromPlayers(startPlayerId){
+    var startPlayer;
     return db_getters.getPlayer(startPlayerId)
-    .then(function(player){
-      return db_getters.getGame(player.gameId)
+    .then(function(_startPlayer){
+      startPlayer = _startPlayer;
+      return db_getters.getGame(_startPlayer.gameId)
     })
     .then(function(game){
       var playerSwapping = _.find(game.GamePlayers, {id: startPlayerId});
@@ -258,11 +260,14 @@ module.exports = function () {
         return player.setTemporary(newTempCards[player.id])
       })
     })
+    .then(function(){
+      return db_getters.getGame(startPlayer.gameId)
+    })
   }
   
-  function returnUpdatedGame () {
-    return db_getters.getGame(player.gameId);
-  }
+//  function returnUpdatedGame (playerId) {
+//    return db_getters.getGame(player.gameId);
+//  }
 
   // PUBLIC API: 
   return orchestrator;

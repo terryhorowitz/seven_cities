@@ -136,7 +136,10 @@ module.exports = function (server) {
         console.log('outside', playersChoices)
         if (playersChoices.length === peopleInRoom){
           console.log('inside', peopleInRoom)
-          playCard(playersChoices)
+          return playCard(playersChoices)
+          .then(function(response){
+            console.log('game back to frontend', response)
+          })
         }
         
 		// return playCard(data.playerId, data.cardId, data.selection)
