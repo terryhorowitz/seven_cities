@@ -12,17 +12,30 @@ app.directive('otherPlayers', function ($rootScope, $state, $uibModal) {
             scope.showNeighbor = function(neighbor) {
                 $uibModal.open({
                     animation: scope.animationsEnabled,
-                    templateUrl: 'myModalContent.html',
+                    templateUrl: 'myModalContent',
                     size: 'large',
+                    scope: scope
                 })
                 scope.neighborView = true;
-                console.log('this is neighbor', neighbor)
+
                 scope.neighbor = neighbor;
+                scope.neighborWonders = [1, 2, 3];
+                console.log('this is neighbor', scope.neighbor)
+                scope.minuses = neighbor.minuses;
+                scope.pluses = neighbor.pluses;
+                scope.money = neighbor.money;
+
+                scope.background = {'background-color': 'blue', 'background': 'url(img/background/' + scope.neighbor.board.name + '.png)'}
+
+                // $scope.background = {background: 'url(img/background/' + $scope.me.board.name + '.png) no-repeat center center fixed', 'background-size': 'cover', 'min-height': '100%'};
+                scope.expandPile = function (pile) {
+                    if (!scope.clickedPile) scope.clickedPile = pile;
+                    else scope.clickedPile = false;
+                  }
+
             }
 
-            console.log('scope.left', scope.left);
         }
-
 
     };
 
