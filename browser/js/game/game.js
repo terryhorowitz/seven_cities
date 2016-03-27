@@ -148,7 +148,6 @@ app.controller('GameController', function ($scope, $state) {
       })
 
       socket.on('new round', function(data) {
-        console.log('data', data)
         $scope.players = data;
 
         for (var i = 0; i < data.length; i++) {

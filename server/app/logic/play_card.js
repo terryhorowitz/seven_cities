@@ -236,12 +236,12 @@ module.exports = function () {
     else if (boardName === "Alexandria" && player.wondersBuilt === 2){
       return addToPlayerResources.buildPlayerResources(player, ["clay/ore/wood/stone"]);
     }
-    else if (boardName === "Halikarnassos" && player.wondersBuilt === 2){
-      return  player.save()// do something on front end for this??
-    }
-    else if(boardName === "Olympia" && player.wondersBuilt === 2){
-      return player.save()//"do not have to pay once per era";
-    }
+//    else if (boardName === "Halikarnassos" && player.wondersBuilt === 2){
+//      return  player.save()// do something on front end for this??
+//    }
+//    else if(boardName === "Olympia" && player.wondersBuilt === 2){
+//      return player.save()//"do not have to pay once per era";
+//    }
     else return Promise.resolve();
   }
     
