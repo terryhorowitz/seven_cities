@@ -1,8 +1,8 @@
 'use strict';
 var getGameResources = require('./game_resources')().getGameResources;
+var db_getters = require('./db_getters.js')
 
 function buildPlayerResources(player, resources) {
-  console.log('adding')
   var gameResources = getGameResources(player.gameId);
   var playersResources = gameResources[player.id].self;
     for (var i = 0; i < resources.length; i++) {
@@ -19,9 +19,19 @@ function buildPlayerResources(player, resources) {
       } 
       else playersResources[resources[i]]++;
     }
-    console.log('should be inside', gameResources)
   return player.save();
 }
+
+//function updateNeighborsResources(player){
+//    var gameResources = getGameResources(player.gameId);
+//    var leftResources = gameResources[player.LeftNeighborId];
+//    var rightResources = gameResources[player.RightNeighborId];
+//    
+//    gameResources[player.id].left = leftResources;
+//    gameResources[player.id].right = rightResources;
+//    console.log('complete updates?', gameResources)
+//    return player;
+//}
 
 function updateResourceTradingParams(player, direction, resourceType) {
   var gameResources = getGameResources(player.gameId);
