@@ -57,7 +57,9 @@ module.exports = function () {
           // for (let i of builtCards) {}
           if (builtCards[i].name === card.name) return "already have it";
           else if (!card.cost) return "get free";
-          else if (builtCards[i].upgradeTo.indexOf(card.name)!==-1) return "upgrade";
+          else if (builtCards[i].upgradeTo) {
+            if (builtCards[i].upgradeTo.indexOf(card.name)!==-1) return "upgrade";
+          }
         }
       }
       return checkResourcePaymentMethods(player, card.cost)
