@@ -25,8 +25,22 @@
     <script type="text/ng-template" id="myModalContent">
  
 	    <div ng-style="background" class="modal-body modal-background">
-	       <h1> {{neighbor}} </h1>
-	HI
+	       <h1> {{neighbor.board.name}} </h1>
+
+	       <p>{{neighbor}}</p>
+
+
+	      <!--  <div class='wonders'>
+				<div ng-click="expandPile(wonder)" ng-repeat="wonder in wonderOptions" ng-class="{wonderexpand: wonder === clickedPile}" class="test">
+					<img src='/img/wonders/{{me.board.name}}_{{wonder}}.png'>
+				</div>
+			</div> -->
+
+			<div class='wonders'>
+				<div class="test" ng-repeat="wonder in neighborWonders">
+					<img src='/img/wonders/{{neighbor.board.name}}_{{wonder}}.png'>
+				</div>
+			</div>
 
 	    </div>
 	 
