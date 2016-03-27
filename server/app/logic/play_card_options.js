@@ -68,6 +68,7 @@ module.exports = function () {
     var playersResources = Resources.getGameResources(player.gameId)[player.id];
     var leftResourcesCopy = _.cloneDeep(playersResources.left);
     var rightResourcesCopy = _.cloneDeep(playersResources.right);
+    console.log('keeping track, left', leftResourcesCopy, 'right', rightResourcesCopy)
     var trade = {};
     var leftContribution = [];
     var rightContribution = [];
