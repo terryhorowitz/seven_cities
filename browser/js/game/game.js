@@ -27,6 +27,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.leftNeighbor;
     $scope.wonderOptions = [1, 2, 3];
     $scope.nonNeighbors = [];
+    
 
 
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
@@ -65,16 +66,16 @@ app.controller('GameController', function ($scope, $state) {
           var thisSocket = $scope.players[i].socket.slice(2);
           if (thisSocket == socket.id) {
             $scope.me = $scope.players[i];
-            
+            $scope.coin = $scope.me.money;
             $scope.minuses = [];
             $scope.pluses = 0;
-            // $scope.me.tokens.forEach(function(token) {
-            //   if (token === -1) {
-            //     $scope.minuses.push(token);
-            //   } else {
-            //     $scope.pluses += token;
-            //   }
-            // });
+            $scope.me.tokens.forEach(function(token) {
+              if (token === -1) {
+                $scope.minuses.push(token);
+              } else {
+                $scope.pluses += token;
+              }
+            });
         
           }
         }
