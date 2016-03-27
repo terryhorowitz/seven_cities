@@ -23,6 +23,7 @@ module.exports = function (server) {
   var newGame;
   var socketId;
   var clients;
+  var playersChoices = [];
 	//hold all user socket ids with names and playerids (from db)
 	var allPlayers = {};
   io.sockets.on('connection', function (socket) {
@@ -30,7 +31,6 @@ module.exports = function (server) {
 		var counter = 0;
 		var players = [];
 		var gameObject;
-		var playersChoices = [];
 		//join all players to the correct room
 		socket.on('create', function(data) {
 			//this whole if is for dealing with a user refreshing during a game. local storage!
@@ -43,7 +43,7 @@ module.exports = function (server) {
 					allPlayers[socket.id].push(data.localId)
 					thisGame = game;
 					socket.join(game.name);
-					players = createPlayers.createPlayersObjectRefresh(thisGame.GamePlayers, players)
+					players = createPlayers.createPlayersObjectRefresh(thisGame.GamePlayers)
 					io.sockets.connected[socket.id].emit('game initialized', players);
 					var me = _.find(thisGame.GamePlayers, {'socket': socket.id})
 					io.sockets.connected[socket.id].emit('your hand', me.Temporary);
@@ -112,7 +112,7 @@ module.exports = function (server) {
 				io.sockets.connected[socket.id].emit('err', {message: 'Need at least 3 players to play!'});
 			}
 		});
-		socket.on('choice made', function(data) {
+	socket.on('choice made', function(data) {
 		//needs to check if the choice is ok and then emit
 		var cardId = data.card;
 		var playerId = data.player;
@@ -127,8 +127,28 @@ module.exports = function (server) {
 	});
 
 	socket.on('submit choice', function(data) {
+		console.log('in submit choice', data)
+        var peopleInRoom = 0;
+      
+        clients = io.sockets.adapter.rooms[currentRoom];
+        for (var key in clients.sockets) {
+            peopleInRoom++;
+        }
 		playersChoices.push(data)
-		console.log('this is players', players, 'this is counter', counter, 'this is data', data)
+        console.log('outside if statement', playersChoices)
+        if (playersChoices.length === peopleInRoom){
+          console.log('inside', peopleInRoom)
+          return playCard(playersChoices)
+          .then(function(game) {
+          	playersChoices = [];
+          	players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
+          	io.to(currentRoom).emit('new round', players);
+          	game.GamePlayers.forEach(function(player) {
+							io.sockets.connected[player.socket].emit('your hand', player.Temporary);
+          	})
+          })
+        }
+        
 		// return playCard(data.playerId, data.cardId, data.selection)
 		// .then(function(game) {
 

@@ -29,7 +29,7 @@ module.exports = function () {
     "paid by own resources": buildCard,
     "pay money": payForCard,
     "build wonder": buildWonder,
-    "discard": discard
+    "Discard": discard
   }
   
   var resourceTypeMap = {
@@ -46,19 +46,45 @@ module.exports = function () {
   
   
   /////// Public API/////////////
-  function orchestrator(playerId, cardId, choice){
-    Promise.join(db_getters.getPlayer(playerId), db_getters.getCard(cardId))
-    .spread(function(_player, _card){
-      player = _player; 
-      card = _card; 
-      return executeChoice(choice)
-    })
+  function orchestrator(playersSelections){
+    return playersSelections.reduce(function(promiseAccumulator, playerChoice){
+      return promiseAccumulator
+        .then(function(){
+          return Promise.join(db_getters.getPlayer(playerChoice.playerId), db_getters.getCard(playerChoice.cardId))
+        })
+        .spread(function(_player, _card){
+          player = _player;
+          card = _card;
+          return executeChoice(playerChoice.choice);
+        })
+    }, Promise.resolve())
     .then(function(){
-      return shiftHand();
+      //rotate hands
+      return shiftHandFromPlayers(playersSelections[0].playerId)
     })
-    .then(function(){
-      return returnUpdatedGame();
-    })
+//    .then(function(){
+//      return returnUpdatedGame(playersSelections[0].playerId);
+//    })
+    .catch(function(err){ console.error('error executing', err) })
+//    return Promise.map(playersSelections, function(playerChoice){
+//      
+//      return Promise.join(db_getters.getPlayer(playerChoice.playerId), db_getters.getCard(playerChoice.cardId))
+//      .spread(function(_player, _card){
+//        console.log('the guy', _player.id)
+//        player = _player; 
+//        console.log('the guy saved', player.id)
+//        console.log('the things', _card.id, playerChoice.choice)
+//        card = _card; 
+//        return executeChoice(playerChoice.choice)
+//      })
+//      
+//    })
+//    .then(function(){
+//      return shiftHand();
+//    })
+//    .then(function(){
+////      return returnUpdatedGame();
+//    })
   }
   
   //////////////
@@ -67,17 +93,20 @@ module.exports = function () {
 
   function executeChoice(choice){
     //if choice is not in map, an obj was returned, indicating trade options were selected
-    if (!choiceMap[choice]) tradeForCard(choice);
-    else choiceMap[choice]();
+    if (!choiceMap[choice]) return tradeForCard(choice);
+    else return choiceMap[choice]();
   }
 
   
   ////// IN MAP
   function buildCard() {
-    doSomethingBasedOnBuildingACard()
+    return doSomethingBasedOnBuildingACard()
     .then(function(){
       return Promise.join(player.removeTemporary(card), player.addPermanent(card));
     })
+    .catch(function(err){
+      console.log(err, 'error!');
+    });
   }
   
   function payForCard() {
@@ -101,9 +130,9 @@ module.exports = function () {
   }
   
   function discard(){
-    db_getter.getGame(player.gameId)
+    return db_getters.getGame(player.gameId)
     .then(function(game){
-      return Promise.join(game.addDiscard(discardCard), playerDiscarding.removeTemporary(discardCard));
+      return Promise.join(game.addDiscard(card), player.removeTemporary(card));
     })
     .then(function(){
       player.money+=3;
@@ -115,6 +144,7 @@ module.exports = function () {
   
   function doSomethingBasedOnBuildingACard(){
     if (newResources.indexOf(card.type) > -1 || newResources.indexOf(card.name) > -1){
+      console.log('need to add to server', card.type)
       return addToPlayerResources.buildPlayerResources(player, card.functionality);
     }
 
@@ -123,7 +153,7 @@ module.exports = function () {
     }
     else if (tradePosts.indexOf(card.name) > -1){
       //functionality array indicates direction and type of resource
-      addToPlayerResources.updateResourceTradingParams(player, card.functionality[0], card.functionality[card.functionality.length - 1]);
+      return addToPlayerResources.updateResourceTradingParams(player, card.functionality[0], card.functionality[card.functionality.length - 1]);
     }
     //some cards that do not have immediate effects will also pass through here
     else return increaseMoney(); 
@@ -134,6 +164,7 @@ module.exports = function () {
   function increaseMoney(){
     if (card.name === 'Tavern') player.money += 5;
     else if (card.name === 'Arena') player.money += (player.wondersBuilt * 3);
+    else return Promise.resolve();
     return player.save()
   }
   
@@ -209,21 +240,35 @@ module.exports = function () {
     return totalPayment;
   }
     
-  function shiftHand(){
-    var newHand;
-    return db_getters.getNeighbors(player)
-    .spread(function(left, right){
-        return db_getters.getTemporaryForLR({}, left, right);
+  function shiftHandFromPlayers(startPlayerId){
+    var startPlayer;
+    return db_getters.getPlayer(startPlayerId)
+    .then(function(_startPlayer){
+      startPlayer = _startPlayer;
+      return db_getters.getGame(_startPlayer.gameId)
     })
-    .then(function(leftHand, rightHand){
-      card.era === 2 ? newHand = leftHand : newHand = rightHand;
-      return player.setTemporary(newHand);
+    .then(function(game){
+      var playerSwapping = _.find(game.GamePlayers, {id: startPlayerId});
+      var lastPass = playerSwapping.Temporary;
+      var newTempCards = {};
+      while (playerSwapping.RightNeighborId !== startPlayerId){
+        newTempCards[playerSwapping.id] = _.find(game.GamePlayers, {id: playerSwapping.RightNeighborId}).Temporary;
+        playerSwapping = _.find(game.GamePlayers, {id: playerSwapping.RightNeighborId});
+      }
+      var lastPlayer = _.find(game.GamePlayers, {RightNeighborId: startPlayerId});
+      newTempCards[lastPlayer.id] = lastPass;
+      return Promise.map(game.GamePlayers, function(player){
+        return player.setTemporary(newTempCards[player.id])
+      })
+    })
+    .then(function(){
+      return db_getters.getGame(startPlayer.gameId)
     })
   }
   
-  function returnUpdatedGame () {
-    return db_getters.getGame(player.gameId);
-  }
+//  function returnUpdatedGame (playerId) {
+//    return db_getters.getGame(player.gameId);
+//  }
 
   // PUBLIC API: 
   return orchestrator;

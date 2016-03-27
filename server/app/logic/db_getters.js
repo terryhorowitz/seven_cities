@@ -16,16 +16,10 @@ module.exports = {
   
     getPlayer: function (playerId){
       return Player.findOne({where: {id: playerId}, include: [{all:true}]})
-      .then(function(_player){
-        player = _player;
-      })
     }, 
   
     getCard: function (cardId){
       return Card.findOne({where: {id: cardId}, include: [{all:true}]})
-      .then(function(_card){
-        card = _card;
-      })
     }, 
   
     getPermanentForLR: function(query, left, right){

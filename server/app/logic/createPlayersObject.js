@@ -33,22 +33,45 @@ var createPlayersObject = function (allBoards, counter, allSockets, allPlayers) 
 	return players;
 };
 
-var createPlayersObjectRefresh = function(GamePlayers, players) {
+var createPlayersObjectRefresh = function(GamePlayers) {
+	var players =[];
 	for (var m = 0; m < GamePlayers.length; m++) {
 		var obj = {};
 		obj.board = GamePlayers[m].board;
 		obj.money = GamePlayers[m].money;
 		obj.tokens = GamePlayers[m].tokens;
-		obj.built = [];
+		obj.built = GamePlayers[m].Permanent;
 		obj.playerId = GamePlayers[m].id;
 		obj.socket = GamePlayers[m].socket;
 		obj.name = GamePlayers[m].name;
 		obj.neighborL = GamePlayers[m].LeftNeighbor.socket;
 		obj.neighborR = GamePlayers[m].RightNeighbor.socket;
+
+		obj.builtView = sortBuiltCards(GamePlayers[m].Permanent);
 		players.push(obj);
 	}
 	return players;
 };
+
+function sortBuiltCards (cards){
+	var sorted = [[],[],[],[],[],[]];
+	var cardTypeMap = {
+		"Raw Resource": 0,
+		"Processed Resource": 1,
+		"Trading": 2,
+		"War": 3,
+		"Technology": 4,
+		"Victory Points": 5,
+		"Guild": 6
+	}
+
+	cards.forEach(function(c){
+		sorted[cardTypeMap[c.type]].push('img/' + c.picture);
+	});
+	console.log('did i organize?', sorted)
+	return sorted;
+
+}
     
 module.exports = {
     createPlayersObject: createPlayersObject,

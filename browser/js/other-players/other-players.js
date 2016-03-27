@@ -20,7 +20,7 @@ app.directive('otherPlayers', function ($rootScope, $state, $uibModal) {
                 scope.neighbor = neighbor;
             }
 
-            console.log(scope.left);
+            console.log('scope.left', scope.left);
         }
 
 
