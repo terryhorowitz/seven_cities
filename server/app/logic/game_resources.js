@@ -84,7 +84,6 @@ module.exports = function () {
     var initalTradeParams = {raw: 2, processed: 2}
     playersResources.left.trade = {};
     playersResources.right.trade = {}
-    console.log(playersResources.right)
     playersResources.left.trade = initalTradeParams;
     playersResources.right.trade = initalTradeParams;
     return player;

@@ -38,9 +38,7 @@ app.directive('otherPlayers', function ($rootScope, $state, $uibModal) {
 
             }
 
-            // console.log('left',scope.left);
         }
-
 
     };
 

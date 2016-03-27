@@ -58,10 +58,10 @@
 			<div class="clearfix"></div>
 
 			<div id="built-cards">
-				<div ng-click="expandPile(pile)" ng-class="{expand: pile === clickedPile}" class="pile" ng-repeat="pile in builtCards" ng-click>
+				<div ng-click="expandPile(pile)" ng-class="{expand: pile === clickedPile}" class="pile" ng-repeat="pile in me.builtView" ng-click>
 					<ul>
 						<li ng-repeat="card in pile">
-							<img class="pile-card-img" src='{{card.image}}'>
+							<img class="pile-card-img" src='{{card}}'>
 						</li>
 					</ul>
 				</div>

@@ -46,7 +46,6 @@ app.controller('GameController', function ($scope, $state) {
       socket.emit('create', {roomname: $scope.roomname, playername: $scope.playername, localId: tempId});
 
       socket.on('your id', function(data) {
-        console.log('inside your id event')
         $scope.me.playerId = data;
         localStorage.setItem('playerId', data)
       })
@@ -66,16 +65,17 @@ app.controller('GameController', function ($scope, $state) {
           var thisSocket = $scope.players[i].socket.slice(2);
           if (thisSocket == socket.id) {
             $scope.me = $scope.players[i];
-            $scope.coin = $scope.me.money;
-            $scope.minuses = [];
-            $scope.pluses = 0;
-            $scope.me.tokens.forEach(function(token) {
-              if (token === -1) {
-                $scope.minuses.push(token);
-              } else {
-                $scope.pluses += token;
-              }
-            });
+
+            if ($scope.players[i].pluses) {
+              $scope.pluses = $scope.players[i].pluses;
+            } else {
+              $scope.pluses = 0;
+            }
+            if ($scope.players[i].minuses) {
+              $scope.minuses = $scope.players[i].minuses;
+            } else {
+              $scope.minuses = 0;
+            }
         
           }
         }
@@ -108,7 +108,8 @@ app.controller('GameController', function ($scope, $state) {
       //{"left":null,"right":["papyrus"]}
 
         $scope.submitChoice = function(selection){
-          socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId})
+          socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+          $scope.playOptions = null;
         }
 
       socket.on('your options', function(options) {
@@ -145,10 +146,38 @@ app.controller('GameController', function ($scope, $state) {
         $scope.$digest();
       })
 
+      socket.on('new round', function(data) {
+        console.log('data', data)
+        $scope.players = data;
+
+        for (var i = 0; i < data.length; i++) {
+          var thisSocket = $scope.players[i].socket.slice(2);
+          if (thisSocket == socket.id) {
+            $scope.me = $scope.players[i];
+            $scope.pluses = $scope.players[i].pluses;
+            $scope.minuses = $scope.players[i].minuses;
+        
+          }
+        }
+
+        for (var i = 0; i < data.length; i++) {
+          var thisSocket = $scope.players[i].socket.slice(2);
+          if ($scope.players[i].socket == $scope.me.neighborL && thisSocket !== socket.id) {
+            $scope.leftNeighbor = $scope.players[i];
+          } else if ($scope.players[i].socket == $scope.me.neighborR && thisSocket !== socket.id) {
+            $scope.rightNeighbor = $scope.players[i];
+          } else if (thisSocket !== socket.id) {
+            $scope.nonNeighbors.push($scope.players[i]);
+          }
+        }
+        console.log('this is players', $scope.players)
+
+        $scope.$digest();
+      })
       //player submits their choice
       $scope.selectCard = function(card) {
         $scope.cardSelection = card;
-	      socket.emit('choice made', {player: $scope.me.playerId, card: card.id});
+        socket.emit('choice made', {player: $scope.me.playerId, card: card.id});
       };
 
       $scope.dismiss = function() {
@@ -168,26 +197,26 @@ app.controller('GameController', function ($scope, $state) {
 
       
 
-      $scope.builtCards = [
-        [ {image: 'img/3_arena_3.png'},
-          {image: 'img/3_garden_3.png'},
-          {image: 'img/3_haven_3.png'},
-          {image: 'img/3_arsenal_3.png'},
-          {image: 'img/3_palace_3.png'}
-        ],
-        [ {image: 'img/3_observatory_3.png'},
-          {image: 'img/3_pantheon_3.png'},
-          {image: 'img/3_study_3.png'},
-          {image: 'img/3_lodge_3.png'},
-          {image: 'img/3_fortifications_3.png'}
-        ]
-      ]
+      // $scope.builtCards = [
+      //   [ {image: 'img/3_arena_3.png'},
+      //     {image: 'img/3_garden_3.png'},
+      //     {image: 'img/3_haven_3.png'},
+      //     {image: 'img/3_arsenal_3.png'},
+      //     {image: 'img/3_palace_3.png'}
+      //   ],
+      //   [ {image: 'img/3_observatory_3.png'},
+      //     {image: 'img/3_pantheon_3.png'},
+      //     {image: 'img/3_study_3.png'},
+      //     {image: 'img/3_lodge_3.png'},
+      //     {image: 'img/3_fortifications_3.png'}
+      //   ]
+      // ]
 
-      $scope.wonders = [
-        {image: 'img/wonders/alexandria_1.png'},
-        {image: 'img/wonders/alexandria_2.png'},
-        {image: 'img/wonders/alexandria_3.png'}
-      ]
+      // $scope.wonders = [
+      //   {image: 'img/wonders/alexandria_1.png'},
+      //   {image: 'img/wonders/alexandria_2.png'},
+      //   {image: 'img/wonders/alexandria_3.png'}
+      // ]
 
 
         // console.log($scope.wonders)
