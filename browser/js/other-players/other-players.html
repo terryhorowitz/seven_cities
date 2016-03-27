@@ -34,6 +34,17 @@
 				</div>
 			</div> -->
 
+
+			<div id="built-cards">
+				<div ng-click="expandPile(pile)" ng-class="{expand: pile === clickedPile}" class="pile" ng-repeat="pile in neighbor.builtView">
+					<ul>
+						<li ng-repeat="card in pile">
+							<img class="pile-card-img" src='{{card}}'>
+						</li>
+					</ul>
+				</div>
+			</div>
+
 			<div class='wonders'>
 				<div class="test" ng-repeat="wonder in neighborWonders">
 					<img src='/img/wonders/{{neighbor.board.name}}_{{wonder}}.png'>
