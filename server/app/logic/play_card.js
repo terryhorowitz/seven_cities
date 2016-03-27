@@ -18,7 +18,7 @@ module.exports = function () {
   
   
   ////////////// STATE ////////////////
-  var player, card;
+  var player, card, choice;
   var newResources = ["Raw Resource", "Processed Resource", "Forum", "Caravansery"]; 
   var tradingSites = ["Vineyard", "Bazar", "Haven", "Chamber of Commerce", "Lighthouse"];
   var tradePosts = ["East Trading Post", "West Trading Post", "Marketplace"]
@@ -48,6 +48,7 @@ module.exports = function () {
   /////// Public API/////////////
   function orchestrator(playersSelections){
     return playersSelections.reduce(function(promiseAccumulator, playerChoice){
+      choice = playerChoice.choice;
       return promiseAccumulator
         .then(function(){
           return Promise.join(db_getters.getPlayer(playerChoice.playerId), db_getters.getCard(playerChoice.cardId))
@@ -62,29 +63,7 @@ module.exports = function () {
       //rotate hands
       return shiftHandFromPlayers(playersSelections[0].playerId)
     })
-//    .then(function(){
-//      return returnUpdatedGame(playersSelections[0].playerId);
-//    })
     .catch(function(err){ console.error('error executing', err) })
-//    return Promise.map(playersSelections, function(playerChoice){
-//      
-//      return Promise.join(db_getters.getPlayer(playerChoice.playerId), db_getters.getCard(playerChoice.cardId))
-//      .spread(function(_player, _card){
-//        console.log('the guy', _player.id)
-//        player = _player; 
-//        console.log('the guy saved', player.id)
-//        console.log('the things', _card.id, playerChoice.choice)
-//        card = _card; 
-//        return executeChoice(playerChoice.choice)
-//      })
-//      
-//    })
-//    .then(function(){
-//      return shiftHand();
-//    })
-//    .then(function(){
-////      return returnUpdatedGame();
-//    })
   }
   
   //////////////
@@ -144,11 +123,10 @@ module.exports = function () {
   
   function doSomethingBasedOnBuildingACard(){
     if (newResources.indexOf(card.type) > -1 || newResources.indexOf(card.name) > -1){
-      console.log('need to add to server', card.type)
+      console.log('need to added to server', card.type)
       return addToPlayerResources.buildPlayerResources(player, card.functionality);
     }
-
-    else if (tradingSites.indexOf(card.name) > -1){
+    if (tradingSites.indexOf(card.name) > -1){
       return getMoneyFromCard();
     }
     else if (tradePosts.indexOf(card.name) > -1){
@@ -265,10 +243,6 @@ module.exports = function () {
       return db_getters.getGame(startPlayer.gameId)
     })
   }
-  
-//  function returnUpdatedGame (playerId) {
-//    return db_getters.getGame(player.gameId);
-//  }
 
   // PUBLIC API: 
   return orchestrator;
