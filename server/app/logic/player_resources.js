@@ -3,7 +3,7 @@ var getGameResources = require('./game_resources')().getGameResources;
 
 function buildPlayerResources(player, resources) {
   var gameResources = getGameResources(player.gameId);
-  playersResources = gameResources[player.id].self;
+  var playersResources = gameResources[player.id].self;
     for (var i = 0; i < resources.length; i++) {
       //ore/wood(combo)-type logic
       if (resources[i].indexOf('/') !== -1){//if it is a slash resource
@@ -23,8 +23,8 @@ function buildPlayerResources(player, resources) {
 
 function updateResourceTradingParams(player, direction, resourceType) {
   var gameResources = getGameResources(player.gameId);
-  leftResourcesTradeParams = gameResources[player.id].leftNeighbor.trade;
-  rightResourcesTradeParams = gameResources[player.id].rightNeighbor.trade;
+  var leftResourcesTradeParams = gameResources[player.id].leftNeighbor.trade;
+  var rightResourcesTradeParams = gameResources[player.id].rightNeighbor.trade;
   if (resourceType === "Raw Resource" || direction === 'left'){
     leftResourcesTradeParams.raw = 1;
   } 

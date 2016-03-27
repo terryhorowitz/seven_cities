@@ -30,7 +30,11 @@ app.directive('otherPlayers', function ($rootScope, $state, $uibModal) {
                     if (token === -1) {
                         scope.minuses.push(token);
                     } else scope.pluses.push(token);
-                })
+                });
+
+                scope.background = {'background-color': 'blue', 'background': 'url(img/background/' + scope.neighbor.board.name + '.png)'}
+
+                // $scope.background = {background: 'url(img/background/' + $scope.me.board.name + '.png) no-repeat center center fixed', 'background-size': 'cover', 'min-height': '100%'};
 
             }
 
