@@ -33,13 +33,14 @@ var createPlayersObject = function (allBoards, counter, allSockets, allPlayers) 
 	return players;
 };
 
-var createPlayersObjectRefresh = function(GamePlayers, players) {
+var createPlayersObjectRefresh = function(GamePlayers) {
+	var players =[];
 	for (var m = 0; m < GamePlayers.length; m++) {
 		var obj = {};
 		obj.board = GamePlayers[m].board;
 		obj.money = GamePlayers[m].money;
 		obj.tokens = GamePlayers[m].tokens;
-		obj.built = [];
+		obj.built = GamePlayers[m].Permanent;
 		obj.playerId = GamePlayers[m].id;
 		obj.socket = GamePlayers[m].socket;
 		obj.name = GamePlayers[m].name;

@@ -45,7 +45,6 @@ app.controller('GameController', function ($scope, $state) {
       socket.emit('create', {roomname: $scope.roomname, playername: $scope.playername, localId: tempId});
 
       socket.on('your id', function(data) {
-        console.log('inside your id event')
         $scope.me.playerId = data;
         localStorage.setItem('playerId', data)
       })
@@ -107,7 +106,9 @@ app.controller('GameController', function ($scope, $state) {
       //{"left":null,"right":["papyrus"]}
 
         $scope.submitChoice = function(selection){
-          socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId})
+          socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+          $scope.playOptions = null;
+          $scope.$digest();
         }
 
       socket.on('your options', function(options) {
@@ -144,10 +145,36 @@ app.controller('GameController', function ($scope, $state) {
         $scope.$digest();
       })
 
+      socket.on('new round', function(data) {
+        console.log('data', data)
+        $scope.players = data;
+
+        for (var i = 0; i < data.length; i++) {
+          var thisSocket = $scope.players[i].socket.slice(2);
+          if (thisSocket == socket.id) {
+            $scope.me = $scope.players[i];
+        
+          }
+        }
+
+        for (var i = 0; i < data.length; i++) {
+          var thisSocket = $scope.players[i].socket.slice(2);
+          if ($scope.players[i].socket == $scope.me.neighborL && thisSocket !== socket.id) {
+            $scope.leftNeighbor = $scope.players[i];
+          } else if ($scope.players[i].socket == $scope.me.neighborR && thisSocket !== socket.id) {
+            $scope.rightNeighbor = $scope.players[i];
+          } else if (thisSocket !== socket.id) {
+            $scope.nonNeighbors.push($scope.players[i]);
+          }
+        }
+        console.log('this is players', $scope.players)
+
+        $scope.$digest();
+      })
       //player submits their choice
       $scope.selectCard = function(card) {
         $scope.cardSelection = card;
-	      socket.emit('choice made', {player: $scope.me.playerId, card: card.id});
+        socket.emit('choice made', {player: $scope.me.playerId, card: card.id});
       };
 
       $scope.dismiss = function() {

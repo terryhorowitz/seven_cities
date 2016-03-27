@@ -43,7 +43,7 @@ module.exports = function (server) {
 					allPlayers[socket.id].push(data.localId)
 					thisGame = game;
 					socket.join(game.name);
-					players = createPlayers.createPlayersObjectRefresh(thisGame.GamePlayers, players)
+					players = createPlayers.createPlayersObjectRefresh(thisGame.GamePlayers)
 					io.sockets.connected[socket.id].emit('game initialized', players);
 					var me = _.find(thisGame.GamePlayers, {'socket': socket.id})
 					io.sockets.connected[socket.id].emit('your hand', me.Temporary);
@@ -112,7 +112,7 @@ module.exports = function (server) {
 				io.sockets.connected[socket.id].emit('err', {message: 'Need at least 3 players to play!'});
 			}
 		});
-		socket.on('choice made', function(data) {
+	socket.on('choice made', function(data) {
 		//needs to check if the choice is ok and then emit
 		var cardId = data.card;
 		var playerId = data.player;
@@ -127,6 +127,7 @@ module.exports = function (server) {
 	});
 
 	socket.on('submit choice', function(data) {
+		console.log('in submit choice', data)
         var peopleInRoom = 0;
       
         clients = io.sockets.adapter.rooms[currentRoom];
@@ -134,12 +135,16 @@ module.exports = function (server) {
             peopleInRoom++;
         }
 		playersChoices.push(data)
-        console.log('outside', playersChoices)
+        console.log('outside if statement', playersChoices)
         if (playersChoices.length === peopleInRoom){
           console.log('inside', peopleInRoom)
           return playCard(playersChoices)
-          .then(function(response){
-            console.log('game back to frontend', response)
+          .then(function(game) {
+          	players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
+          	io.to(currentRoom).emit('new round', players);
+          	game.GamePlayers.forEach(function(player) {
+							io.sockets.connected[player.socket].emit('your hand', player.Temporary);
+          	})
           })
         }
         
