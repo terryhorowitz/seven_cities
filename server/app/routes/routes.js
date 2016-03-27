@@ -38,7 +38,7 @@ router.get('/deck', function(req, res, next){
 
 router.get('/game', function(req, res, next){
 
-  Game.findAll({include: [{all: true}]})
+  Game.findAll({include: [{model: Deck}, {model: Player, as: 'GamePlayers', include: [{model: Card, as: 'Permanent'}, {model: Card, as: 'Temporary'}, {model: Player, as: 'LeftNeighbor'}, {model: Player, as: 'RightNeighbor'}, {model: Board}]}]})
 
   .then(function(games){
     console.log('HOW MANY', games.length)
