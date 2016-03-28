@@ -96,14 +96,16 @@ module.exports = function () {
   }
   
   function buildWonder(){
-    return playOptions.checkIfPlayerCanBuildWonder()
+    return playOptions.checkIfPlayerCanBuildWonder(player.id)
     .then(function(response){
       player.wondersBuilt++;
       if (typeof response === 'string'){
         return player.removeTemporary(card); //remove from player but do not include in game discard
       }
       else {
-        return tradeForCard(response);
+        var wonderCost = {};
+        wonderCost.wonder = response;
+        return tradeForCard(wonderCost);
       }
       //need to consider outcome(functionality) of building wonder
     })
@@ -188,36 +190,63 @@ module.exports = function () {
   
   function tradeForCard(tradeParams){
     //obj that needs to be recieved: {left: ['wood', 'clay'], right: ['clay]} OR {left: ['ore'], right: null} etc).
-    var payLeft = trade(tradeParams.left, 'leftNeighbor');
-    var payRight = tradeParams(tradeParams.right, 'rightNeighbor')
+    var forWonder = false;
+    if (tradeParams.wonder) {
+      forWonder = true;
+      tradeParams = tradeParams.wonder;
+    }
+    var payLeft, payRight;
+    tradeParams.left !== null ? payLeft = trade(tradeParams.left, 'left') : payLeft = 0;
+    tradeParams.right !== null ? payRight = trade(tradeParams.right, 'right') : payRight = 0;
     return db_getters.getNeighbors(player)
-    .then(function(left, right){
+    .spread(function(leftNeighbor, rightNeighbor){
       if (tradeParams.left !== null && tradeParams.right !== null){
         player.money -= payLeft - payRight;
-        left.money += payLeft;
-        right.money += payRight;
+        leftNeighbor.money += payLeft;
+        rightNeighbor.money += payRight;
       }
       else if (!tradeParams.right) {
         player.money -= payLeft;
-        left.money += payLeft;
+        leftNeighbor.money += payLeft;
       }
       else if (!tradeParams.left) {
-        player.money -= payLeft;
-        right.money += payLeft;
+        player.money -= payRight;
+        rightNeighbor.money += payRight;
       }
+      return Promise.join(leftNeighbor.save(), rightNeighbor.save(), player.save())
+    })
+    .then(function(leftNeighbor, rightNeighbor){
+      if (forWonder) return getWonderOutcome();
       return buildCard();
     })
   }
 
-  function trade(trade, tradeDirection){
-    // console.log('go', trade, tradeDirection)
+  function trade (trade, tradeDirection){
     var tradeParams = resourcesObj.getGameResources(player.gameId)[player.id].trade[tradeDirection];
-    // console.log('dir', tradeDirection, 'params',tradeParams)
     var totalPayment = 0;
     for (var i = 0; i < trade.length; i++){
       totalPayment += tradeParams[resourceTypeMap[trade[i]]];
     }
     return totalPayment;
+  }
+  
+  function getWonderOutcome () {
+    var boardName = player.board.name;
+    var wonderFunc = player.board[wonder + player.wondersBuilt];
+    if (boardName === "Esphesos" && player.wondersBuilt === 2){
+      player.money += 9;
+      return player.save();
+    }
+    else if (boardName === "Alexandria" && player.wondersBuilt === 2){
+      return addToPlayerResources.buildPlayerResources(player, ["clay/ore/wood/stone"]);
+    }
+//    else if (boardName === "Halikarnassos" && player.wondersBuilt === 2){
+//      return  player.save()// do something on front end for this??
+//    }
+//    else if(boardName === "Olympia" && player.wondersBuilt === 2){
+//      return player.save()//"do not have to pay once per era";
+//    }
+    else return Promise.resolve();
   }
     
   function shiftHandFromPlayers(startPlayerId, era){ //check how to pass era (from deck?) -> only needs if era II

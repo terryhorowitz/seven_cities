@@ -3,6 +3,7 @@ var Game = require('../../db/models/index.js').Game;
 var Player = require('../../db/models/index.js').Player;
 var Deck = require('../../db/models/index.js').Deck;
 var Card = require('../../db/models/index.js').Card;
+var Promise = require('bluebird');
 
 module.exports = {
 

@@ -128,7 +128,6 @@ module.exports = function (server) {
 	});
 
 	socket.on('submit choice', function(data) {
-		// console.log('in submit choice', data)
         var peopleInRoom = 0;
       
         clients = io.sockets.adapter.rooms[currentRoom];
@@ -137,9 +136,8 @@ module.exports = function (server) {
 	        }
 
 		playersChoices.push(data)
-        // console.log('outside if statement', playersChoices)
+
         if (playersChoices.length === peopleInRoom){
-          // console.log('inside', peopleInRoom)
           return playCard(playersChoices)
           .then(function(game) {
           	console.log('!!!!!!!!!!!!!!', game)
@@ -147,7 +145,7 @@ module.exports = function (server) {
           	players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
           	io.to(currentRoom).emit('new round', players);
           	game.GamePlayers.forEach(function(player) {
-							io.sockets.connected[player.socket].emit('your hand', player.Temporary);
+                io.sockets.connected[player.socket].emit('your hand', player.Temporary);
           	})
           })
         }
