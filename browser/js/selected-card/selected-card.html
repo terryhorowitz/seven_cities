@@ -4,7 +4,7 @@
         <img src="img/{{cardSelection.picture}}">
     </div>
     <div class="col-xs-8">
-        <div ng-repeat='option in playOptions'>
+        <div ng-repeat='option in playOptions track by $index'>
             <a ng-click="submitChoice(option)">{{option.msg || option}}</a>
         </div>
         <<!-- div>

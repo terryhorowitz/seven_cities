@@ -115,36 +115,37 @@ app.controller('GameController', function ($scope, $state) {
         }
 
       socket.on('your options', function(options) {
-        $scope.playOptions = options;
-        $scope.playOptions.forEach(function(option) {
+//        $scope.playOptions = options;
+        $scope.playOptions = options.map(function(option) {
           if (typeof option !== 'string') {
             var needed = [];
-            if (option.left && option.left[0]) {
-              needed.push({});
-              needed[0].left = ['left'];
+            for (var i = 0; i < option.total.length; i++){
+              var obj = {};
+              obj[option.total[i]] = [];
+              needed.push(obj);
             }
-            if (option.right && option.right[0]) {
-              needed.push({});
-              needed[0].right = ['right'];
+          for (var j = 0; j < needed.length; j++){
+            if (option.left && option.left.length && needed[j][option.left[0]]){
+              needed[j][option.left[0]].push('left');
+              option.left.shift();
             }
-            console.log('this is playoptions', $scope.playOptions)
-          } else if (option === 'Discard') {
-            option = option;
-          } else if (option === 'get free' || option === 'paid by own resources') {
-            option = 'Build for free';
-          } else if (option === 'pay money') {
-            option = "Pay 1 coin";
-          } else if (option === 'upgrade') {
-            option = 'Upgrade for free'
-          } else if (option === 'build wonder') {
-            option = 'Build wonder';
-          } else if (option !== "can't afford") {
-
-          } else if (option !== "already have it") {
-
-          } else if (option !== "no trade available!") {
-
+            if (option.right && option.right.length && needed[j][option.right[0]]){
+              needed[j][option.right[0]].push('right');
+              option.right.shift();
+            }
           }
+            return needed;
+          } else if (option === 'Discard') {
+            return option;
+          } else if (option === 'get free' || option === 'paid by own resources') {
+            return 'Build for free';
+          } else if (option === 'pay money') {
+            return "Pay 1 coin";
+          } else if (option === 'upgrade') {
+            return 'Upgrade for free'
+          } else if (option === 'build wonder') {
+            return 'Build wonder';
+          } else return "";
         })
         $scope.$digest();
       })
