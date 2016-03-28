@@ -24,11 +24,11 @@ module.exports = function () {
   var tradePosts = ["East Trading Post", "West Trading Post", "Marketplace"]
   
   var choiceMap = {
-    "get free": buildCard,
-    "upgrade": buildCard,
+    "Build for free": buildCard,
+    "Upgrade for free": buildCard,
     "paid by own resources": buildCard,
-    "pay money": payForCard,
-    "build wonder": buildWonder,
+    "Pay 1 coin": payForCard,
+    "Build wonder": buildWonder,
     "Discard": discard
   }
   
