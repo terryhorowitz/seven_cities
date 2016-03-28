@@ -26,42 +26,38 @@ var getEraAwardPoints = function(era) {
   }
 }
 
-var countWarPoints = function(warCards) {
+var countWarPoints = function(warCards, pointScale) {
   var totalPoints = 0;
   for (var i = 0; i < warCards.length; i++) {
-    totalPoints += playerBuiltCards[i].functionality.length;
+    totalPoints += warCards[i].functionality.length * pointScale;
   }
-  console.log('total war points', totalPoints);
   return totalPoints;
 }
 
 var eachPlayerWar = function(player, era) {
-
   var playerWarPoints = 0;
-  var neighborWarPoints = 0;
+  var leftNeighborWarPoints = 0;
   var warPoints = getEraAwardPoints(era)
 
   return player.getLeftNeighbor()
   .then(function(leftNeighbor) {
-      // console.log('?????????? this is player', player);
-      // console.log('?????????? this is leftNeighbor', leftNeighbor);
-
     return Promise.join(player, leftNeighbor, player.getPermanent({where: {type: "War"}}), leftNeighbor.getPermanent({where: {type: "War"}}))
   })
-  .spread(function(player, leftNeigbor, playerWarCards, leftNeighborWarCards) {
-    if (playerWarCards.length) playerWarPoints = countWarPoints(playerWarCards)
-    if (leftNeighborWarCards.length) neighborWarPoints = countWarPoints(leftNeighborWarCards)
-      console.log('!!!!!!!!!!!!!   playerWarPoints', playerWarPoints);
-      console.log('!!!!!!!!!!!!!   leftNeighborWarPoints', leftNeighborWarPoints);
+  .spread(function(player, leftNeighbor, playerWarCards, leftNeighborWarCards) {
+    if (playerWarCards.length) playerWarPoints = countWarPoints(playerWarCards, warPoints)
+    if (leftNeighborWarCards.length) leftNeighborWarPoints = countWarPoints(leftNeighborWarCards, warPoints)
+      console.log('!!!!!!!!!!!!! playerWarPoints', playerWarPoints);
+      console.log('!!!!!!!!!!!!! leftNeighborWarPoints', leftNeighborWarPoints);
 
-    if (playerWarPoints > neighborWarPoints) {
+    if (playerWarPoints > leftNeighborWarPoints) {
       player.tokens.push(playerWarPoints)
       leftNeighbor.tokens.push(-1)
     }
-    else if (neighborWarPoints > playerWarPoints) {
-      leftNeighbor.tokens.push(neighborWarPoints)
+    else if (leftNeighborWarPoints > playerWarPoints) {
+      leftNeighbor.tokens.push(leftNeighborWarPoints)
       player.tokens.push(-1)
     }
+    console.log('############player', player )
     return Promise.join(player.save(), leftNeighbor.save())
   })
 }
