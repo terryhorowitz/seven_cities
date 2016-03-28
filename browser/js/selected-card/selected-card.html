@@ -7,30 +7,9 @@
         <div ng-repeat='option in playOptions track by $index'>
             <a ng-click="submitChoice(option)">{{option.msg || option}}</a>
         </div>
-        <<!-- div>
-            <a>Confirm</a>
-        </div> -->
-
-  <!--       <div>
-            <a ng-hide="" class="card-actions" href="">Build Card</a>
-            <a ng-show="" class="card-actions" href="">Confirm Build Card</a>
+        <div ng-repeat="resource in tradeOptions">
+            {{resource}}: <input type="radio" ng-show="resource.left">left<br>
+                          <input type="radio" ng-show="resource.right">right<br>
         </div>
-        <div>
-            <a ng-hide="" class="card-actions" href="">Discard</a>
-            <a ng-show="" class="card-actions" href="">Confirm Discard</a>
-        </div>
-        <div>
-            <a ng-hide="" class="card-actions" href="">Build Wonder</a>
-            <a ng-show="" class="card-actions" href="">Confirm Build Wonder</a>
-        </div>
-        <div ng-show="">
-            <h4>Trade</h4>
-            <div class="radio">
-              <label><input type="radio" name="optradio">Trade Left</label>
-            </div>
-            <div class="radio">
-              <label><input type="radio" name="optradio">Trade Right</label>
-            </div>
-        </div> -->
     </div>
 </div>

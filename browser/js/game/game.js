@@ -134,7 +134,7 @@ app.controller('GameController', function ($scope, $state) {
               option.right.shift();
             }
           }
-            return needed;
+            $scope.tradeOptions = needed;
           } else if (option === 'Discard') {
             return option;
           } else if (option === 'get free' || option === 'paid by own resources') {
