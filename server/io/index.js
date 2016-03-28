@@ -55,9 +55,12 @@ module.exports = function (server) {
 				currentRoom = data.roomname;
 				socket.join(data.roomname);
 				clients = io.sockets.adapter.rooms[data.roomname];
+				var namesOfPlayers = [];
 				for (var key in clients.sockets) {
 					counter++;
+					namesOfPlayers.push(allPlayers[key][0])
 				}
+				io.to(currentRoom).emit('in room', namesOfPlayers);
 				// if player is first in room, allows them to start game
 				if (counter===1) {
 					socket.emit('firstPlayer');

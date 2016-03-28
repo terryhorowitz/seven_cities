@@ -46,6 +46,12 @@ app.controller('GameController', function ($scope, $state) {
       var tempId = localStorage.getItem('playerId');
       socket.emit('create', {roomname: $scope.roomname, playername: $scope.playername, localId: tempId});
 
+      socket.on('in room', function(data) {
+        console.log('this is in room', data);
+        $scope.inRoom = data.join(', ');
+        $scope.$digest();
+      })
+
       socket.on('your id', function(data) {
         $scope.me.playerId = data;
         localStorage.setItem('playerId', data)
