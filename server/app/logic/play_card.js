@@ -194,31 +194,34 @@ module.exports = function () {
       forWonder = true;
       tradeParams = tradeParams.wonder;
     }
-    var payLeft = trade(tradeParams.left, 'leftNeighbor');
-    var payRight = tradeParams(tradeParams.right, 'rightNeighbor')
+    var payLeft, payRight;
+    tradeParams.left !== null ? payLeft = trade(tradeParams.left, 'left') : payLeft = 0;
+    tradeParams.right !== null ? payRight = trade(tradeParams.right, 'right') : payRight = 0;
     return db_getters.getNeighbors(player)
-    .then(function(left, right){
+    .spread(function(leftNeighbor, rightNeighbor){
       if (tradeParams.left !== null && tradeParams.right !== null){
         player.money -= payLeft - payRight;
-        left.money += payLeft;
-        right.money += payRight;
+        leftNeighbor.money += payLeft;
+        rightNeighbor.money += payRight;
       }
       else if (!tradeParams.right) {
         player.money -= payLeft;
-        left.money += payLeft;
+        leftNeighbor.money += payLeft;
       }
       else if (!tradeParams.left) {
-        player.money -= payLeft;
-        right.money += payLeft;
+        player.money -= payRight;
+        rightNeighbor.money += payRight;
       }
+      return Promise.join(leftNeighbor.save(), rightNeighbor.save(), player.save())
+    })
+    .then(function(leftNeighbor, rightNeighbor){
       if (forWonder) return getWonderOutcome();
       return buildCard();
     })
   }
 
-  function trade(trade, tradeDirection){
+  function trade (trade, tradeDirection){
     var tradeParams = resourcesObj.getGameResources(player.gameId)[player.id].trade[tradeDirection];
-    console.log('dir', tradeDirection, 'params',tradeParams)
     var totalPayment = 0;
     for (var i = 0; i < trade.length; i++){
       totalPayment += tradeParams[resourceTypeMap[trade[i]]];

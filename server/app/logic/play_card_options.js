@@ -39,7 +39,12 @@ module.exports = function () {
           }
         }
       }
-      return checkResourcePaymentMethods(player, card.cost)
+      var payment = checkResourcePaymentMethods(player, card.cost);
+      if (typeof payment === "string") return payment;
+      else {//include total to figure out trade options on frontend
+        payment.total = card.cost;
+        return payment;
+      }
     })
   }
   
@@ -80,7 +85,7 @@ module.exports = function () {
     else trade.left = null;
     if (rightContribution.length === cost.length) trade.right = rightContribution;
     else trade.right = null;
-    if (trade.right === null && trade.left === null) return 'no trade available!'
+    if (trade.right === null && trade.left === null) return 'no trade available!';
     return trade;
   }
   
