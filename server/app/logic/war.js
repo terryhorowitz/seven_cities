@@ -38,11 +38,12 @@ var eachPlayerWar = function(player, era) {
   var playerWarPoints = 0;
   var leftNeighborWarPoints = 0;
   var warPoints = getEraAwardPoints(era);
-  var newPlayerToken = player.tokens;
+  var newPlayerToken; 
   var newNeighborToken;
 
-  return player.getLeftNeighbor()
-  .then(function(leftNeighbor) {
+  return Promise.join(Player.findById(player.id), player.getLeftNeighbor())
+  .spread(function(player, leftNeighbor) {
+    newPlayerToken = player.tokens;
     newNeighborToken = leftNeighbor.tokens;
     return Promise.join(player, leftNeighbor, player.getPermanent({where: {type: "War"}}), leftNeighbor.getPermanent({where: {type: "War"}}))
   })
@@ -77,9 +78,9 @@ var goToWar = function(gameId, era) {
     return game.getGamePlayers()
   })
   .then(function(playersArr){
-    playersArr.reduce(function(promiseAccumulator, player){
+    playersArr.reduce(function(promiseAccumulator, p){
       return promiseAccumulator.then(function(){
-        return eachPlayerWar(player, era);
+        return eachPlayerWar(p, era);
       })
     }, Promise.resolve())
   })
