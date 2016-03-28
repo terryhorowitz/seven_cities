@@ -48,8 +48,6 @@ var eachPlayerWar = function(player, era) {
     return Promise.join(player, leftNeighbor, player.getPermanent({where: {type: "War"}}), leftNeighbor.getPermanent({where: {type: "War"}}))
   })
   .spread(function(player, leftNeighbor, playerWarCards, leftNeighborWarCards) {
-    console.log('BEFORE newPlayerToken', newPlayerToken)
-    console.log('BEFORE newNeighborToken', newNeighborToken)
     if (playerWarCards.length) playerWarPoints = countWarPoints(playerWarCards)
     if (leftNeighborWarCards.length) leftNeighborWarPoints = countWarPoints(leftNeighborWarCards)
 
@@ -61,14 +59,11 @@ var eachPlayerWar = function(player, era) {
       newNeighborToken.push(leftNeighborWarPoints * warPoints)
       newPlayerToken.push(-1)
     }
-    console.log('player id', player.id)
-    console.log('newPlayerToken', newPlayerToken)
-    console.log('newNeighborToken', newNeighborToken)
-    console.log('############player', player )
     return Promise.join(player.update({tokens: newPlayerToken}), leftNeighbor.update({tokens: newNeighborToken}))
   })
-  .then(function(data) {
-    console.log('!!!!!!!!!!!!! after promise.join', data);
+  .then(function() {
+    //call new era
+    //refresh player views to add tokens
   })
 }
 
