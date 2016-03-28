@@ -109,6 +109,7 @@ app.controller('GameController', function ($scope, $state) {
       //{"left":null,"right":["papyrus"]}
 
         $scope.submitChoice = function(selection){
+          console.log('submission', selection)
           socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
           $scope.playOptions = null;
         }
@@ -154,7 +155,6 @@ app.controller('GameController', function ($scope, $state) {
       })
 
       socket.on('new round', function(data) {
-        console.log('data', data)
         $scope.players = data;
 
         for (var i = 0; i < data.length; i++) {

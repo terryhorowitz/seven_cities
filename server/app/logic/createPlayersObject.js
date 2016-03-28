@@ -69,7 +69,6 @@ function sortBuiltCards (cards){
 	cards.forEach(function(c){
 		sorted[cardTypeMap[c.type]].push('img/' + c.picture);
 	});
-	console.log('did i organize?', sorted)
 	return sorted;
 
 }
