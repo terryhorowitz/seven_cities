@@ -24,11 +24,10 @@ module.exports = function () {
   var tradePosts = ["East Trading Post", "West Trading Post", "Marketplace"]
   
   var choiceMap = {
-    "get free": buildCard,
-    "upgrade": buildCard,
-    "paid by own resources": buildCard,
-    "pay money": payForCard,
-    "build wonder": buildWonder,
+    "Build for free": buildCard,
+    "Upgrade for free": buildCard,
+    "Pay 1 coin": payForCard,
+    "Build Wonder": buildWonder,
     "Discard": discard
   }
   
@@ -47,6 +46,7 @@ module.exports = function () {
   
   /////// Public API/////////////
   function orchestrator(playersSelections){
+    console.log('enter play card', playersSelections)
     return playersSelections.reduce(function(promiseAccumulator, playerChoice){
       choice = playerChoice.choice;
       return promiseAccumulator
@@ -72,6 +72,7 @@ module.exports = function () {
 
   function executeChoice(choice){
     //if choice is not in map, an obj was returned, indicating trade options were selected
+    console.log('goiong', choice)
     if (!choiceMap[choice]) return tradeForCard(choice);
     else return choiceMap[choice]();
   }
@@ -125,6 +126,7 @@ module.exports = function () {
   
   function doSomethingBasedOnBuildingACard(){
     if (newResources.indexOf(card.type) > -1 || newResources.indexOf(card.name) > -1){
+      console.log('building rsc')
       return addToPlayerResources.buildPlayerResources(player, card.functionality);
     }
     if (tradingSites.indexOf(card.name) > -1){

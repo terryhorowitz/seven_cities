@@ -3,6 +3,7 @@ var getGameResources = require('./game_resources')().getGameResources;
 var db_getters = require('./db_getters.js')
 
 function buildPlayerResources(player, resources) {
+  console.log('build rsc')
   var gameResources = getGameResources(player.gameId);
   var playersResources = gameResources[player.id].self;
     for (var i = 0; i < resources.length; i++) {

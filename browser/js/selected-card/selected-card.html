@@ -7,9 +7,14 @@
         <div ng-repeat='option in playOptions track by $index'>
             <a ng-click="submitChoice(option)">{{option.msg || option}}</a>
         </div>
-        <div ng-repeat="resource in tradeOptions">
-            {{resource}}: <input type="radio" ng-show="resource.left">left<br>
-                          <input type="radio" ng-show="resource.right">right<br>
-        </div>
+        <form>
+          <div ng-repeat="resource in tradeOptions">
+            {{resource[0][0]}}
+            <div ng-repeat="direction in resource[1]">
+               <input type="radio" ng-model="trade[$index]" value="{{direction + '/' + resource[0][0]}}">{{direction}}<br>
+            </div>
+          </div>
+          <div ng-show="tradeOptions"><a ng-click='submitTrade()'>submit trade</a></div>
+        </form>
     </div>
 </div>

@@ -128,6 +128,7 @@ module.exports = function (server) {
 
 	socket.on('submit choice', function(data) {
         var peopleInRoom = 0;
+      console.log('socket io', data)
       
         clients = io.sockets.adapter.rooms[currentRoom];
         for (var key in clients.sockets) {
