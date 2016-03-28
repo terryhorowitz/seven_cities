@@ -125,11 +125,10 @@ module.exports = function (server) {
 			//check if player can build wonders
 		})
 	});
-<<<<<<< HEAD
+
 	socket.on('send msg', function(data){
 		io.to(currentRoom).emit('get msg', data)
 	})
-=======
 
 	socket.on('submit choice', function(data) {
         var peopleInRoom = 0;
@@ -156,8 +155,6 @@ module.exports = function (server) {
 
 		// })
 	})
-
->>>>>>> d486201bd12906fef34d34e8db0d5c20ffa3b116
   });
   
   return io;
