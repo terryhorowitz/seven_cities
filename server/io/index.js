@@ -99,7 +99,6 @@ module.exports = function (server) {
 					return startGameFuncs.startGame(players, currentRoom);
 				})
 				.then(function(gameObject) {
-					console.log(gameObject)
 					players = players.map(function(player) {
 						var current = _.find(gameObject.GamePlayers, {'socket': player.socket})
 							player.playerId = current.id;
@@ -140,7 +139,6 @@ module.exports = function (server) {
         if (playersChoices.length === peopleInRoom){
           return playCard(playersChoices)
           .then(function(game) {
-          	console.log('!!!!!!!!!!!!!!', game)
           	playersChoices = [];
           	players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
           	io.to(currentRoom).emit('new round', players);

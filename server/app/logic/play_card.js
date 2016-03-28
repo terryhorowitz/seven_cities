@@ -260,19 +260,32 @@ module.exports = function () {
       var playerSwapping = _.find(game.GamePlayers, {id: startPlayerId});
       var lastPass = playerSwapping.Temporary;
       var newTempCards = {};
-      var myNeighbor = 'RightNeighborId'; // double check if this syntax is okay
-      if (era) myNeighbor = 'LeftNeighborId';
-      while (playerSwapping[myNeighbor] !== startPlayerId){
-        newTempCards[playerSwapping.id] = _.find(game.GamePlayers, {id: playerSwapping[myNeighbor]}).Temporary;
-        playerSwapping = _.find(game.GamePlayers, {id: playerSwapping[myNeighbor]});
+      // var swapNeighbor;
+      
+      if (era) {
+        while (playerSwapping.LeftNeighborId !== startPlayerId){
+          newTempCards[playerSwapping.id] = _.find(game.GamePlayers, {id: playerSwapping.LeftNeighborId}).Temporary;
+          playerSwapping = _.find(game.GamePlayers, {id: playerSwapping.LeftNeighborId});
+        }
+        if (newTempCards.length == 1) {
+          console.log('this is where war should start')
+        }
+        var lastPlayer = _.find(game.GamePlayers, {LeftNeighborId: startPlayerId});
+      } else {
+        while (playerSwapping.RightNeighborId !== startPlayerId){
+          newTempCards[playerSwapping.id] = _.find(game.GamePlayers, {id: playerSwapping.RightNeighborId}).Temporary;
+          playerSwapping = _.find(game.GamePlayers, {id: playerSwapping.RightNeighborId});
+        }
+        console.log('newTempCards first prop', newTempCards[startPlayerId])
+        // console.dir(newTempCards)
+        if (newTempCards[startPlayerId].length == 1) {
+          console.log('this is where war should start')
+        }
+        var lastPlayer = _.find(game.GamePlayers, {RightNeighborId: startPlayerId});
       }
-      if (newTempCards.length == 1) {
-        console.log('this is where war should start')
-      }
-      var lastPlayer = _.find(game.GamePlayers, {myNeighbor: startPlayerId});
       newTempCards[lastPlayer.id] = lastPass;
-      return Promise.map(game.GamePlayers, function(player){ //player is already declared in the upper scope -> change variable name
-        return player.setTemporary(newTempCards[player.id]);
+      return Promise.map(game.GamePlayers, function(p){ //player is already declared in the upper scope -> change variable name
+        return p.setTemporary(newTempCards[p.id]);
       });
     })
     .then(function(){
