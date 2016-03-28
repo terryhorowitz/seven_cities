@@ -12,6 +12,10 @@ var playCardOptions = require('../app/logic/play_card_options.js')();
 var _ = require('lodash');
 var playerReload = require('../app/logic/playerReload.js');
 var createPlayers = require('../app/logic/createPlayersObject.js');
+var playCard = require('../app/logic/play_card.js')();
+
+
+
 module.exports = function (server) {
   if (io) return io;
   io = socketio(server);
@@ -19,6 +23,7 @@ module.exports = function (server) {
   var newGame;
   var socketId;
   var clients;
+  var playersChoices = [];
 	//hold all user socket ids with names and playerids (from db)
 	var allPlayers = {};
   io.sockets.on('connection', function (socket) {
@@ -38,7 +43,7 @@ module.exports = function (server) {
 					allPlayers[socket.id].push(data.localId)
 					thisGame = game;
 					socket.join(game.name);
-					players = createPlayers.createPlayersObjectRefresh(thisGame.GamePlayers, players)
+					players = createPlayers.createPlayersObjectRefresh(thisGame.GamePlayers)
 					io.sockets.connected[socket.id].emit('game initialized', players);
 					var me = _.find(thisGame.GamePlayers, {'socket': socket.id})
 					io.sockets.connected[socket.id].emit('your hand', me.Temporary);
@@ -91,13 +96,13 @@ module.exports = function (server) {
 						io.sockets.connected[players[a].socket].emit('your hand', hands[a]);
 						players[a].hand = hands[a];
 					}
-					gameObject = startGameFuncs.startGame(players, currentRoom);
-					return gameObject;
+					return startGameFuncs.startGame(players, currentRoom);
 				})
 				.then(function(gameObject) {
 					players = players.map(function(player) {
 						var current = _.find(gameObject.GamePlayers, {'socket': player.socket})
 							player.playerId = current.id;
+							console.log('!!!!!!! right before emitting')
 							io.sockets.connected[player.socket].emit('your id', current.id);
 							return player;
 					})
@@ -107,7 +112,7 @@ module.exports = function (server) {
 				io.sockets.connected[socket.id].emit('err', {message: 'Need at least 3 players to play!'});
 			}
 		});
-		socket.on('choice made', function(data) {
+	socket.on('choice made', function(data) {
 		//needs to check if the choice is ok and then emit
 		var cardId = data.card;
 		var playerId = data.player;
@@ -120,9 +125,39 @@ module.exports = function (server) {
 			//check if player can build wonders
 		})
 	});
+<<<<<<< HEAD
 	socket.on('send msg', function(data){
 		io.to(currentRoom).emit('get msg', data)
 	})
+=======
+
+	socket.on('submit choice', function(data) {
+        var peopleInRoom = 0;
+      
+        clients = io.sockets.adapter.rooms[currentRoom];
+        for (var key in clients.sockets) {
+            peopleInRoom++;
+        }
+		playersChoices.push(data)
+        if (playersChoices.length === peopleInRoom){
+          return playCard(playersChoices)
+          .then(function(game) {
+          	playersChoices = [];
+          	players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
+          	io.to(currentRoom).emit('new round', players);
+          	game.GamePlayers.forEach(function(player) {
+                io.sockets.connected[player.socket].emit('your hand', player.Temporary);
+          	})
+          })
+        }
+        
+		// return playCard(data.playerId, data.cardId, data.selection)
+		// .then(function(game) {
+
+		// })
+	})
+
+>>>>>>> d486201bd12906fef34d34e8db0d5c20ffa3b116
   });
   
   return io;

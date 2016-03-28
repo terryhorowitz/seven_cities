@@ -2,18 +2,56 @@
     <ul class="nav navbar-nav">
 
 
-        <li class="other-player-icons neighbor-icons">
-            {{left.name}}
+
+
+        <li ng-style="{'background': 'url(img/background/' + left.board.name + '.png) no-repeat center center'}" class="other-player-icons neighbor-icons">
+            <a ng-click='showNeighbor(left)'>{{left.name}}</a>
+<!--             <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
+ ng-click='showNeighbor(left)'
+ -->        </li>
+        <li ng-style="{'background': 'url(img/background/' + player.board.name + '.png) no-repeat center center'}" class="other-player-icons" ng-repeat="player in other" ng-show="true">
+            <a ng-click='showNeighbor(player)'>{{player.name}}</a>
 <!--             <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
  -->        </li>
-        <li class="other-player-icons" ng-repeat="player in other" ng-show="true">
-            {{player.name}}
-<!--             <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
- -->        </li>
-        <li class="other-player-icons neighbor-icons">
-            {{right.name}}
+        <li ng-style="{'background': 'url(img/background/' + right.board.name + '.png) no-repeat center center'}" class="other-player-icons neighbor-icons">
+            <a ng-click='showNeighbor(right)'>{{right.name}}</a>
 <!--             <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
  -->        </li>
     </ul>
 </div>
 <div ng-show="true">Waiting on {{  }}...</div>
+<!-- <div ng-show='neighborView'> -->
+    <!-- <view-neighbor></view-neighbor> -->
+    <script type="text/ng-template" id="myModalContent">
+ 
+	    <div ng-style="background" class="modal-body modal-background">
+	       <h1 class="pull-left"> {{neighbor.board.name}} </h1>
+	       <tokens class="pull-right"></tokens>
+
+	      <!--  <div class='wonders'>
+				<div ng-click="expandPile(wonder)" ng-repeat="wonder in wonderOptions" ng-class="{wonderexpand: wonder === clickedPile}" class="test">
+					<img src='/img/wonders/{{me.board.name}}_{{wonder}}.png'>
+				</div>
+			</div> -->
+
+
+			<div id="built-cards">
+				<div ng-click="expandPile(pile)" ng-class="{expand: pile === clickedPile}" class="pile" ng-repeat="pile in neighbor.builtView">
+					<ul>
+						<li ng-repeat="card in pile">
+							<img class="pile-card-img" src='{{card}}'>
+						</li>
+					</ul>
+				</div>
+			</div>
+
+			<div class='wonders'>
+				<div class="test" ng-repeat="wonder in neighborWonders">
+					<img src='/img/wonders/{{neighbor.board.name}}_{{wonder}}.png'>
+				</div>
+			</div>
+
+	    </div>
+	 
+	</script>
+<!-- </div> -->

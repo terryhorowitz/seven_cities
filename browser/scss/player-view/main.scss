@@ -2,14 +2,36 @@ html {
   height: 100%;
 }
 
-body { 
-  background: url(img/background/olympia.png) no-repeat center center fixed; 
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  -o-background-size: cover;
-  background-size: cover;
-  min-height: 100%;
+body {
+	min-height: 100%;
 }
+
+#player-view {
+	h1, h2, h3 {
+		-webkit-text-stroke: 1px #614A00;
+		font-weight: bold;
+		color: #e9e9e9;
+	}
+}
+
+h1 {
+	font-size: 45px;
+}
+
+.background { 
+  background: no-repeat center center fixed; 
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  -webkit-background-size: contain;
+  -moz-background-size: contain;
+  -o-background-size: contain;
+  background-size: contain;
+  /*min-height: 100%;*/
+}
+
+
 
 @mixin not-last-of-type($selector) {
   & #{$selector}:not(:last-of-type) {
@@ -167,20 +189,42 @@ li {
 	}
 }
 
-.other-player-icons {
-	width: 50px;
-	height: 50px;
-	border-radius: 50%;
-	border: solid yellow 1px;
-	background-color: white;
-	margin-right: 25px;
-	line-height: 60px;
-	vertical-align: middle;
+.resources {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	img {
+		height: 50px;
+	}
 }
 
-.neighbor-icons {
-	width: 60px;
-	height: 60px;
+nav {
+	li.other-player-icons {
+		width: 80px;
+		height: 80px;
+		border-radius: 50%;
+		border: solid rgba(255, 255, 255, 0.7) 3px;
+		margin-right: 25px;
+		line-height: 60px;
+		vertical-align: middle;
+		background-size: cover !important;
+		a {
+			line-height: 44px;
+			text-align: center;
+			cursor: pointer;
+			border-radius: 50%;
+			color: #fff;
+			&:hover{
+				height: 74px;
+				background-color: rgba(255, 255, 255, 0.3);
+			}
+		}
+	}
+
+	.neighbor-icons {
+		width: 100px;
+		height: 100px;
+	}
 }
 
 .navbar-nav {
@@ -224,3 +268,45 @@ selected-card {
     margin: 0 20px;
     color: white;
 }
+
+.modal-background {
+	background: no-repeat center center fixed; 
+	position: absolute;
+	top: 0px;
+	bottom: 0;
+	width: 100%;
+	height: 400px;
+	-webkit-background-size: contain;
+	-moz-background-size: contain;
+	-o-background-size: contain;
+	background-size: contain;
+}
+
+.modal-dialog.modal-large {
+	width: 60%;
+}
+
+
+#waiting-screen {
+  text-align: center;
+  font-family: 'Cinzel Decorative', cursive;
+  h1 {
+  	font-weight: bold;
+  	font-size: 60px;
+    margin-top: 40px;
+    text-align: center;
+	  margin-top: 3em;
+	  text-shadow: 0 0 3px #DEB887;
+
+  }
+  background-color: rgba(255, 255, 255,0.7);
+
+}
+
+#wait-container {
+width: 100%; 
+    height: 100%; 
+    position: fixed; 
+    left: 0px; 
+    top: 0px;
+  }
