@@ -41,12 +41,18 @@ var eachPlayerWar = function(player, era) {
   var warPoints = getEraAwardPoints(era)
 
   return player.getLeftNeighbor()
-  .then(function(player, leftNeighbor) {
-    return Promise.join(player, leftNeighbor, player.getPermanent({where: {type: "War"}}), player.getPermanent({where: {type: "War"}}))
+  .then(function(leftNeighbor) {
+      // console.log('?????????? this is player', player);
+      // console.log('?????????? this is leftNeighbor', leftNeighbor);
+
+    return Promise.join(player, leftNeighbor, player.getPermanent({where: {type: "War"}}), leftNeighbor.getPermanent({where: {type: "War"}}))
   })
   .spread(function(player, leftNeigbor, playerWarCards, leftNeighborWarCards) {
     if (playerWarCards.length) playerWarPoints = countWarPoints(playerWarCards)
     if (leftNeighborWarCards.length) neighborWarPoints = countWarPoints(leftNeighborWarCards)
+      console.log('!!!!!!!!!!!!!   playerWarPoints', playerWarPoints);
+      console.log('!!!!!!!!!!!!!   leftNeighborWarPoints', leftNeighborWarPoints);
+
     if (playerWarPoints > neighborWarPoints) {
       player.tokens.push(playerWarPoints)
       leftNeighbor.tokens.push(-1)

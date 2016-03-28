@@ -249,7 +249,7 @@ module.exports = function () {
     else return Promise.resolve();
   }
     
-  function shiftHandFromPlayers(startPlayerId, era){ //check how to pass era (from deck?) -> only needs if era II
+  function shiftHandFromPlayers(startPlayerId, era){
     var startPlayer;
     return db_getters.getPlayer(startPlayerId)
     .then(function(_startPlayer){
@@ -266,11 +266,8 @@ module.exports = function () {
         newTempCards[playerSwapping.id] = _.find(game.GamePlayers, {id: playerSwapping[swapNeighbor]}).Temporary;
         playerSwapping = _.find(game.GamePlayers, {id: playerSwapping[swapNeighbor]});
       }
-      console.log('???????????? temp cards ', newTempCards[startPlayerId])
-
       if (newTempCards[startPlayerId].length == 1) {
         //need to discard last card 
-        console.log('????????????last card era', era)
         return war.goToWar(game.id, era);
       }
       var lastPlayer = _.find(game.GamePlayers, function(eachPlayer) {
@@ -278,7 +275,7 @@ module.exports = function () {
       });
       
       newTempCards[lastPlayer.id] = lastPass;
-      return Promise.map(game.GamePlayers, function(p){ //player is already declared in the upper scope -> change variable name
+      return Promise.map(game.GamePlayers, function(p){
         return p.setTemporary(newTempCards[p.id]);
       });
     })
