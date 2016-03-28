@@ -62,7 +62,7 @@ module.exports = function () {
     }, Promise.resolve())
     .then(function(){
       //rotate hands
-      return shiftHandFromPlayers(playersSelections[0].playerId)
+      return shiftHandFromPlayers(playersSelections[0].playerId, card.dataValues.era)
     })
     .catch(function(err){ console.error('error executing', err) })
   }
@@ -260,14 +260,18 @@ module.exports = function () {
       var playerSwapping = _.find(game.GamePlayers, {id: startPlayerId});
       var lastPass = playerSwapping.Temporary;
       var newTempCards = {};
-      var swapNeighbor = era ? 'LeftNeighborId' : 'RightNeighborId';
+      var swapNeighbor = (era === 2) ? 'LeftNeighborId' : 'RightNeighborId';
 
       while (playerSwapping[swapNeighbor] !== startPlayerId){
         newTempCards[playerSwapping.id] = _.find(game.GamePlayers, {id: playerSwapping[swapNeighbor]}).Temporary;
         playerSwapping = _.find(game.GamePlayers, {id: playerSwapping[swapNeighbor]});
       }
-      if (newTempCards.length == 1) {
-        console.log('this is where war should start')
+      console.log('???????????? temp cards ', newTempCards[startPlayerId])
+
+      if (newTempCards[startPlayerId].length == 1) {
+        //need to discard last card 
+        console.log('????????????last card era', era)
+        return war.goToWar(game.id, era);
       }
       var lastPlayer = _.find(game.GamePlayers, function(eachPlayer) {
         return eachPlayer[swapNeighbor] === startPlayerId;

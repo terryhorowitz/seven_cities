@@ -60,6 +60,7 @@ var eachPlayerWar = function(player, era) {
 }
 
 var goToWar = function(gameId, era) {
+  console.log('!!!!!!!!!!!!!   inside war');
   return Game.findById(gameId)
   .then(function(game){
     return game.getGamePlayers()
