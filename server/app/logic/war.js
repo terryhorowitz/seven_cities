@@ -26,10 +26,10 @@ var getEraAwardPoints = function(era) {
   }
 }
 
-var countWarPoints = function(warCards, pointScale) {
+var countWarPoints = function(warCards) {
   var totalPoints = 0;
   for (var i = 0; i < warCards.length; i++) {
-    totalPoints += warCards[i].functionality.length * pointScale;
+    totalPoints += warCards[i].functionality.length;
   }
   return totalPoints;
 }
@@ -37,41 +37,51 @@ var countWarPoints = function(warCards, pointScale) {
 var eachPlayerWar = function(player, era) {
   var playerWarPoints = 0;
   var leftNeighborWarPoints = 0;
-  var warPoints = getEraAwardPoints(era)
+  var warPoints = getEraAwardPoints(era);
+  var newPlayerToken = player.tokens;
+  var newNeighborToken;
 
   return player.getLeftNeighbor()
   .then(function(leftNeighbor) {
+    newNeighborToken = leftNeighbor.tokens;
     return Promise.join(player, leftNeighbor, player.getPermanent({where: {type: "War"}}), leftNeighbor.getPermanent({where: {type: "War"}}))
   })
   .spread(function(player, leftNeighbor, playerWarCards, leftNeighborWarCards) {
-    if (playerWarCards.length) playerWarPoints = countWarPoints(playerWarCards, warPoints)
-    if (leftNeighborWarCards.length) leftNeighborWarPoints = countWarPoints(leftNeighborWarCards, warPoints)
-      console.log('!!!!!!!!!!!!! playerWarPoints', playerWarPoints);
-      console.log('!!!!!!!!!!!!! leftNeighborWarPoints', leftNeighborWarPoints);
+    console.log('BEFORE newPlayerToken', newPlayerToken)
+    console.log('BEFORE newNeighborToken', newNeighborToken)
+    if (playerWarCards.length) playerWarPoints = countWarPoints(playerWarCards)
+    if (leftNeighborWarCards.length) leftNeighborWarPoints = countWarPoints(leftNeighborWarCards)
 
     if (playerWarPoints > leftNeighborWarPoints) {
-      player.tokens.push(playerWarPoints)
-      leftNeighbor.tokens.push(-1)
+      newPlayerToken.push(playerWarPoints * warPoints)
+      newNeighborToken.push(-1)
     }
     else if (leftNeighborWarPoints > playerWarPoints) {
-      leftNeighbor.tokens.push(leftNeighborWarPoints)
-      player.tokens.push(-1)
+      newNeighborToken.push(leftNeighborWarPoints * warPoints)
+      newPlayerToken.push(-1)
     }
+    console.log('player id', player.id)
+    console.log('newPlayerToken', newPlayerToken)
+    console.log('newNeighborToken', newNeighborToken)
     console.log('############player', player )
-    return Promise.join(player.save(), leftNeighbor.save())
+    return Promise.join(player.update({tokens: newPlayerToken}), leftNeighbor.update({tokens: newNeighborToken}))
+  })
+  .then(function(data) {
+    console.log('!!!!!!!!!!!!! after promise.join', data);
   })
 }
 
 var goToWar = function(gameId, era) {
-  console.log('!!!!!!!!!!!!!   inside war');
   return Game.findById(gameId)
   .then(function(game){
     return game.getGamePlayers()
   })
   .then(function(playersArr){
-    return Promise.map(playersArr, function(player){
-      return eachPlayerWar(player, era)
-    })
+    playersArr.reduce(function(promiseAccumulator, player){
+      return promiseAccumulator.then(function(){
+        return eachPlayerWar(player, era);
+      })
+    }, Promise.resolve())
   })
 }
 
