@@ -11,10 +11,11 @@
 				<p>{{err}}</p>
 			</div>
 			<h4><a ng-click='clearLocal()'>Clear Local Storage</a></h4>
-			<h4 ng-show="!firstPlayer">Waiting for first player to start game</h4>
-			<h4>In room {{roomname}}</h5>
+			<p>In room {{roomname}}</p>
 
-			<p>My name: {{me.name}}</p>
+			<p>My name: {{playername}}</p>
+			<p>Currently in room: {{inRoom}}</p>
+			<h4 ng-show="!firstPlayer">Waiting for first player to start game</h4>
 			<div id='loading-img'>
 				<img src='img/loading.gif'>
 			</div>
