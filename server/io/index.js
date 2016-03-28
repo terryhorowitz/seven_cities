@@ -99,10 +99,11 @@ module.exports = function (server) {
 					return startGameFuncs.startGame(players, currentRoom);
 				})
 				.then(function(gameObject) {
+					console.log(gameObject)
 					players = players.map(function(player) {
 						var current = _.find(gameObject.GamePlayers, {'socket': player.socket})
 							player.playerId = current.id;
-							console.log('!!!!!!! right before emitting')
+							// console.log('!!!!!!! right before emitting')
 							io.sockets.connected[player.socket].emit('your id', current.id);
 							return player;
 					})
@@ -127,19 +128,21 @@ module.exports = function (server) {
 	});
 
 	socket.on('submit choice', function(data) {
-		console.log('in submit choice', data)
+		// console.log('in submit choice', data)
         var peopleInRoom = 0;
       
         clients = io.sockets.adapter.rooms[currentRoom];
-        for (var key in clients.sockets) {
-            peopleInRoom++;
-        }
+	        for (var key in clients.sockets) {
+	            peopleInRoom++;
+	        }
+
 		playersChoices.push(data)
-        console.log('outside if statement', playersChoices)
+        // console.log('outside if statement', playersChoices)
         if (playersChoices.length === peopleInRoom){
-          console.log('inside', peopleInRoom)
+          // console.log('inside', peopleInRoom)
           return playCard(playersChoices)
           .then(function(game) {
+          	console.log('!!!!!!!!!!!!!!', game)
           	playersChoices = [];
           	players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
           	io.to(currentRoom).emit('new round', players);
