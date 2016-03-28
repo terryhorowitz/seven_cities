@@ -28,9 +28,10 @@ var getEraAwardPoints = function(era) {
 
 var countWarPoints = function(warCards) {
   var totalPoints = 0;
-  for (var i = 0; i < playerCards.length; i++) {
+  for (var i = 0; i < warCards.length; i++) {
     totalPoints += playerBuiltCards[i].functionality.length;
   }
+  console.log('total war points', totalPoints);
   return totalPoints;
 }
 
