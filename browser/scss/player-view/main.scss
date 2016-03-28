@@ -244,12 +244,30 @@ selected-card {
 }
 
 .chat-box {
-	position: absolute;
-	bottom: 0;
-	right: 0;
-	width: 200px;
-	height: 250px;
-	background-color: white;
+    position: absolute;
+    overflow-y: scroll;
+    bottom: 40px;
+    right: 0;
+    width: 250px;
+    height: 200px;
+    background-color: white;
+    border-style: double;
+  }
+
+	#chatMessage {
+    position: fixed;
+    word-wrap: break-word;
+    bottom: 0;
+    right: 0;
+    width: 250px;
+    height: 40px;
+    background-color: white;
+    color: black;
+    border-style: double;
+  }
+
+#messageList {
+  height: 250px;
 }
 
 .card-highlight {
@@ -291,6 +309,7 @@ selected-card {
   text-align: center;
   font-family: 'Cinzel Decorative', cursive;
   h1 {
+  	padding-top: 25px;
   	font-weight: bold;
   	font-size: 60px;
     margin-top: 40px;
@@ -300,7 +319,23 @@ selected-card {
 
   }
   background-color: rgba(255, 255, 255,0.7);
+  p {
+  	font-size: 20px;
+	}
+  a {
+  	font-weight: bold;
+  	font-size: 24px;
+  	color: #660033;
+  	text-shadow: 0 0 3px #DEB887;
 
+  }
+  a:hover {
+  	color: #996666;
+  	text-decoration: none;
+  }
+  #loading-img {
+  	padding-bottom: 25px;
+  }
 }
 
 #wait-container {

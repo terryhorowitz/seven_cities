@@ -13,6 +13,7 @@ app.config(function ($stateProvider) {
 app.controller('GameController', function ($scope, $state) {
 
     var socket = io(window.location.origin); 
+
     $scope.roomname = $state.params.roomname;
     $scope.playername = $state.params.playername;
 
@@ -44,6 +45,12 @@ app.controller('GameController', function ($scope, $state) {
       console.log('I have made a persistent two-way connection to the server!');
       var tempId = localStorage.getItem('playerId');
       socket.emit('create', {roomname: $scope.roomname, playername: $scope.playername, localId: tempId});
+
+      socket.on('in room', function(data) {
+        console.log('this is in room', data);
+        $scope.inRoom = data.join(', ');
+        $scope.$digest();
+      })
 
       socket.on('your id', function(data) {
         $scope.me.playerId = data;
@@ -108,46 +115,67 @@ app.controller('GameController', function ($scope, $state) {
       //{"left":null,"right":["ore"]}
       //{"left":null,"right":["papyrus"]}
 
-        $scope.submitChoice = function(selection){
+          $scope.submitChoice = function(selection){
           console.log('submission', selection)
           socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
           $scope.playOptions = null;
         }
-
+                
       socket.on('your options', function(options) {
-        $scope.playOptions = options;
-        $scope.playOptions.forEach(function(option) {
+//        $scope.playOptions = options;
+        $scope.playOptions = options.map(function(option) {
           if (typeof option !== 'string') {
             var needed = [];
-            if (option.left && option.left[0]) {
-              needed.push({});
-              needed[0].left = ['left'];
+            for (var i = 0; i < option.total.length; i++){
+              var arr = [[],[]];
+              arr[0].push(option.total[i]);
+              needed.push(arr);
             }
-            if (option.right && option.right[0]) {
-              needed.push({});
-              needed[0].right = ['right'];
-            }
-            console.log('this is playoptions', $scope.playOptions)
-          } else if (option === 'Discard') {
-            option = option;
-          } else if (option === 'get free' || option === 'paid by own resources') {
-            option = 'Build for free';
-          } else if (option === 'pay money') {
-            option = "Pay 1 coin";
-          } else if (option === 'upgrade') {
-            option = 'Upgrade for free'
-          } else if (option === 'build wonder') {
-            option = 'Build wonder';
-          } else if (option !== "can't afford") {
-
-          } else if (option !== "already have it") {
-
-          } else if (option !== "no trade available!") {
-
+            for (var j = 0; j < needed.length; j++){
+              if (option.left && option.left.length && needed[j][0][0] === option.left[0]){
+                needed[j][1].push('left');
+                option.left.shift();
+              }
+              if (option.right && option.right.length && needed[j][0][0] === option.right[0]){
+                needed[j][1].push('right');
+                option.right.shift();
+              }
           }
+            console.log('needed', needed)
+            $scope.tradeOptions = needed;
+          } else if (option === 'Discard') {
+            return option;
+          } else if (option === 'get free' || option === 'paid by own resources') {
+            return 'Build for free';
+          } else if (option === 'pay money') {
+            return "Pay 1 coin";
+          } else if (option === 'upgrade') {
+            return 'Upgrade for free'
+          } else if (option === 'build wonder') {
+            return 'Build wonder';
+          } else return "";
         })
         $scope.$digest();
       })
+      
+      $scope.trade = {}
+      
+      $scope.submitTrade = function(){
+        var tradeObj = {
+          left: [],
+          right: []
+        };
+        for (var key in $scope.trade){
+          var arr = $scope.trade[key].split("/");
+          var direction = arr[0];
+          var resource = arr[1];
+          tradeObj[direction].push(resource);
+        }
+        
+        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+        $scope.playOptions = null;
+        
+      }; 
 
       socket.on('err', function(data) {
         $scope.err = data.message;
@@ -230,10 +258,40 @@ app.controller('GameController', function ($scope, $state) {
         // console.log($scope.wonders)
 
       $scope.clickedPile = false;
+      $scope.minimizeChat = true;
 
       $scope.expandPile = function (pile) {
         if (!$scope.clickedPile) $scope.clickedPile = pile;
         else $scope.clickedPile = false;
       }
+
+      // chat stuff
+      $scope.msgs = [];
+      $scope.sendMsg = function() {
+        $scope.msg.player = $scope.playername
+        socket.emit('send msg', {'player': $scope.msg.player, 'content': $scope.msg.text})
+        $scope.msg.text = ''
+      } 
+
+      $scope.hideChat = function() {
+        if ($scope.minimizeChat) {
+          document.getElementById('messageList').style.height = '250px';
+          $scope.minimizeChat = false;
+        }
+        else {
+          document.getElementById('messageList').style.height = '0px';
+          $scope.minimizeChat = true;
+        }
+      }
+
+      socket.on('get msg', function(data) {
+        $scope.msgs.push(data)
+        $scope.$digest()
+        var objDiv = document.getElementById("messageList");
+        objDiv.scrollTop = objDiv.scrollHeight
+      })
+
+
+
 });
 
