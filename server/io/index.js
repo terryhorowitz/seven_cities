@@ -14,8 +14,6 @@ var playerReload = require('../app/logic/playerReload.js');
 var createPlayers = require('../app/logic/createPlayersObject.js');
 var playCard = require('../app/logic/play_card.js')();
 
-
-
 module.exports = function (server) {
   if (io) return io;
   io = socketio(server);
@@ -121,9 +119,11 @@ module.exports = function (server) {
 		var playerId = data.player;
 		var response;
 		var options = ['Discard'];
-		return playCardOptions.checkSelectedCardOptions(playerId, cardId)
-		.then(function(res) {
-			options.push(res);
+//		return playCardOptions.checkSelectedCardOptions(playerId, cardId)
+        return Promise.join(playCardOptions.checkSelectedCardOptions(playerId, cardId), playCardOptions.checkIfPlayerCanBuildWonder(playerId))
+		.spread(function(cardOptions, wonderOptions) {
+			options.push(cardOptions);
+            options.push({wonder: wonderOptions});
 			io.sockets.connected[socket.id].emit('your options', options);
 			//check if player can build wonders
 		})

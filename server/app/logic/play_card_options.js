@@ -49,17 +49,20 @@ module.exports = function () {
   }
   
   function checkResourcePaymentMethods(player, cost) {
+    var costCopy = _.cloneDeep(cost);
     var playersResources = Resources.getGameResources(player.gameId)[player.id];
     var ownResourcesCopy = _.cloneDeep(playersResources.self);
-//    var counter = 0;
+    
     for (var i = 0; i < cost.length; i++) {
-      if (!!ownResourcesCopy[cost[i]] && ownResourcesCopy[cost[i]] > 0) {
+      if (!!ownResourcesCopy[cost[i]]) {
         ownResourcesCopy[cost[i]]--;
-        _.pullAt(cost, i)
+        _.pullAt(costCopy, cost.indexOf(cost[i]))
       }
     }
-    if (!cost.length) return 'paid by own resources';
-    else return canIBuyFromMyNeighbors(player, cost);
+    if (!costCopy.length) return 'paid by own resources';
+    else {
+      return canIBuyFromMyNeighbors(player, cost);
+    }
   }
   
   function canIBuyFromMyNeighbors(player, cost) {
@@ -92,9 +95,9 @@ module.exports = function () {
   function checkIfPlayerCanBuildWonder(playerId){
     return db_getters.getPlayer(playerId)
     .then(function(player){
-      if (player.wondersBuilt === 0) return checkResourcePaymentMethods(player, board.wonder1Cost);
-      if (player.wondersBuilt === 1) return checkResourcePaymentMethods(player, board.wonder2Cost);
-      if (player.wondersBuilt === 2) return checkResourcePaymentMethods(player, board.wonder3Cost);
+      if (player.wondersBuilt === 0) return checkResourcePaymentMethods(player, player.board.wonder1Cost);
+      if (player.wondersBuilt === 1) return checkResourcePaymentMethods(player, player.board.wonder2Cost);
+      if (player.wondersBuilt === 2) return checkResourcePaymentMethods(player, player.board.wonder3Cost);
       if (player.wondersBuilt === 3) return 'all built';
     })
   }
