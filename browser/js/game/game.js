@@ -13,6 +13,7 @@ app.config(function ($stateProvider) {
 app.controller('GameController', function ($scope, $state) {
 
     var socket = io(window.location.origin); 
+
     $scope.roomname = $state.params.roomname;
     $scope.playername = $state.params.playername;
 
@@ -257,10 +258,40 @@ app.controller('GameController', function ($scope, $state) {
         // console.log($scope.wonders)
 
       $scope.clickedPile = false;
+      $scope.minimizeChat = true;
 
       $scope.expandPile = function (pile) {
         if (!$scope.clickedPile) $scope.clickedPile = pile;
         else $scope.clickedPile = false;
       }
+
+      // chat stuff
+      $scope.msgs = [];
+      $scope.sendMsg = function() {
+        $scope.msg.player = $scope.playername
+        socket.emit('send msg', {'player': $scope.msg.player, 'content': $scope.msg.text})
+        $scope.msg.text = ''
+      } 
+
+      $scope.hideChat = function() {
+        if ($scope.minimizeChat) {
+          document.getElementById('messageList').style.height = '250px';
+          $scope.minimizeChat = false;
+        }
+        else {
+          document.getElementById('messageList').style.height = '0px';
+          $scope.minimizeChat = true;
+        }
+      }
+
+      socket.on('get msg', function(data) {
+        $scope.msgs.push(data)
+        $scope.$digest()
+        var objDiv = document.getElementById("messageList");
+        objDiv.scrollTop = objDiv.scrollHeight
+      })
+
+
+
 });
 

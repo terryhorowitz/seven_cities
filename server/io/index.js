@@ -129,6 +129,10 @@ module.exports = function (server) {
 		})
 	});
 
+	socket.on('send msg', function(data){
+		io.to(currentRoom).emit('get msg', data)
+	})
+
 	socket.on('submit choice', function(data) {
         var peopleInRoom = 0;
       
@@ -154,7 +158,6 @@ module.exports = function (server) {
 
 		// })
 	})
-
   });
   
   return io;
