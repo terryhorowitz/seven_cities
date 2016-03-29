@@ -268,7 +268,7 @@ module.exports = function () {
       }
       if (newTempCards[startPlayerId].length == 1) {
         //need to discard last card 
-        return war.goToWar(game.id, era);
+        return war.goToWar(game, era);
       }
       var lastPlayer = _.find(game.GamePlayers, function(eachPlayer) {
         return eachPlayer[swapNeighbor] === startPlayerId;

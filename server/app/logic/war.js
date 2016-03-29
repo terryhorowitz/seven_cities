@@ -64,11 +64,8 @@ var eachPlayerWar = function(player, era) {
   })
 }
 
-var goToWar = function(gameId, era) {
-  return Game.findById(gameId)
-  .then(function(game){
-    return game.getGamePlayers()
-  })
+var goToWar = function(game, era) {
+  return game.getGamePlayers()
   .then(function(playersArr){
     playersArr.reduce(function(promiseAccumulator, p){
       return promiseAccumulator.then(function(){
@@ -76,7 +73,7 @@ var goToWar = function(gameId, era) {
       })
     }, Promise.resolve())
     .then(function(){
-      return endOfEra.eraEnded(gameId, era);
+      return endOfEra.eraEnded(game, era);
     })
   })
 }

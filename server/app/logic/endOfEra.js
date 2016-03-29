@@ -21,12 +21,11 @@ var db_getters = require('./db_getters');
 var Promise = require('bluebird');
 var _ = require('lodash');
 
-var eraEnded = function(gameId, currentEra) {
-  var newPlayerHand, shuffledDeck;
-
-  return db_getters.getGame(gameId)
-  .then(function(game) {
-    let playersArr = game.GamePlayers;
+var eraEnded = function(game, currentEra) {
+  let newPlayerHand, shuffledDeck;
+  let playersArr = game.GamePlayers;
+  let era = currentEra + 1;
+  console.log(era);
     return Promise.map(playersArr, function(player){
       return player.getTemporary()
       .then(function(playerHand){
@@ -35,18 +34,23 @@ var eraEnded = function(gameId, currentEra) {
       })
     })
     .then(function(playersArr) {
-    console.log('%%%%%%%playersArr', playersArr)
-      return Deck.findOne({where: {era: currentEra++, numPlayers: playersArr.length}, include: [{all:true}]})
-      .then(function(deck){
+      return Deck.findOne({where: {era: era, numPlayers: playersArr.length}, include: [{all:true}]})
+      .then(function(deck) {
         console.log('^^^^^^^^^^^deck', deck)
         shuffledDeck = _.shuffle(deck.cards)
-        newPlayerHand = shuffledDeck.splice(0, 7)
-        //TODO
-        //return game.setDecks(deck)
-
-        //map set temporary
-
-        return Promise.join(player.setTemporary(newPlayerHand), game.setDecks(deck))
+        return game.setDecks(deck)
+      })
+      .then(function() {
+        return Promise.map(playersArr, function(player){
+          newPlayerHand = shuffledDeck.splice(0, 7)
+    console.log('%%%%%%%newPlayerHand', newPlayerHand)
+          return player.setTemporary(newPlayerHand)
+          .then(function(player) {
+            return player;         
+          })
+        })
+      .then(function(playersArr) {
+          console.log('%%%%%%%player temp cards after set new hand', playersArr[0].Temporary)
       })
     })
   })
