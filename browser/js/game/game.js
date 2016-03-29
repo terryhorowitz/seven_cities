@@ -28,7 +28,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.leftNeighbor;
     $scope.wonderOptions = [1, 2, 3];
     $scope.nonNeighbors = [];
-    
+    $scope.submitted = false;
     $scope.background = {background: 'url(/img/map.jpg) no-repeat center center fixed', 'background-size': 'cover', 'min-height': '100%'};
 
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
@@ -116,7 +116,7 @@ app.controller('GameController', function ($scope, $state) {
       //{"left":null,"right":["papyrus"]}
 
           $scope.submitChoice = function(selection){
-          console.log('submission', selection)
+            $scope.submitted = true;
           socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
           $scope.playOptions = null;
         }
@@ -188,9 +188,11 @@ app.controller('GameController', function ($scope, $state) {
       $scope.trade = {}
       
       $scope.submitTrade = function(){
+        $scope.submitted = true;
         var tradeObj = {
           left: [],
-          right: []
+          right: [],
+          wonder: false
         };
         for (var key in $scope.trade){
           var arr = $scope.trade[key].split("/");
@@ -206,7 +208,23 @@ app.controller('GameController', function ($scope, $state) {
       
       $scope.tradeForWonder = {};
       $scope.submitWonderTrade = function () {
-        console.log('wonder trade', $scope.tradeForWonder)
+        $scope.submitted = true;
+        var tradeObj = {
+          left: [],
+          right: [],
+          wonder: true
+        };
+        for (var key in $scope.tradeForWonder){
+          var arr = $scope.tradeForWonder[key].split("/");
+          var direction = arr[0];
+          var resource = arr[1];
+          tradeObj[direction].push(resource);
+        }
+        if (!tradeObj.left.length) tradeObj.left = null;
+        if (!tradeObj.right.length) tradeObj.right = null;
+        
+        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+        $scope.playOptions = null;
       }
 
       socket.on('err', function(data) {
@@ -215,6 +233,7 @@ app.controller('GameController', function ($scope, $state) {
       })
 
       socket.on('new round', function(data) {
+        $scope.submitted = false;
         $scope.players = data;
 
         for (var i = 0; i < data.length; i++) {

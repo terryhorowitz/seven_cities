@@ -122,7 +122,7 @@ module.exports = function (server) {
 //		return playCardOptions.checkSelectedCardOptions(playerId, cardId)
         return Promise.join(playCardOptions.checkSelectedCardOptions(playerId, cardId), playCardOptions.checkIfPlayerCanBuildWonder(playerId))
 		.spread(function(cardOptions, wonderOptions) {
-            console.log(wonderOptions)
+            console.log('wo', wonderOptions)
             if (typeof wonderOptions !== "string") wonderOptions.wonder = true;
             if (typeof cardOptions !== 'string')cardOptions.wonder = false;
 			options.push(cardOptions);
