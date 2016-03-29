@@ -232,7 +232,7 @@ module.exports = function () {
   
   function getWonderOutcome () {
     var boardName = player.board.name;
-    var wonderFunc = player.board[wonder + player.wondersBuilt];
+    // var wonderFunc = player.board[wonder + player.wondersBuilt];
     if (boardName === "Esphesos" && player.wondersBuilt === 2){
       player.money += 9;
       return player.save();
@@ -266,22 +266,23 @@ module.exports = function () {
         newTempCards[playerSwapping.id] = _.find(game.GamePlayers, {id: playerSwapping[swapNeighbor]}).Temporary;
         playerSwapping = _.find(game.GamePlayers, {id: playerSwapping[swapNeighbor]});
       }
-      if (newTempCards[startPlayerId].length == 1) {
-        //need to discard last card 
-        return war.goToWar(game, era);
+      if (newTempCards[startPlayerId].length === 1) {
+        return war.goToWar(game, era)
+
+      } else {
+        var lastPlayer = _.find(game.GamePlayers, function(eachPlayer) {
+          return eachPlayer[swapNeighbor] === startPlayerId;
+        });
+        
+        newTempCards[lastPlayer.id] = lastPass;
+        return Promise.map(game.GamePlayers, function(p){
+          return p.setTemporary(newTempCards[p.id]);
+        })
       }
-      var lastPlayer = _.find(game.GamePlayers, function(eachPlayer) {
-        return eachPlayer[swapNeighbor] === startPlayerId;
-      });
-      
-      newTempCards[lastPlayer.id] = lastPass;
-      return Promise.map(game.GamePlayers, function(p){
-        return p.setTemporary(newTempCards[p.id]);
-      });
     })
     .then(function(){
       return db_getters.getGame(startPlayer.gameId);
-    });
+    })
   }
 
   // PUBLIC API: 
