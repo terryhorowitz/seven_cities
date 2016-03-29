@@ -148,6 +148,7 @@ module.exports = function (server) {
         if (playersChoices.length === peopleInRoom){
           return playCard(playersChoices)
           .then(function(game) {
+            console.log('ret game', game)
           	playersChoices = [];
           	players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
           	io.to(currentRoom).emit('new round', players);

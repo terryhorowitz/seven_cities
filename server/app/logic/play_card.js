@@ -28,7 +28,7 @@ module.exports = function () {
     "Upgrade for free": buildCard,
     "paid by own resources": buildCard,
     "Pay 1 coin": payForCard,
-    "Build wonder": buildWonder,
+    "Build Wonder": buildWonder,
     "Discard": discard
   }
   
@@ -47,6 +47,7 @@ module.exports = function () {
   
   /////// Public API/////////////
   function orchestrator(playersSelections){
+    console.log('selects', playersSelections)
     return playersSelections.reduce(function(promiseAccumulator, playerChoice){
       choice = playerChoice.choice;
       return promiseAccumulator
@@ -95,17 +96,22 @@ module.exports = function () {
   }
   
   function buildWonder(){
+    console.log('before building', player.wondersBuilt)
     return playOptions.checkIfPlayerCanBuildWonder(player.id)
     .then(function(response){
       player.wondersBuilt++;
-      if (typeof response === 'string'){
-        return player.removeTemporary(card); //remove from player but do not include in game discard
-      }
-      else {
-        var wonderCost = {};
-        wonderCost.wonder = response;
-        return tradeForCard(wonderCost);
-      }
+      console.log('wonders built after', player.wondersBuilt)
+//      if (typeof response === 'string'){
+        return Promise.join(player.removeTemporary(card), player.save(), getWonderOutcome()); //remove from player but do not include in game discard
+//      }
+//      else {
+//        var wonderCost = {};
+//        wonderCost.wonder = response;
+//        return player.save()
+//        .then(function(){
+//          return tradeForCard(wonderCost)
+//        })
+//      }
       //need to consider outcome(functionality) of building wonder
     })
   }
@@ -215,7 +221,10 @@ module.exports = function () {
       return Promise.join(leftNeighbor.save(), rightNeighbor.save(), player.save())
     })
     .then(function(leftNeighbor, rightNeighbor){
-      if (forWonder) return getWonderOutcome();
+      if (forWonder) {
+        console.log('for wonder') 
+        return buildWonder();
+      }
       return buildCard();
     })
   }

@@ -189,6 +189,7 @@ app.controller('GameController', function ($scope, $state) {
       $scope.trade = {}
       
       $scope.submitTrade = function(){
+        console.log('reg trade', $scope.trade)
         $scope.submitted = true;
         var tradeObj = {
           left: [],
@@ -201,7 +202,9 @@ app.controller('GameController', function ($scope, $state) {
           var resource = arr[1];
           tradeObj[direction].push(resource);
         }
-        
+        if (!tradeObj.left.length) tradeObj.left = null;
+        if (!tradeObj.right.length) tradeObj.right = null;
+        console.log('obj submitting', tradeObj)
         socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
         $scope.playOptions = null;
         
@@ -209,6 +212,7 @@ app.controller('GameController', function ($scope, $state) {
       
       $scope.tradeForWonder = {};
       $scope.submitWonderTrade = function () {
+        console.log('wonder trade', $scope.tradeForWonder)
         $scope.submitted = true;
         var tradeObj = {
           left: [],
