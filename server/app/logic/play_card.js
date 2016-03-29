@@ -55,6 +55,7 @@ module.exports = function () {
           return Promise.join(db_getters.getPlayer(playerChoice.playerId), db_getters.getCard(playerChoice.cardId))
         })
         .spread(function(_player, _card){
+        console.log('got them back', _player.id, _card.id)
           player = _player;
           card = _card;
           return executeChoice(playerChoice.choice);

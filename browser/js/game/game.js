@@ -188,20 +188,23 @@ app.controller('GameController', function ($scope, $state) {
       
       $scope.trade = {}
       
+//      $scope.tradeSelection = function(direction, resource){
+//        var tradeObj = {};
+//        tradeObj[direction] = [resource];
+//        return tradeObj;
+//      }
+//      
       $scope.submitTrade = function(){
         console.log('reg trade', $scope.trade)
         $scope.submitted = true;
-        var tradeObj = {
-          left: [],
-          right: [],
-          wonder: false
-        };
+        var tradeObj = {};
+        tradeObj.left = [];
+        tradeObj.right = [];
         for (var key in $scope.trade){
-          var arr = $scope.trade[key].split("/");
-          var direction = arr[0];
-          var resource = arr[1];
-          tradeObj[direction].push(resource);
+          console.log('key', $scope.trade[key][0])
+          tradeObj[$scope.trade[key][0]].push($scope.trade[key][1]);
         }
+        
         if (!tradeObj.left.length) tradeObj.left = null;
         if (!tradeObj.right.length) tradeObj.right = null;
         console.log('obj submitting', tradeObj)
@@ -212,22 +215,17 @@ app.controller('GameController', function ($scope, $state) {
       
       $scope.tradeForWonder = {};
       $scope.submitWonderTrade = function () {
-        console.log('wonder trade', $scope.tradeForWonder)
         $scope.submitted = true;
-        var tradeObj = {
-          left: [],
-          right: [],
-          wonder: true
-        };
+        var tradeObj = {};
+        tradeObj.left = [];
+        tradeObj.right = [];
         for (var key in $scope.tradeForWonder){
-          var arr = $scope.tradeForWonder[key].split("/");
-          var direction = arr[0];
-          var resource = arr[1];
-          tradeObj[direction].push(resource);
+          tradeObj[$scope.tradeForWonder[key][0]].push($scope.tradeForWonder[key][1]);
         }
+        
         if (!tradeObj.left.length) tradeObj.left = null;
         if (!tradeObj.right.length) tradeObj.right = null;
-        
+        console.log('obj submitting', tradeObj)
         socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
         $scope.playOptions = null;
       }

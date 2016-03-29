@@ -11,9 +11,10 @@
           Trade for Resources:
           <div ng-repeat="resource in tradeOptions">
             {{resource[0][0]}}
-            <div ng-repeat="direction in resource[1]">
-               <input type="radio" ng-model="trade[$index]" value="{{direction + '/' + resource[0][0]}}">{{direction}}<br>
-            </div>
+<!--            <div ng-repeat="direction in resource[1]">-->
+               <input type="radio" ng-model="trade[$index]" ng-value="{{['left', resource[0][0]]}}" ng-show="resource[1][0] === 'left'">Left<br>
+               <input type="radio" ng-model="trade[$index]" ng-value="{{['right', resource[0][0]]}}" ng-show="resource[1][0] === 'right' || resource[1][1] === 'right'">Right<br>
+<!--            </div>-->
           </div>
           <div><a ng-click='submitTrade()'>submit trade</a></div>
         </form>
@@ -21,8 +22,8 @@
           Build A Wonder:
             <div ng-repeat="wt in wonderTrades">
               {{wt[0][0]}}
-              <div ng-repeat="dir in wt[1]">
-                 <input type="radio" ng-model="tradeForWonder[$index]" value="{{dir + '/' + wt[0][0]}}">{{dir}}<br>
+              <div ng-repeat="direction in wt[1]">
+                 <input type="radio" ng-model="tradeForWonder[$index]" value="{{wt[0][0]}}">{{direction}}<br>
               </div>
             </div>
             <div><a ng-click='submitWonderTrade()'>Build Wonder</a></div>

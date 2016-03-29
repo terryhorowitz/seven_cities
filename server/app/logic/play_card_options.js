@@ -91,6 +91,7 @@ module.exports = function () {
     if (rightContribution.length === cost.length) trade.right = rightContribution;
     else trade.right = null;
     if (trade.right === null && trade.left === null) return 'no trade available!';
+    console.log('trade', trade)
     return trade;
   }
   
