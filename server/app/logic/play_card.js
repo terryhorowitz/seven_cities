@@ -47,7 +47,6 @@ module.exports = function () {
   
   /////// Public API/////////////
   function orchestrator(playersSelections){
-    console.log('selects', playersSelections)
     return playersSelections.reduce(function(promiseAccumulator, playerChoice){
       choice = playerChoice.choice;
       return promiseAccumulator
@@ -55,7 +54,6 @@ module.exports = function () {
           return Promise.join(db_getters.getPlayer(playerChoice.playerId), db_getters.getCard(playerChoice.cardId))
         })
         .spread(function(_player, _card){
-        console.log('got them back', _player.id, _card.id)
           player = _player;
           card = _card;
           return executeChoice(playerChoice.choice);
@@ -97,11 +95,9 @@ module.exports = function () {
   }
   
   function buildWonder(){
-    console.log('before building', player.wondersBuilt)
     return playOptions.checkIfPlayerCanBuildWonder(player.id)
     .then(function(response){
       player.wondersBuilt++;
-      console.log('wonders built after', player.wondersBuilt)
 //      if (typeof response === 'string'){
         return Promise.join(player.removeTemporary(card), player.save(), getWonderOutcome()); //remove from player but do not include in game discard
 //      }
@@ -196,7 +192,6 @@ module.exports = function () {
   
   function tradeForCard(tradeParams){
     //obj that needs to be recieved: {left: ['wood', 'clay'], right: ['clay]} OR {left: ['ore'], right: null} etc).
-    console.log('trading', tradeParams)
     var forWonder = false;
     if (tradeParams.wonder) {
       forWonder = true;
@@ -223,7 +218,6 @@ module.exports = function () {
     })
     .then(function(leftNeighbor, rightNeighbor){
       if (forWonder) {
-        console.log('for wonder') 
         return buildWonder();
       }
       return buildCard();
@@ -240,7 +234,6 @@ module.exports = function () {
   }
   
   function getWonderOutcome () {
-    console.log('wonder outcome!!!')
     var boardName = player.board.name;
     if (boardName === "Esphesos" && player.wondersBuilt === 2){
       player.money += 9;

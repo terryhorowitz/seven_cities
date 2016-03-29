@@ -66,7 +66,6 @@ app.controller('GameController', function ($scope, $state) {
         $scope.currentlyPlaying = true;
         // console.log('game started')
         $scope.players = data;
-        console.log('players', $scope.players)
         //find myself
         for (var i = 0; i < data.length; i++) {
           var thisSocket = $scope.players[i].socket.slice(2);
@@ -122,8 +121,6 @@ app.controller('GameController', function ($scope, $state) {
         }
                 
       socket.on('your options', function(options) {
-//        $scope.playOptions = options;
-        console.log('the options', options)
         $scope.wonderTrades = null;
         $scope.tradeOptions = null;
         $scope.playOptions = options.map(function(option) {
@@ -195,7 +192,6 @@ app.controller('GameController', function ($scope, $state) {
 //      }
 //      
       $scope.submitTrade = function(){
-        console.log('reg trade', $scope.trade)
         $scope.submitted = true;
         var tradeObj = {};
         tradeObj.left = [];
@@ -207,7 +203,6 @@ app.controller('GameController', function ($scope, $state) {
         
         if (!tradeObj.left.length) tradeObj.left = null;
         if (!tradeObj.right.length) tradeObj.right = null;
-        console.log('obj submitting', tradeObj)
         socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
         $scope.playOptions = null;
         
@@ -225,7 +220,6 @@ app.controller('GameController', function ($scope, $state) {
         
         if (!tradeObj.left.length) tradeObj.left = null;
         if (!tradeObj.right.length) tradeObj.right = null;
-        console.log('obj submitting', tradeObj)
         socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
         $scope.playOptions = null;
       }
@@ -260,7 +254,6 @@ app.controller('GameController', function ($scope, $state) {
             $scope.nonNeighbors.push($scope.players[i]);
           }
         }
-        console.log('this is players', $scope.players)
 
         $scope.$digest();
       })

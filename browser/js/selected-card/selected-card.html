@@ -22,9 +22,13 @@
           Build A Wonder:
             <div ng-repeat="wt in wonderTrades">
               {{wt[0][0]}}
+<!--
               <div ng-repeat="direction in wt[1]">
                  <input type="radio" ng-model="tradeForWonder[$index]" value="{{wt[0][0]}}">{{direction}}<br>
               </div>
+-->
+                <input name="{{$index}}" type="radio" ng-model="tradeForWonder[$index]" ng-value="{{['left', wt[0][0]]}}" ng-show="wt[1][0] === 'left'">Left<br>
+               <input name="{{$index}}" type="radio" ng-model="trade[$index]" ng-value="{{['right', wt[0][0]]}}" ng-show="wt[1][0] === 'right' || wt[1][1] === 'right'">Right<br>
             </div>
             <div><a ng-click='submitWonderTrade()'>Build Wonder</a></div>
         </form>
