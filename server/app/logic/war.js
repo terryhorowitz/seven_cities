@@ -67,7 +67,7 @@ var eachPlayerWar = function(player, era) {
 var goToWar = function(game, era) {
   return game.getGamePlayers()
   .then(function(playersArr){
-    playersArr.reduce(function(promiseAccumulator, p){
+    return playersArr.reduce(function(promiseAccumulator, p){
       return promiseAccumulator.then(function(){
         return eachPlayerWar(p, era);
       })

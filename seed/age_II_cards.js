@@ -357,7 +357,7 @@ module.exports = [
     upgradeTo: ["Senate", "University"],
     era: 2,
     numPlayers: 6,
-    picture: "2_libray_6.png"
+    picture: "2_library_6.png"
   },
   {
     name: "Libray",
@@ -367,7 +367,7 @@ module.exports = [
     upgradeTo: ["Senate", "University"],
     era: 2,
     numPlayers: 3,
-    picture: "2_libray_3.png"
+    picture: "2_library_3.png"
   },
   {
     name: "Dispensary",

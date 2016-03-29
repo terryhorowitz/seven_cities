@@ -46,8 +46,11 @@ var eraEnded = function(game, currentEra) {
             return player;         
           })
         })
-      .then(function(playersArr) {
-        return db_getters.getGame(game.id);
+      .then(function() {
+        return game.setGamePlayers(playersArr);
+      })
+      .then(function() {
+        return db_getters.getGame(game.id); 
       })
     })
   })
