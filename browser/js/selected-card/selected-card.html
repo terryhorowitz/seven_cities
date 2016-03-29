@@ -12,8 +12,8 @@
           <div ng-repeat="resource in tradeOptions">
             {{resource[0][0]}}
 <!--            <div ng-repeat="direction in resource[1]">-->
-               <input type="radio" ng-model="trade[$index]" ng-value="{{['left', resource[0][0]]}}" ng-show="resource[1][0] === 'left'">Left<br>
-               <input type="radio" ng-model="trade[$index]" ng-value="{{['right', resource[0][0]]}}" ng-show="resource[1][0] === 'right' || resource[1][1] === 'right'">Right<br>
+               <input name="{{$index}}" type="radio" ng-model="trade[$index]" ng-value="{{['left', resource[0][0]]}}" ng-show="resource[1][0] === 'left'">Left<br>
+               <input name="{{$index}}" type="radio" ng-model="trade[$index]" ng-value="{{['right', resource[0][0]]}}" ng-show="resource[1][0] === 'right' || resource[1][1] === 'right'">Right<br>
 <!--            </div>-->
           </div>
           <div><a ng-click='submitTrade()'>submit trade</a></div>
