@@ -268,9 +268,7 @@ module.exports = function () {
       }
       if (newTempCards[startPlayerId].length === 1) {
         return war.goToWar(game, era)
-        .then(function(){
-          return db_getters.getGame(startPlayer.gameId);
-        })
+
       } else {
         var lastPlayer = _.find(game.GamePlayers, function(eachPlayer) {
           return eachPlayer[swapNeighbor] === startPlayerId;
@@ -280,13 +278,10 @@ module.exports = function () {
         return Promise.map(game.GamePlayers, function(p){
           return p.setTemporary(newTempCards[p.id]);
         })
-        .then(function(){
-          return db_getters.getGame(startPlayer.gameId);
-        })
       }
     })
-    .then(function(game) {
-      return game;
+    .then(function(){
+      return db_getters.getGame(startPlayer.gameId);
     })
   }
 
