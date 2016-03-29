@@ -13,6 +13,7 @@
 var Game = require('../../db/models').Game
 var Player = require('../../db/models').Player
 var Promise = require('bluebird');
+var endOfEra = require('./endOfEra.js');
 
 var getEraAwardPoints = function(era) {
   if (era===1) {
@@ -61,10 +62,6 @@ var eachPlayerWar = function(player, era) {
     }
     return Promise.join(player.update({tokens: newPlayerToken}), leftNeighbor.update({tokens: newNeighborToken}))
   })
-  .then(function() {
-    //call new era
-    //refresh player views to add tokens
-  })
 }
 
 var goToWar = function(gameId, era) {
@@ -78,6 +75,9 @@ var goToWar = function(gameId, era) {
         return eachPlayerWar(p, era);
       })
     }, Promise.resolve())
+    .then(function(){
+      return endOfEra.eraEnded(gameId, era);
+    })
   })
 }
 
