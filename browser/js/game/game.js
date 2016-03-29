@@ -124,7 +124,36 @@ app.controller('GameController', function ($scope, $state) {
       socket.on('your options', function(options) {
 //        $scope.playOptions = options;
         $scope.playOptions = options.map(function(option) {
-          if (typeof option !== 'string') {
+          console.log('wonders???', options)
+          if (typeof option !== 'string' && option.wonder && typeof option !== 'string') {
+            console.log('before wonder s4et', option)
+            var wonderNum = $scope.me.wondersBuilt + 1;
+            var wonderCost = "wonder" + wonderNum + "Cost";
+            var originalCostOfWonder = $scope.me.board[wonderCost];
+            option.total = originalCostOfWonder;
+            console.log('wonder opts', option)
+            var wonderNeeds = [];
+            for (var i = 0; i < option.total.length; i++){
+              var arr = [[],[]];
+              arr[0].push(option.total[i]);
+              wonderNeeds.push(arr);
+            }
+            for (var j = 0; j < wonderNeeds.length; j++){
+              if (option.left && option.left.length && wonderNeeds[j][0][0] === option.left[0]){
+                wonderNeeds[j][1].push('left');
+                option.left.shift();
+              }
+              if (option.right && option.right.length && wonderNeeds[j][0][0] === option.right[0]){
+                wonderNeeds[j][1].push('right');
+                option.right.shift();
+              }
+            }
+            console.log('needed', wonderNeeds)
+            $scope.wonderOptions = wonderNeeds;
+          } else if (option.wonder && option === "paid by own resources"){
+            return "Build Wonder"
+          }
+          else if (typeof option !== 'string' && !option.wonder) {
             var needed = [];
             for (var i = 0; i < option.total.length; i++){
               var arr = [[],[]];
@@ -176,6 +205,11 @@ app.controller('GameController', function ($scope, $state) {
         $scope.playOptions = null;
         
       }; 
+      
+      $scope.wonderTrade = {};
+      $scope.submitWonderTrade = function () {
+        console.log('wonder trade', $scope.wonderTrade)
+      }
 
       socket.on('err', function(data) {
         $scope.err = data.message;

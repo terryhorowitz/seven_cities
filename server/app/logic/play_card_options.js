@@ -61,7 +61,7 @@ module.exports = function () {
     }
     if (!costCopy.length) return 'paid by own resources';
     else {
-      return canIBuyFromMyNeighbors(player, cost);
+      return canIBuyFromMyNeighbors(player, costCopy);
     }
   }
   
@@ -72,17 +72,20 @@ module.exports = function () {
     var trade = {};
     var leftContribution = [];
     var rightContribution = [];
-
+    console.log('check if you can build with trade', cost, leftResourcesCopy, rightResourcesCopy)
     for (var i = 0; i < cost.length; i++){
-      if (leftResourcesCopy[cost[i]] && leftResourcesCopy[cost[i]] > 0){
+      if (leftResourcesCopy[cost[i]]){
+        console.log('in left', leftResourcesCopy, cost)
         leftResourcesCopy[cost[i]]--;
         leftContribution.push(cost[i]);
       }
-      if (rightResourcesCopy[cost[i]] && rightResourcesCopy[cost[i]] > 0){
+      if (rightResourcesCopy[cost[i]]){
+        console.log('in left', rightResourcesCopy, cost)
         rightResourcesCopy[cost[i]]--;
         rightContribution.push(cost[i]);
       }
     }
+    console.log('after check', leftContribution, rightContribution)
     //check if a player can AFFORD!!!!
     if (leftContribution.length === cost.length) trade.left = leftContribution;
     else trade.left = null;
