@@ -124,7 +124,8 @@ module.exports = function (server) {
 		.spread(function(cardOptions, wonderOptions) {
             console.log('wo', wonderOptions)
             if (typeof wonderOptions !== "string") wonderOptions.wonder = true;
-            if (typeof cardOptions !== 'string')cardOptions.wonder = false;
+            else if (typeof wonderOptions === "string") wonderOptions = "wonder " + wonderOptions;
+            if (typeof cardOptions !== 'string') cardOptions.wonder = false;
 			options.push(cardOptions);
             options.push(wonderOptions);
 			io.sockets.connected[socket.id].emit('your options', options);

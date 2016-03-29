@@ -123,6 +123,7 @@ app.controller('GameController', function ($scope, $state) {
                 
       socket.on('your options', function(options) {
 //        $scope.playOptions = options;
+        console.log('the options', options)
         $scope.wonderTrades = null;
         $scope.tradeOptions = null;
         $scope.playOptions = options.map(function(option) {
@@ -149,7 +150,7 @@ app.controller('GameController', function ($scope, $state) {
             }
             $scope.tradeOptions = null;
             $scope.wonderTrades = wonderNeeds;
-          } else if (option.wonder && option === "paid by own resources"){
+          } else if (option === "wonder paid by own resources"){
             return "Build Wonder"
           }
           else if (typeof option !== 'string' && !option.wonder) {

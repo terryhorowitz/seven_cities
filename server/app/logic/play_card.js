@@ -47,7 +47,6 @@ module.exports = function () {
   
   /////// Public API/////////////
   function orchestrator(playersSelections){
-    console.log('selections', playersSelections)
     return playersSelections.reduce(function(promiseAccumulator, playerChoice){
       choice = playerChoice.choice;
       return promiseAccumulator
@@ -73,7 +72,6 @@ module.exports = function () {
 
   function executeChoice(choice){
     //if choice is not in map, an obj was returned, indicating trade options were selected
-    console.log('choice', choice)
     if (!choiceMap[choice]) return tradeForCard(choice);
     else return choiceMap[choice]();
   }
@@ -97,7 +95,6 @@ module.exports = function () {
   }
   
   function buildWonder(){
-    console.log('building wonder')
     return playOptions.checkIfPlayerCanBuildWonder(player.id)
     .then(function(response){
       player.wondersBuilt++;
@@ -106,7 +103,6 @@ module.exports = function () {
       }
       else {
         var wonderCost = {};
-        console.log('wonder obj', wonderCost)
         wonderCost.wonder = response;
         return tradeForCard(wonderCost);
       }
@@ -128,7 +124,7 @@ module.exports = function () {
   ///////
   
   function doSomethingBasedOnBuildingACard(){
-    if (newResources.indexOf(card.type) > -1 || newResources.indexOf(card.name) > -1){ console.log('resource', card.functionality)
+    if (newResources.indexOf(card.type) > -1 || newResources.indexOf(card.name) > -1){ 
       return addToPlayerResources.buildPlayerResources(player, card.functionality);
     }
     if (tradingSites.indexOf(card.name) > -1){
@@ -234,7 +230,7 @@ module.exports = function () {
   }
   
   function getWonderOutcome () {
-    console.log('wonder outcome')
+    console.log('wonder outcome!!!')
     var boardName = player.board.name;
     if (boardName === "Esphesos" && player.wondersBuilt === 2){
       player.money += 9;
