@@ -9,7 +9,8 @@ var Player = require('../../db/models').Player;
 var db_getters = require('./db_getters');
 var addToPlayerResources = require('./player_resources');
 var playOptions = require('./play_card_options')();
-var resourcesObj = require('./game_resources.js')()
+var resourcesObj = require('./game_resources.js')();
+var war = require('./war.js');
 
 var Promise = require('bluebird');
 var _ = require('lodash');
@@ -61,7 +62,7 @@ module.exports = function () {
     }, Promise.resolve())
     .then(function(){
       //rotate hands
-      return shiftHandFromPlayers(playersSelections[0].playerId)
+      return shiftHandFromPlayers(playersSelections[0].playerId, card.dataValues.era)
     })
     .catch(function(err){ console.error('error executing', err) })
   }
@@ -248,30 +249,39 @@ module.exports = function () {
     else return Promise.resolve();
   }
     
-  function shiftHandFromPlayers(startPlayerId){
+  function shiftHandFromPlayers(startPlayerId, era){
     var startPlayer;
     return db_getters.getPlayer(startPlayerId)
     .then(function(_startPlayer){
       startPlayer = _startPlayer;
-      return db_getters.getGame(_startPlayer.gameId)
+      return db_getters.getGame(_startPlayer.gameId);
     })
     .then(function(game){
       var playerSwapping = _.find(game.GamePlayers, {id: startPlayerId});
       var lastPass = playerSwapping.Temporary;
       var newTempCards = {};
-      while (playerSwapping.RightNeighborId !== startPlayerId){
-        newTempCards[playerSwapping.id] = _.find(game.GamePlayers, {id: playerSwapping.RightNeighborId}).Temporary;
-        playerSwapping = _.find(game.GamePlayers, {id: playerSwapping.RightNeighborId});
+      var swapNeighbor = (era === 2) ? 'LeftNeighborId' : 'RightNeighborId';
+
+      while (playerSwapping[swapNeighbor] !== startPlayerId){
+        newTempCards[playerSwapping.id] = _.find(game.GamePlayers, {id: playerSwapping[swapNeighbor]}).Temporary;
+        playerSwapping = _.find(game.GamePlayers, {id: playerSwapping[swapNeighbor]});
       }
-      var lastPlayer = _.find(game.GamePlayers, {RightNeighborId: startPlayerId});
+      if (newTempCards[startPlayerId].length == 1) {
+        //need to discard last card 
+        return war.goToWar(game, era);
+      }
+      var lastPlayer = _.find(game.GamePlayers, function(eachPlayer) {
+        return eachPlayer[swapNeighbor] === startPlayerId;
+      });
+      
       newTempCards[lastPlayer.id] = lastPass;
-      return Promise.map(game.GamePlayers, function(player){
-        return player.setTemporary(newTempCards[player.id])
-      })
+      return Promise.map(game.GamePlayers, function(p){
+        return p.setTemporary(newTempCards[p.id]);
+      });
     })
     .then(function(){
-      return db_getters.getGame(startPlayer.gameId)
-    })
+      return db_getters.getGame(startPlayer.gameId);
+    });
   }
 
   // PUBLIC API: 
