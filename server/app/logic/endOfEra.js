@@ -12,36 +12,45 @@
 'use strict';
 
 
-var Game = require('../../db/models').Game
-var Deck = require('../../db/models').Deck
-var Player = require('../../db/models').Player
-var War = require('./war')
-var playCard = require('./play_card')
-var Promise = require('bluebird')
-var _ = require('lodash')
+var Game = require('../../db/models').Game;
+var Deck = require('../../db/models').Deck;
+var Player = require('../../db/models').Player;
+var War = require('./war');
+var playCard = require('./play_card');
+var db_getters = require('./db_getters'); 
+var Promise = require('bluebird');
+var _ = require('lodash');
 
-var eraEnded = function(gameId, currentEra) {
-
-  var newPlayerHand, shuffledDeck;
-
-  return Game.findById(gameId)
-  .then(function(game) {
-    game.getGamePlayers()
-  })
-  .then(function(playersArr){
+var eraEnded = function(game, currentEra) {
+  let newPlayerHand, shuffledDeck;
+  let playersArr = game.GamePlayers;
+  let era = currentEra + 1;
     return Promise.map(playersArr, function(player){
       return player.getTemporary()
       .then(function(playerHand){
-        playerHand.forEach(function(card){
-          game.addDiscard(card)
-          playCard.discard(player, card)
-        })
-        return Deck.findOne({where: {era: currentEra++, numPlayers: playersArr.length}, include: [{all:true}]})
+        game.addDiscard(playerHand[0]);
+        return player;
       })
-      .then(function(deck){
+    })
+    .then(function(playersArr) {
+      return Deck.findOne({where: {era: era, numPlayers: playersArr.length}, include: [{all:true}]})
+      .then(function(deck) {
         shuffledDeck = _.shuffle(deck.cards)
-        newPlayerHand = shuffledDeck.splice(0, 7)
-        return Promise.join(player.setTemporary(newPlayerHand), game.setDecks(deck))
+        return game.setDecks(deck)
+      })
+      .then(function() {
+        return Promise.map(playersArr, function(player){
+          newPlayerHand = shuffledDeck.splice(0, 7)
+          return player.setTemporary(newPlayerHand)
+          .then(function(player) {
+            return player;         
+          })
+        })
+      .then(function() {
+        return game.setGamePlayers(playersArr);
+      })
+      .then(function() {
+        return db_getters.getGame(game.id); 
       })
     })
   })
@@ -59,4 +68,8 @@ var eraEnded = function(gameId, currentEra) {
   // .then(function(){
 
   // })
+}
+
+module.exports = {
+  eraEnded: eraEnded
 }

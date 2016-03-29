@@ -13,6 +13,7 @@
 var Game = require('../../db/models').Game
 var Player = require('../../db/models').Player
 var Promise = require('bluebird');
+var endOfEra = require('./endOfEra.js');
 
 var getEraAwardPoints = function(era) {
   if (era===1) {
@@ -28,45 +29,51 @@ var getEraAwardPoints = function(era) {
 
 var countWarPoints = function(warCards) {
   var totalPoints = 0;
-  for (var i = 0; i < playerCards.length; i++) {
-    totalPoints += playerBuiltCards[i].functionality.length;
+  for (var i = 0; i < warCards.length; i++) {
+    totalPoints += warCards[i].functionality.length;
   }
   return totalPoints;
 }
 
 var eachPlayerWar = function(player, era) {
-
   var playerWarPoints = 0;
-  var neighborWarPoints = 0;
-  var warPoints = getEraAwardPoints(era)
+  var leftNeighborWarPoints = 0;
+  var warPoints = getEraAwardPoints(era);
+  var newPlayerToken; 
+  var newNeighborToken;
 
-  return player.getLeftNeighbor()
-  .then(function(player, leftNeighbor) {
-    return Promise.join(player, leftNeighbor, player.getPermanent({where: {type: "War"}}), player.getPermanent({where: {type: "War"}}))
+  return Promise.join(Player.findById(player.id), player.getLeftNeighbor())
+  .spread(function(player, leftNeighbor) {
+    newPlayerToken = player.tokens;
+    newNeighborToken = leftNeighbor.tokens;
+    return Promise.join(player, leftNeighbor, player.getPermanent({where: {type: "War"}}), leftNeighbor.getPermanent({where: {type: "War"}}))
   })
-  .spread(function(player, leftNeigbor, playerWarCards, leftNeighborWarCards) {
+  .spread(function(player, leftNeighbor, playerWarCards, leftNeighborWarCards) {
     if (playerWarCards.length) playerWarPoints = countWarPoints(playerWarCards)
-    if (leftNeighborWarCards.length) neighborWarPoints = countWarPoints(leftNeighborWarCards)
-    if (playerWarPoints > neighborWarPoints) {
-      player.tokens.push(playerWarPoints)
-      leftNeighbor.tokens.push(-1)
+    if (leftNeighborWarCards.length) leftNeighborWarPoints = countWarPoints(leftNeighborWarCards)
+
+    if (playerWarPoints > leftNeighborWarPoints) {
+      newPlayerToken.push(playerWarPoints * warPoints)
+      newNeighborToken.push(-1)
     }
-    else if (neighborWarPoints > playerWarPoints) {
-      leftNeighbor.tokens.push(neighborWarPoints)
-      player.tokens.push(-1)
+    else if (leftNeighborWarPoints > playerWarPoints) {
+      newNeighborToken.push(leftNeighborWarPoints * warPoints)
+      newPlayerToken.push(-1)
     }
-    return Promise.join(player.save(), leftNeighbor.save())
+    return Promise.join(player.update({tokens: newPlayerToken}), leftNeighbor.update({tokens: newNeighborToken}))
   })
 }
 
-var goToWar = function(gameId, era) {
-  return Game.findById(gameId)
-  .then(function(game){
-    return game.getGamePlayers()
-  })
+var goToWar = function(game, era) {
+  return game.getGamePlayers()
   .then(function(playersArr){
-    return Promise.map(playersArr, function(player){
-      return eachPlayerWar(player, era)
+    return playersArr.reduce(function(promiseAccumulator, p){
+      return promiseAccumulator.then(function(){
+        return eachPlayerWar(p, era);
+      })
+    }, Promise.resolve())
+    .then(function(){
+      return endOfEra.eraEnded(game, era);
     })
   })
 }
