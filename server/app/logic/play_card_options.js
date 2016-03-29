@@ -72,7 +72,7 @@ module.exports = function () {
     var trade = {};
     var leftContribution = [];
     var rightContribution = [];
-    console.log('check if you can build with trade', cost, leftResourcesCopy, rightResourcesCopy)
+
     for (var i = 0; i < cost.length; i++){
       if (leftResourcesCopy[cost[i]]){
         console.log('in left', leftResourcesCopy, cost)
@@ -85,7 +85,6 @@ module.exports = function () {
         rightContribution.push(cost[i]);
       }
     }
-    console.log('after check', leftContribution, rightContribution)
     //check if a player can AFFORD!!!!
     if (leftContribution.length === cost.length) trade.left = leftContribution;
     else trade.left = null;

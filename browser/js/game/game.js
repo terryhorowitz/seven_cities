@@ -123,16 +123,15 @@ app.controller('GameController', function ($scope, $state) {
                 
       socket.on('your options', function(options) {
 //        $scope.playOptions = options;
+        $scope.wonderTrades = null;
+        $scope.tradeOptions = null;
         $scope.playOptions = options.map(function(option) {
-          console.log('wonders???', options)
-          if (typeof option !== 'string' && option.wonder && typeof option !== 'string') {
-            console.log('before wonder s4et', option)
-            var wonderNum = $scope.me.wondersBuilt + 1;
-            var wonderCost = "wonder" + wonderNum + "Cost";
-            var originalCostOfWonder = $scope.me.board[wonderCost];
-            option.total = originalCostOfWonder;
-            console.log('wonder opts', option)
+          if (typeof option !== 'string' && option.wonder) {
             var wonderNeeds = [];
+            var leftPayment = option.left || [];
+            var rightPayment = option.right || [];
+            option.total = leftPayment.concat(rightPayment)
+
             for (var i = 0; i < option.total.length; i++){
               var arr = [[],[]];
               arr[0].push(option.total[i]);
@@ -148,8 +147,8 @@ app.controller('GameController', function ($scope, $state) {
                 option.right.shift();
               }
             }
-            console.log('needed', wonderNeeds)
-            $scope.wonderOptions = wonderNeeds;
+            $scope.tradeOptions = null;
+            $scope.wonderTrades = wonderNeeds;
           } else if (option.wonder && option === "paid by own resources"){
             return "Build Wonder"
           }
@@ -170,7 +169,6 @@ app.controller('GameController', function ($scope, $state) {
                 option.right.shift();
               }
           }
-            console.log('needed', needed)
             $scope.tradeOptions = needed;
           } else if (option === 'Discard') {
             return option;
@@ -206,9 +204,9 @@ app.controller('GameController', function ($scope, $state) {
         
       }; 
       
-      $scope.wonderTrade = {};
+      $scope.tradeForWonder = {};
       $scope.submitWonderTrade = function () {
-        console.log('wonder trade', $scope.wonderTrade)
+        console.log('wonder trade', $scope.tradeForWonder)
       }
 
       socket.on('err', function(data) {
