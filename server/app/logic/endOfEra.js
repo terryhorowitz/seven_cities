@@ -25,7 +25,6 @@ var eraEnded = function(game, currentEra) {
   let newPlayerHand, shuffledDeck;
   let playersArr = game.GamePlayers;
   let era = currentEra + 1;
-  console.log(era);
     return Promise.map(playersArr, function(player){
       return player.getTemporary()
       .then(function(playerHand){
@@ -36,21 +35,19 @@ var eraEnded = function(game, currentEra) {
     .then(function(playersArr) {
       return Deck.findOne({where: {era: era, numPlayers: playersArr.length}, include: [{all:true}]})
       .then(function(deck) {
-        console.log('^^^^^^^^^^^deck', deck)
         shuffledDeck = _.shuffle(deck.cards)
         return game.setDecks(deck)
       })
       .then(function() {
         return Promise.map(playersArr, function(player){
           newPlayerHand = shuffledDeck.splice(0, 7)
-    console.log('%%%%%%%newPlayerHand', newPlayerHand)
           return player.setTemporary(newPlayerHand)
           .then(function(player) {
             return player;         
           })
         })
       .then(function(playersArr) {
-          console.log('%%%%%%%player temp cards after set new hand', playersArr[0].Temporary)
+        return db_getters.getGame(game.id);
       })
     })
   })

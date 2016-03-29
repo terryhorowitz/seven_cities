@@ -146,10 +146,12 @@ module.exports = function (server) {
         if (playersChoices.length === peopleInRoom){
           return playCard(playersChoices)
           .then(function(game) {
+          	console.log('game.GamePlayers', game.GamePlayers)
           	playersChoices = [];
           	players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
           	io.to(currentRoom).emit('new round', players);
           	game.GamePlayers.forEach(function(player) {
+          		// console.log('each hand', player.Temporary)
                 io.sockets.connected[player.socket].emit('your hand', player.Temporary);
           	})
           })
