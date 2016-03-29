@@ -5,26 +5,39 @@ var _ = require('lodash');
 
 module.exports = function () {
 
-	var calculatePoints = function (thisPlayer) {
-		var totalPoints = 0;
-		var totalMoney = 0;
+	var calculatePoints = function (player) {
+		let totalPoints = 0;
+		let totalMoney = 0;
+		let wonders = player.wondersBuilt;
 
-		return Player.findOne({ where: { id: thisPlayer.id }})
-		.then(function (player) {
+		// return Player.findOne({ where: { id: thisPlayer.id }})
+		// .then(function (player) {
 
-			//calculate money and military points 
+		// 	//calculate money and military points 
+		if (player.tokens.length) {
+			console.log('########player.tokens', player.tokens);
+			let totalTokens = player.tokens.reduce(function(a, b) {
+				return a + b;
+			})
+			totalPoints += totalTokens + Math.floor(player.money/3);
+		}
 
-			totalPoints += player.tokens[0] - player.tokens[1] + Math.floor(player.money/3);
-			totalMoney = player.money;
-			return player;
-		})
-		.then(function (player) {
+		totalMoney = player.money;
+		// 	return player;
+		// })
+		// .then(function (player) {
 
 			//calculate wonder points
+		console.log('########totalPoints', totalPoints);
+		console.log('$$$$$$$$$$totalMoney', totalMoney);
 			
-			return Promise.join(player, player.builtWonders(), player.getBoard())
-		.spread(function(player, wonders, board) {
-			for (let i = 1; i < wonders+1; i--) {
+		return player.getBoard()
+		.then(function(board) {
+			console.log('########player.wondersBuilt', wonders);
+			console.log('########board', board);
+
+			for (let i = 1; i < wonders+1; i++) {
+				console.log('########inside the loop');
 				//thisWonder will be a string such as 'wonder1'
 				let thisWonder = `wonder${i}`;
 				//check if board.wonder1 can be converted to number, then add that number to total points
@@ -35,9 +48,10 @@ module.exports = function () {
 
 			//calculate points from built cards
 
-			return Promise.join(player, wonders, board, player.getPermanent())
+		return Promise.join(board, player.getPermanent());
 		})
-		.spread(function(player, wonders, board, builtCards) {
+		.spread(function(board, builtCards) {
+			console.log('$$$$$$$$$$after spread');
 			//Technology Cards helper variables:
 			let technologyCards = [0, 0, 0];//index 0 is tablet, index 1 is gear, index 2 is compass
 			let scientistsGuild = false;
@@ -130,18 +144,18 @@ module.exports = function () {
 			// if the player has other guild cards, execute this promise:
 
 			if (guildCards.length) {
-				return Promise.join(player, wonders, board, builtCards, guildCards, player.getLeftNeighbor(), player.getRightNeighbor())
-				.spread(function(player, wonders, board, builtCards, guildCards, leftNeighbor, rightNeighbor) {
-					return Promise.join(player, wonders, board, builtCards, guildCards, leftNeighbor, rightNeighbor, leftNeighbor.getPermanent(), rightNeighbor.getPermanent())
+				return Promise.join(board, builtCards, guildCards, player.getLeftNeighbor(), player.getRightNeighbor())
+				.spread(function(board, builtCards, guildCards, leftNeighbor, rightNeighbor) {
+					return Promise.join(wonders, board, builtCards, guildCards, leftNeighbor, rightNeighbor, leftNeighbor.getPermanent(), rightNeighbor.getPermanent())
 				})
-				.spread(function(player, wonders, board, builtCards, guildCards, leftNeighbor, rightNeighbor, leftCards, rightCards) {
+				.spread(function(board, builtCards, guildCards, leftNeighbor, rightNeighbor, leftCards, rightCards) {
 					for (let card of guildCards) {
 						if (card.name === "Strategists Guild") {
 							totalPoints += leftNeighbor.tokens[2] * -1 + rightNeighbor.tokens[2] * -1;
 						} 
 						else if (card.name === "Builders Guild") {
 							return Promise.join(wonders, leftNeighbor.builtWonders(), rightNeighbor.builtWonders())
-							.spread(function(wonders, leftWonders, rightWonders) {
+							.spread(function(leftWonders, rightWonders) {
 								totalPoints += wonders + leftWonders +rightWonders;
 							})
 						} else {
@@ -156,7 +170,6 @@ module.exports = function () {
 			.then(function() {
 				return { points: totalPoints, money: totalMoney}
 			})
-		})
 	}
 
 
