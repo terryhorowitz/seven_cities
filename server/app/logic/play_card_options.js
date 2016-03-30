@@ -52,14 +52,12 @@ module.exports = function () {
     var costCopy = _.cloneDeep(cost);
     var playersResources = Resources.getGameResources(player.gameId)[player.id];
     var ownResourcesCopy = _.cloneDeep(playersResources.self);
-    console.log('payment info', costCopy, ownResourcesCopy)
     for (var i = 0; i < cost.length; i++) {
       if (!!ownResourcesCopy[cost[i]]) {
         ownResourcesCopy[cost[i]]--;
         _.pullAt(costCopy, costCopy.indexOf(cost[i]))
       }
     }
-    console.log('re if', costCopy, cost, ownResourcesCopy)
     if (!costCopy.length) return 'paid by own resources';
     else {
       return canIBuyFromMyNeighbors(player, costCopy);
@@ -77,25 +75,22 @@ module.exports = function () {
 
     for (var i = 0; i < cost.length; i++){
       if (leftResourcesCopy[cost[i]]){
-        console.log('in left', leftResourcesCopy, cost)
         leftResourcesCopy[cost[i]]--;
         leftContribution.push(cost[i]);
         _.pullAt(costCopy, costCopy.indexOf(cost[i]));
       }
       if (rightResourcesCopy[cost[i]]){
-        console.log('in right', rightResourcesCopy, cost)
         rightResourcesCopy[cost[i]]--;
         rightContribution.push(cost[i]);
-        if (costCopy.indexOf(cost[i])) _.pullAt(costCopy, costCopy.indexOf(cost[i]));
+        if (costCopy.indexOf(cost[i]) > -1) _.pullAt(costCopy, costCopy.indexOf(cost[i]));
       }
     }
     //check if a player can AFFORD!!!!
-    if (costCopy.length) return 'no trade available!';
+    if (costCopy.length > 0) return 'no trade available!';
     if (leftContribution.length) trade.left = leftContribution;
     else trade.left = null;
     if (rightContribution.length) trade.right = rightContribution;
     else trade.right = null;
-    console.log('trade', trade)
     return trade;
   }
   
