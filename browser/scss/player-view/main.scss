@@ -200,6 +200,13 @@ li {
 	}
 }
 
+other-players {
+	height: 80px;
+/*	position: absolute;
+	top: 10px;
+	margin: 0 auto;*/
+}
+
 nav {
 	li.other-player-icons {
 		width: 80px;
@@ -236,7 +243,7 @@ nav {
 }
 
 .play-options {
-	background-color: rgba(255,255,255,0.3);
+	background-color: rgba(255,255,255,0.5);
 	border-radius: 8px;
 	padding: 10px;
 	font-size:16px;
@@ -307,9 +314,10 @@ selected-card {
 
 .token-nav {
 	padding-right: 15px;
+	height: 80px;
 	.token {
 		padding-left: 7px;
-		text-shadow: 0 0 3px white;
+		text-shadow: 0 0 3px #fff;
 		img{
 			max-height: 40px;
 		}
@@ -403,3 +411,13 @@ width: 100%;
 	overflow: hidden;
 }
 
+board-name {
+	margin-right: 70px;
+}
+
+.already-played {
+	padding-top: 40px;
+	font-size: 18px;
+	font-weight: 900;
+	text-shadow: 0 0 3px #fff;
+}
