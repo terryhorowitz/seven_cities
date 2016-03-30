@@ -118,7 +118,6 @@ module.exports = function () {
       return addToPlayerResources.buildPlayerResources(player, card.functionality);
     }
     if (tradingSites.indexOf(card.name) > -1){
-      console.log('trading sites', card.name)
       return getMoneyFromCard();
     }
     else if (tradePosts.indexOf(card.name) > -1){
@@ -140,52 +139,39 @@ module.exports = function () {
   
   
   function getMoneyFromCard(){
-    console.log('get money from card', card.name)
     // this is weird because functionality array holds mixed types by design, don't worry about it 
     if (card.functionality[0] === "left"){
       return Promise.join(countNeighborCardsOfType(), countOwnCardsOfType())
       .spread(function(neighAmount, ownAmount){
-        console.log('l r amt', neighAmount, ownAmount)
         player.money = player.money + neighAmount + ownAmount;
         return player.save();
       })
-//      .then(function(){
-//        return buildCard();
-//      })
     } 
     // if first element in functionality array is not left, then you only have to update own resources 
     else {
       return countOwnCardsOfType()
       .then(function(amount){
-        console.log('own amt', amount)
         player.money = player.money + amount;
         return player.save();
       })
-//      .then(function(){
-//        return buildCard();
-//      })
     }  
   }
   
   function countNeighborCardsOfType(){
     var cardToBePaidFor = card.functionality[card.functionality.length - 1];
-    console.log('gotta get $', cardToBePaidFor)
     return db_getters.getNeighbors(player)
     .spread(function(leftNeighbor, rightNeighbor){
       return db_getters.getPermanentForLR({where: {type: cardToBePaidFor}}, leftNeighbor, rightNeighbor)
     })
     .spread(function(leftCards, rightCards){
-      console.log('perms', leftCards.length, rightCards.length)
       return leftCards.length + rightCards.length;
     })
   }
   
   function countOwnCardsOfType(){
     var cardToBePaidFor = card.functionality[card.functionality.length - 1];
-    console.log('gotta get $', cardToBePaidFor)
     return player.getPermanent({where: {type: cardToBePaidFor}})
     .then(function(cards){
-      console.log('perms', cards.length)
       return cards.length;
     })
   }
