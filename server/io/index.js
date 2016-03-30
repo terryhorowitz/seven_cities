@@ -158,6 +158,10 @@ module.exports = function (server) {
                 io.sockets.connected[player.socket].emit('your hand', player.Temporary);
           	})
           })
+        } else {
+        	var waiting = allPlayers[socket.id][0]
+        	console.log('waiting', waiting)
+        	io.to(currentRoom).emit('waiting on', waiting);
         }
         
 		// return playCard(data.playerId, data.cardId, data.selection)

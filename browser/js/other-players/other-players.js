@@ -5,8 +5,7 @@ app.directive('otherPlayers', function ($rootScope, $state, $uibModal) {
         scope: {
             left: '=',
             right: '=',
-            other: '='
-        },
+            other: '='        },
         templateUrl: 'js/other-players/other-players.html',
         link: function(scope){
             scope.showNeighbor = function(neighbor) {
@@ -32,6 +31,7 @@ app.directive('otherPlayers', function ($rootScope, $state, $uibModal) {
                     if (!scope.clickedPile) scope.clickedPile = pile;
                     else scope.clickedPile = false;
                   }
+                  
 
             }
 

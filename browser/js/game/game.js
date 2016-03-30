@@ -13,7 +13,7 @@ app.config(function ($stateProvider) {
 app.controller('GameController', function ($scope, $state) {
 
     var socket = io(window.location.origin); 
-
+    $scope.socket = socket;
     $scope.roomname = $state.params.roomname;
     $scope.playername = $state.params.playername;
 
@@ -108,6 +108,16 @@ app.controller('GameController', function ($scope, $state) {
 
       socket.on('your hand', function(data) {
         $scope.myHand = data;
+        $scope.waitingOn = null;
+        $scope.$digest();
+      })
+
+      socket.on('waiting on', function(data) {
+        if ($scope.waitingOn) {
+          $scope.waitingOn += ', ' + data;
+        } else {
+          $scope.waitingOn = data;
+        }
         $scope.$digest();
       })
 
@@ -253,7 +263,6 @@ app.controller('GameController', function ($scope, $state) {
             $scope.nonNeighbors.push($scope.players[i]);
           }
         }
-
         $scope.$digest();
       })
       //player submits their choice
