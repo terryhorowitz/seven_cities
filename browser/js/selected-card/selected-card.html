@@ -12,7 +12,7 @@
           <div ng-repeat="resource in tradeOptions">
             {{resource[0][0]}}
 <!--            <div ng-repeat="direction in resource[1]">-->
-               <input name="{{$index}}" type="radio" ng-model="trade[$index]" ng-value="{{['left', resource[0][0]]}}" ng-show="resource[1][0] === 'left'">Left<br>
+               <input name="{{$index}}" type="radio" ng-model="trade[$index]" ng-value="{{['left', resource[0][0]]}}" ng-show="resource[1][0] === 'left'">Left
                <input name="{{$index}}" type="radio" ng-model="trade[$index]" ng-value="{{['right', resource[0][0]]}}" ng-show="resource[1][0] === 'right' || resource[1][1] === 'right'">Right<br>
 <!--            </div>-->
           </div>
@@ -27,7 +27,7 @@
                  <input type="radio" ng-model="tradeForWonder[$index]" value="{{wt[0][0]}}">{{direction}}<br>
               </div>
 -->
-                <input name="{{$index}}" type="radio" ng-model="tradeForWonder[$index]" ng-value="{{['left', wt[0][0]]}}" ng-show="wt[1][0] === 'left'">Left<br>
+                <input name="{{$index}}" type="radio" ng-model="tradeForWonder[$index]" ng-value="{{['left', wt[0][0]]}}" ng-show="wt[1][0] === 'left'">Left
                <input name="{{$index}}" type="radio" ng-model="trade[$index]" ng-value="{{['right', wt[0][0]]}}" ng-show="wt[1][0] === 'right' || wt[1][1] === 'right'">Right<br>
             </div>
             <div><a ng-click='submitWonderTrade()'>Build Wonder</a></div>
