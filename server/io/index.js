@@ -29,7 +29,7 @@ module.exports = function (server) {
 		var counter = 0;
 		var players = [];
 		var gameObject;
-		currentRoom = Object.keys(socket.rooms)[Object.keys(socket.rooms).length-1];
+		currentRoom = findRoomName(socket.rooms);
 		//join all players to the correct room
 		socket.on('create', function(data) {
 			//this whole if is for dealing with a user refreshing during a game. local storage!
@@ -68,7 +68,9 @@ module.exports = function (server) {
 		});
 		//when first player decides to start the game with the current num of players
 		socket.on('startGame', function() {
-			currentRoom = Object.keys(socket.rooms)[Object.keys(socket.rooms).length-1];
+			var x = findRoomName(socket.rooms)
+			console.log('with functions', x)
+			currentRoom = findRoomName(socket.rooms);
 			var hands = [];
 			counter = 0;
 			for (var key in clients.sockets) {
@@ -81,6 +83,8 @@ module.exports = function (server) {
 				.then(function(allBoards) {
 					allBoards = _.shuffle(allBoards);
 					var allSockets = Object.keys(io.sockets.adapter.rooms[currentRoom].sockets);
+					console.log('allSockets', allSockets, 'currentRoom', currentRoom)
+
 					players = createPlayers.createPlayersObject(allBoards, counter, allSockets, allPlayers)
 				})
 				.then(function() {
@@ -116,7 +120,7 @@ module.exports = function (server) {
 			}
 		});
 	socket.on('choice made', function(data) {
-		currentRoom = Object.keys(socket.rooms)[Object.keys(socket.rooms).length-1];
+		currentRoom = findRoomName(socket.rooms);
 		//needs to check if the choice is ok and then emit
 		var cardId = data.card;
 		var playerId = data.player;
@@ -136,12 +140,12 @@ module.exports = function (server) {
 	});
 
 	socket.on('send msg', function(data){
-		currentRoom = Object.keys(socket.rooms)[Object.keys(socket.rooms).length-1];
+		currentRoom = findRoomName(socket.rooms);
 		io.to(currentRoom).emit('get msg', data)
 	})
 
 	socket.on('submit choice', function(data) {
-		currentRoom = Object.keys(socket.rooms)[Object.keys(socket.rooms).length-1];
+		currentRoom = findRoomName(socket.rooms);
     var peopleInRoom = 0;
       
     clients = io.sockets.adapter.rooms[currentRoom];
@@ -178,3 +182,12 @@ module.exports = function (server) {
   
   return io;
 };
+
+
+function findRoomName(roomsObj) {
+	var roomsArr = Object.keys(roomsObj).map(function(k) { return roomsObj[k] });
+	var newArr = roomsArr.filter(function(el) {
+		return el[0] !== '/';
+	})
+	return newArr[0];
+}

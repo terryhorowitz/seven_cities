@@ -27,12 +27,12 @@
 			<a ui-sref="home"><span class="glyphicon glyphicon-home pull-left"></span></a>
 			<board-name class='pull-left'></board-name>
 			<other-players left='leftNeighbor' right='rightNeighbor' other='nonNeighbors' class="text-center"></other-players>
-			<div class='already-played pull-left'>Already played: {{ waitingOn }}</div>
-
+			<div ng-show='waitingOn' class='already-played pull-left'><h4>Already played: {{ waitingOn }}<h4></div><br>
 			<tokens class="pull-right"></tokens>
 		</nav>
 
 		<div class="player-view-container container">
+			<div class='already-played pull-left'><h4>My name: {{me.name}} <br> Current era: {{currentEra}}</h4></div>
 
 			<div class="row">	
 				<div class="col-xs-8">
