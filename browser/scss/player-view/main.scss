@@ -234,6 +234,12 @@ nav {
 	vertical-align: middle;
 }
 
+.play-options {
+	background-color: rgba(255,255,255,0.4);
+	border-radius: 8px;
+	padding: 10px;
+}
+
 selected-card {
 	h3 {
 		margin-top: -5px;
@@ -285,8 +291,15 @@ selected-card {
 	}
 }
 
-.token img{
-	max-width: 40px;
+.token-nav {
+	padding-right: 15px;
+	.token {
+		padding-left: 7px;
+		text-shadow: 0 0 3px white;
+		img{
+			max-height: 40px;
+		}
+	}
 }
 
 .glyphicon.glyphicon-home, .glyphicon.glyphicon-circle-arrow-right {
