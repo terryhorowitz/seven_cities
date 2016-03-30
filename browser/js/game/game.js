@@ -13,7 +13,7 @@ app.config(function ($stateProvider) {
 app.controller('GameController', function ($scope, $state) {
 
     var socket = io(window.location.origin); 
-
+    $scope.socket = socket;
     $scope.roomname = $state.params.roomname;
     $scope.playername = $state.params.playername;
 
@@ -108,8 +108,17 @@ app.controller('GameController', function ($scope, $state) {
       })
 
       socket.on('your hand', function(data) {
-        console.log('my hand', data)
         $scope.myHand = data;
+        $scope.waitingOn = null;
+        $scope.$digest();
+      })
+
+      socket.on('waiting on', function(data) {
+        if ($scope.waitingOn) {
+          $scope.waitingOn += ', ' + data;
+        } else {
+          $scope.waitingOn = data;
+        }
         $scope.$digest();
       })
 
@@ -117,7 +126,6 @@ app.controller('GameController', function ($scope, $state) {
       //{"left":null,"right":["papyrus"]}
 
           $scope.submitChoice = function(selection){
-          console.log('submission', selection)
           socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
           $scope.playOptions = null;
         }
@@ -142,7 +150,6 @@ app.controller('GameController', function ($scope, $state) {
                 option.right.shift();
               }
           }
-            console.log('needed', needed)
             $scope.tradeOptions = needed;
           } else if (option === 'Discard') {
             return option;
@@ -185,7 +192,6 @@ app.controller('GameController', function ($scope, $state) {
 
       socket.on('new round', function(data) {
         $scope.players = data;
-        console.log('data', data)
         for (var i = 0; i < data.length; i++) {
           var thisSocket = $scope.players[i].socket.slice(2);
           if (thisSocket == socket.id) {
@@ -207,8 +213,6 @@ app.controller('GameController', function ($scope, $state) {
             $scope.nonNeighbors.push($scope.players[i]);
           }
         }
-        console.log('this is players', $scope.players)
-
         $scope.$digest();
       })
       //player submits their choice
