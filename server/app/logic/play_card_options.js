@@ -49,17 +49,21 @@ module.exports = function () {
   }
   
   function checkResourcePaymentMethods(player, cost) {
+    var costCopy = _.cloneDeep(cost);
     var playersResources = Resources.getGameResources(player.gameId)[player.id];
     var ownResourcesCopy = _.cloneDeep(playersResources.self);
-//    var counter = 0;
+    console.log('payment info', costCopy, ownResourcesCopy)
     for (var i = 0; i < cost.length; i++) {
-      if (!!ownResourcesCopy[cost[i]] && ownResourcesCopy[cost[i]] > 0) {
+      if (!!ownResourcesCopy[cost[i]]) {
         ownResourcesCopy[cost[i]]--;
-        _.pullAt(cost, i)
+        _.pullAt(costCopy, costCopy.indexOf(cost[i]))
       }
     }
-    if (!cost.length) return 'paid by own resources';
-    else return canIBuyFromMyNeighbors(player, cost);
+    console.log('re if', costCopy, cost, ownResourcesCopy)
+    if (!costCopy.length) return 'paid by own resources';
+    else {
+      return canIBuyFromMyNeighbors(player, costCopy);
+    }
   }
   
   function canIBuyFromMyNeighbors(player, cost) {
@@ -69,32 +73,38 @@ module.exports = function () {
     var trade = {};
     var leftContribution = [];
     var rightContribution = [];
+    var costCopy = _.cloneDeep(cost);
 
     for (var i = 0; i < cost.length; i++){
-      if (leftResourcesCopy[cost[i]] && leftResourcesCopy[cost[i]] > 0){
+      if (leftResourcesCopy[cost[i]]){
+        console.log('in left', leftResourcesCopy, cost)
         leftResourcesCopy[cost[i]]--;
         leftContribution.push(cost[i]);
+        _.pullAt(costCopy, costCopy.indexOf(cost[i]));
       }
-      if (rightResourcesCopy[cost[i]] && rightResourcesCopy[cost[i]] > 0){
+      if (rightResourcesCopy[cost[i]]){
+        console.log('in right', rightResourcesCopy, cost)
         rightResourcesCopy[cost[i]]--;
         rightContribution.push(cost[i]);
+        if (costCopy.indexOf(cost[i])) _.pullAt(costCopy, costCopy.indexOf(cost[i]));
       }
     }
     //check if a player can AFFORD!!!!
-    if (leftContribution.length === cost.length) trade.left = leftContribution;
+    if (costCopy.length) return 'no trade available!';
+    if (leftContribution.length) trade.left = leftContribution;
     else trade.left = null;
-    if (rightContribution.length === cost.length) trade.right = rightContribution;
+    if (rightContribution.length) trade.right = rightContribution;
     else trade.right = null;
-    if (trade.right === null && trade.left === null) return 'no trade available!';
+    console.log('trade', trade)
     return trade;
   }
   
   function checkIfPlayerCanBuildWonder(playerId){
     return db_getters.getPlayer(playerId)
     .then(function(player){
-      if (player.wondersBuilt === 0) return checkResourcePaymentMethods(player, board.wonder1Cost);
-      if (player.wondersBuilt === 1) return checkResourcePaymentMethods(player, board.wonder2Cost);
-      if (player.wondersBuilt === 2) return checkResourcePaymentMethods(player, board.wonder3Cost);
+      if (player.wondersBuilt === 0) return checkResourcePaymentMethods(player, player.board.wonder1Cost);
+      if (player.wondersBuilt === 1) return checkResourcePaymentMethods(player, player.board.wonder2Cost);
+      if (player.wondersBuilt === 2) return checkResourcePaymentMethods(player, player.board.wonder3Cost);
       if (player.wondersBuilt === 3) return 'all built';
     })
   }

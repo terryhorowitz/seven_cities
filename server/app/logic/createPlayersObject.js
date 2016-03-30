@@ -45,6 +45,7 @@ var createPlayersObjectRefresh = function(GamePlayers) {
 		obj.playerId = GamePlayers[m].id;
 		obj.socket = GamePlayers[m].socket;
 		obj.name = GamePlayers[m].name;
+        obj.wondersBuilt = GamePlayers[m].wondersBuilt;
 		obj.neighborL = GamePlayers[m].LeftNeighbor.socket;
 		obj.neighborR = GamePlayers[m].RightNeighbor.socket;
 
