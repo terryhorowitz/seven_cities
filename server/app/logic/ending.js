@@ -174,18 +174,17 @@ module.exports = function () {
 	//player.points = calculatePoints(player);
 
 	var findWinner = function (allPlayers) {
-		console.log('inside findWinner allPlayers is', allPlayers)
-		var topScore = _.maxBy(allPlayers, function(p) { 
-			console.log('inside lodash player is', p)
-			return p.points;
-			 });
-		console.log('topScore', topScore)
-		var winner = _.filter(allPlayers, {'points': topScore });
-		console.log('winner', winner);
-		if (winner.length === 1) return winner.name
+		var topScore = allPlayers.sort(function(a,b) {
+	    	return a.points<b.points;
+		});
+		var winner = _.filter(allPlayers, {'points': topScore[0].points });
+		if (winner.length === 1) return winner[0].name;
 		else if (winner.length > 1) {
-			var topMoney = _.maxBy(winner, function(player) { return player.money });
-			return topMoney;
+			var topMoney = winner.sort(function(a,b) {
+				return a.money<b.money;
+			});
+			var moneyWinner = _.filter(allPlayers, {'money': topMoney[0].money });
+			return moneyWinner;
 		} else {
 			return "There was an error determining the winner";
 		}
