@@ -24,15 +24,15 @@
 	<div ng-show='currentlyPlaying' id='player-view'>
 		<nav class="navbar navbar-static-top">
 			<h4><a ng-click='clearLocal()'>*</a></h4>
-			<a ui-sref="home"><span class="glyphicon glyphicon-home pull-left"></span></a>
+			<!-- <a ui-sref="home"><span class="glyphicon glyphicon-home pull-left"></span></a> -->
 			<board-name class='pull-left'></board-name>
+			<div class='player-info pull-left'><h4>My name: {{me.name}} <br> Current era: {{currentEra}}</h4></div>
 			<other-players left='leftNeighbor' right='rightNeighbor' other='nonNeighbors' class="text-center"></other-players>
 			<div ng-show='waitingOn' class='already-played pull-left'><h4>Already played: {{ waitingOn }}<h4></div><br>
 			<tokens class="pull-right"></tokens>
 		</nav>
 
 		<div class="player-view-container container">
-			<div class='already-played pull-left'><h4>My name: {{me.name}} <br> Current era: {{currentEra}}</h4></div>
 
 			<div class="row">	
 				<div class="col-xs-8">
