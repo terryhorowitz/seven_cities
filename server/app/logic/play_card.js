@@ -118,6 +118,7 @@ module.exports = function () {
       return addToPlayerResources.buildPlayerResources(player, card.functionality);
     }
     if (tradingSites.indexOf(card.name) > -1){
+      console.log('trading sites', card.name)
       return getMoneyFromCard();
     }
     else if (tradePosts.indexOf(card.name) > -1){
@@ -139,39 +140,52 @@ module.exports = function () {
   
   
   function getMoneyFromCard(){
+    console.log('get money from card', card.name)
     // this is weird because functionality array holds mixed types by design, don't worry about it 
     if (card.functionality[0] === "left"){
       return Promise.join(countNeighborCardsOfType(), countOwnCardsOfType())
-      .spread(function(leftAmount, rightAmount){
-        player.money += leftAmount + rightAmount;
-        return buildCard();
+      .spread(function(neighAmount, ownAmount){
+        console.log('l r amt', neighAmount, ownAmount)
+        player.money = player.money + neighAmount + ownAmount;
+        return player.save();
       })
+//      .then(function(){
+//        return buildCard();
+//      })
     } 
     // if first element in functionality array is not left, then you only have to update own resources 
     else {
       return countOwnCardsOfType()
       .then(function(amount){
-        player.money += amount;
-        return buildCard();
+        console.log('own amt', amount)
+        player.money = player.money + amount;
+        return player.save();
       })
+//      .then(function(){
+//        return buildCard();
+//      })
     }  
   }
   
   function countNeighborCardsOfType(){
     var cardToBePaidFor = card.functionality[card.functionality.length - 1];
+    console.log('gotta get $', cardToBePaidFor)
     return db_getters.getNeighbors(player)
     .spread(function(leftNeighbor, rightNeighbor){
       return db_getters.getPermanentForLR({where: {type: cardToBePaidFor}}, leftNeighbor, rightNeighbor)
     })
     .spread(function(leftCards, rightCards){
+      console.log('perms', leftCards.length, rightCards.length)
       return leftCards.length + rightCards.length;
     })
   }
   
   function countOwnCardsOfType(){
     var cardToBePaidFor = card.functionality[card.functionality.length - 1];
+    console.log('gotta get $', cardToBePaidFor)
     return player.getPermanent({where: {type: cardToBePaidFor}})
     .then(function(cards){
+      console.log('perms', cards.length)
       return cards.length;
     })
   }
@@ -179,28 +193,15 @@ module.exports = function () {
   
   function tradeForCard(tradeParams){
     //obj that needs to be recieved: {left: ['wood', 'clay'], right: ['clay]} OR {left: ['ore'], right: null} etc).
-    var forWonder = false;
-    if (tradeParams.wonder) {
-      forWonder = true;
-    }
-    var payLeft, payRight;
+    var forWonder, payLeft, payRight;
+    tradeParams.wonder ? forWonder = true : forWonder = false;
     tradeParams.left !== null ? payLeft = trade(tradeParams.left, 'left') : payLeft = 0;
     tradeParams.right !== null ? payRight = trade(tradeParams.right, 'right') : payRight = 0;
     return db_getters.getNeighbors(player)
     .spread(function(leftNeighbor, rightNeighbor){
-      if (tradeParams.left !== null && tradeParams.right !== null){
-        player.money -= payLeft - payRight;
-        leftNeighbor.money += payLeft;
-        rightNeighbor.money += payRight;
-      }
-      else if (!tradeParams.right) {
-        player.money -= payLeft;
-        leftNeighbor.money += payLeft;
-      }
-      else if (!tradeParams.left) {
-        player.money -= payRight;
-        rightNeighbor.money += payRight;
-      }
+      player.money = player.money - payLeft - payRight;
+      leftNeighbor.money += payLeft;
+      rightNeighbor.money += payRight;
       return Promise.join(leftNeighbor.save(), rightNeighbor.save(), player.save())
     })
     .then(function(leftNeighbor, rightNeighbor){

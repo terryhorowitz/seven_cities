@@ -147,8 +147,10 @@ module.exports = function (server) {
 		playersChoices.push(data)
 
         if (playersChoices.length === peopleInRoom){
+          console.log('!!!!!!!!!!! before play card')
           return playCard(playersChoices)
           .then(function(game) {
+            console.log('********************AFTER PLAY CARD')
           	playersChoices = [];
           	players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
           	io.to(currentRoom).emit('new round', players);
