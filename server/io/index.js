@@ -123,49 +123,51 @@ module.exports = function (server) {
 		var response;
 		var options = ['Discard'];
 //		return playCardOptions.checkSelectedCardOptions(playerId, cardId)
-        return Promise.join(playCardOptions.checkSelectedCardOptions(playerId, cardId), playCardOptions.checkIfPlayerCanBuildWonder(playerId))
+    return Promise.join(playCardOptions.checkSelectedCardOptions(playerId, cardId), playCardOptions.checkIfPlayerCanBuildWonder(playerId))
 		.spread(function(cardOptions, wonderOptions) {
-            if (typeof wonderOptions !== "string") wonderOptions.wonder = true;
-            else if (typeof wonderOptions === "string") wonderOptions = "wonder " + wonderOptions;
-            if (typeof cardOptions !== 'string') cardOptions.wonder = false;
+      if (typeof wonderOptions !== "string") wonderOptions.wonder = true;
+      else if (typeof wonderOptions === "string") wonderOptions = "wonder " + wonderOptions;
+      if (typeof cardOptions !== 'string') cardOptions.wonder = false;
 			options.push(cardOptions);
-            options.push(wonderOptions);
+      options.push(wonderOptions);
 			io.sockets.connected[socket.id].emit('your options', options);
 			//check if player can build wonders
 		})
 	});
 
 	socket.on('send msg', function(data){
+		currentRoom = Object.keys(socket.rooms)[Object.keys(socket.rooms).length-1];
 		io.to(currentRoom).emit('get msg', data)
 	})
 
 	socket.on('submit choice', function(data) {
-        var peopleInRoom = 0;
+		currentRoom = Object.keys(socket.rooms)[Object.keys(socket.rooms).length-1];
+    var peopleInRoom = 0;
       
-        clients = io.sockets.adapter.rooms[currentRoom];
-	        for (var key in clients.sockets) {
-	            peopleInRoom++;
-	        }
+    clients = io.sockets.adapter.rooms[currentRoom];
+      for (var key in clients.sockets) {
+          peopleInRoom++;
+      }
 
 		playersChoices.push(data)
 
-        if (playersChoices.length === peopleInRoom){
-          console.log('!!!!!!!!!!! before play card')
-          return playCard(playersChoices)
-          .then(function(game) {
-            console.log('********************AFTER PLAY CARD')
-          	playersChoices = [];
-          	players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
-          	io.to(currentRoom).emit('new round', players);
-          	game.GamePlayers.forEach(function(player) {
-                io.sockets.connected[player.socket].emit('your hand', player.Temporary);
-          	})
-          })
-        } else {
-        	var waiting = allPlayers[socket.id][0]
-        	console.log('waiting', waiting)
-        	io.to(currentRoom).emit('waiting on', waiting);
-        }
+    if (playersChoices.length === peopleInRoom){
+      console.log('!!!!!!!!!!! before play card')
+      return playCard(playersChoices)
+      .then(function(game) {
+        console.log('********************AFTER PLAY CARD')
+      	playersChoices = [];
+      	players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
+      	io.to(currentRoom).emit('new round', players);
+      	game.GamePlayers.forEach(function(player) {
+            io.sockets.connected[player.socket].emit('your hand', player.Temporary);
+      	})
+      })
+    } else {
+    	var waiting = allPlayers[socket.id][0]
+    	console.log('waiting', waiting)
+    	io.to(currentRoom).emit('waiting on', waiting);
+    }
         
 		// return playCard(data.playerId, data.cardId, data.selection)
 		// .then(function(game) {
