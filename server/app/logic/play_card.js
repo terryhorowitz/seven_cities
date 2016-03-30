@@ -61,7 +61,6 @@ module.exports = function () {
         })
     }, Promise.resolve())
     .then(function(){
-      console.log('wonder after', player.wondersBuilt)
       //rotate hands
       return shiftHandFromPlayers(playersSelections[0].playerId, card.dataValues.era)
     })
@@ -97,9 +96,7 @@ module.exports = function () {
   }
   
   function buildWonder(){
-    console.log('pre build', player.wondersBuilt)
     player.wondersBuilt = player.wondersBuilt + 1;
-    console.log('post build', player.wondersBuilt)
         return Promise.join(player.removeTemporary(card), player.save(), getWonderOutcome()); 
   }
   
@@ -182,7 +179,6 @@ module.exports = function () {
   
   function tradeForCard(tradeParams){
     //obj that needs to be recieved: {left: ['wood', 'clay'], right: ['clay]} OR {left: ['ore'], right: null} etc).
-    console.log('for wwonder??', tradeParams.wonder)
     var forWonder = false;
     if (tradeParams.wonder) {
       forWonder = true;

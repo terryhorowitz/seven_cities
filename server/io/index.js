@@ -122,7 +122,6 @@ module.exports = function (server) {
 //		return playCardOptions.checkSelectedCardOptions(playerId, cardId)
         return Promise.join(playCardOptions.checkSelectedCardOptions(playerId, cardId), playCardOptions.checkIfPlayerCanBuildWonder(playerId))
 		.spread(function(cardOptions, wonderOptions) {
-            console.log('wo', wonderOptions)
             if (typeof wonderOptions !== "string") wonderOptions.wonder = true;
             else if (typeof wonderOptions === "string") wonderOptions = "wonder " + wonderOptions;
             if (typeof cardOptions !== 'string') cardOptions.wonder = false;
@@ -150,7 +149,6 @@ module.exports = function (server) {
         if (playersChoices.length === peopleInRoom){
           return playCard(playersChoices)
           .then(function(game) {
-            console.log('ret game', game)
           	playersChoices = [];
           	players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
           	io.to(currentRoom).emit('new round', players);

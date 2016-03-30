@@ -107,7 +107,6 @@ app.controller('GameController', function ($scope, $state) {
       })
 
       socket.on('your hand', function(data) {
-        console.log('my hand', data)
         $scope.myHand = data;
         $scope.$digest();
       })
@@ -198,7 +197,6 @@ app.controller('GameController', function ($scope, $state) {
         tradeObj.left = [];
         tradeObj.right = [];
         for (var key in $scope.trade){
-          console.log('key', $scope.trade[key][0])
           tradeObj[$scope.trade[key][0]].push($scope.trade[key][1]);
         }
         
@@ -234,7 +232,6 @@ app.controller('GameController', function ($scope, $state) {
       socket.on('new round', function(data) {
         $scope.submitted = false;
         $scope.players = data;
-        console.log('data', data)
         for (var i = 0; i < data.length; i++) {
           var thisSocket = $scope.players[i].socket.slice(2);
           if (thisSocket == socket.id) {
