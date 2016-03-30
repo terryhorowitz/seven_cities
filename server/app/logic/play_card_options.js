@@ -75,20 +75,21 @@ module.exports = function () {
 
     for (var i = 0; i < cost.length; i++){
       if (leftResourcesCopy[cost[i]]){
-        console.log('in left', leftResourcesCopy, cost)
+        console.log('in left', leftResourcesCopy, costCopy)
         leftResourcesCopy[cost[i]]--;
         leftContribution.push(cost[i]);
         _.pullAt(costCopy, costCopy.indexOf(cost[i]));
       }
       if (rightResourcesCopy[cost[i]]){
-        console.log('in right', rightResourcesCopy, cost)
+        console.log('in right', rightResourcesCopy, costCopy)
         rightResourcesCopy[cost[i]]--;
         rightContribution.push(cost[i]);
-        if (costCopy.indexOf(cost[i])) _.pullAt(costCopy, costCopy.indexOf(cost[i]));
+        if (costCopy.indexOf(cost[i]) > -1) _.pullAt(costCopy, costCopy.indexOf(cost[i]));
       }
     }
+    console.log('post check', costCopy)
     //check if a player can AFFORD!!!!
-    if (costCopy.length) return 'no trade available!';
+    if (costCopy.length > 0) return 'no trade available!';
     if (leftContribution.length) trade.left = leftContribution;
     else trade.left = null;
     if (rightContribution.length) trade.right = rightContribution;

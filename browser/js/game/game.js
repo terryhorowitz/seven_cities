@@ -155,6 +155,7 @@ app.controller('GameController', function ($scope, $state) {
                 option.right.shift();
               }
             }
+            console.log('look', wonderNeeds)
             $scope.tradeOptions = null;
             $scope.wonderTrades = wonderNeeds;
           } else if (option === "wonder paid by own resources"){
