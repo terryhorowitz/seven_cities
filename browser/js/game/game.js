@@ -163,6 +163,7 @@ app.controller('GameController', function ($scope, $state) {
           else if (typeof option !== 'string' && !option.wonder) {
             var needed = [];
             for (var i = 0; i < option.total.length; i++){
+              console.log('here', option, needed)
               var arr = [[],[]];
               arr[0].push(option.total[i]);
               needed.push(arr);
@@ -194,15 +195,8 @@ app.controller('GameController', function ($scope, $state) {
       })
       
       $scope.trade = {}
-      
-//      $scope.tradeSelection = function(direction, resource){
-//        var tradeObj = {};
-//        tradeObj[direction] = [resource];
-//        return tradeObj;
-//      }
-//      
+
       $scope.submitTrade = function(){
-        $scope.submitted = true;
         var tradeObj = {};
         tradeObj.left = [];
         tradeObj.right = [];
@@ -219,7 +213,6 @@ app.controller('GameController', function ($scope, $state) {
       
       $scope.tradeForWonder = {};
       $scope.submitWonderTrade = function () {
-        $scope.submitted = true;
         var tradeObj = {};
         tradeObj.left = [];
         tradeObj.right = [];
