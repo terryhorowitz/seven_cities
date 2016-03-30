@@ -6,9 +6,9 @@ body {
 	min-height: 100%;
 }
 
-#player-view {
+#player-view, .modal-body {
 	h1, h2, h3 {
-		-webkit-text-stroke: 1px #614A00;
+		text-shadow: 1px 1px 0 #614A00, 1px -1px 0 #614A00, -1px 1px 0 #614A00, -1px -1px 0 #614A00;
 		font-weight: bold;
 		color: #e9e9e9;
 	}
@@ -187,6 +187,7 @@ li {
 	@include not-last-of-type('.test') {
 	    margin-right: 50px;
 	}
+	/*overflow: hidden;*/
 }
 
 .resources {
@@ -233,7 +234,26 @@ nav {
 	vertical-align: middle;
 }
 
+.play-options {
+	background-color: rgba(255,255,255,0.3);
+	border-radius: 8px;
+	padding: 10px;
+	font-size:16px;
+	font-weight: bold;
+	a {
+		color: inherit;
+		transition: all 0.3s ease-in-out;
+		cursor: pointer;
+		&:hover{
+			text-shadow: 0 0 4px #F7E1C5;
+			transition: all 0.3s ease-in-out;
+			text-decoration: none;
+		}
+	}
+}
+
 selected-card {
+	/*transition: all 1s ease-in-out !important;*/
 	h3 {
 		margin-top: -5px;
 	}
@@ -284,8 +304,15 @@ selected-card {
 	}
 }
 
-.token img{
-	max-width: 40px;
+.token-nav {
+	padding-right: 15px;
+	.token {
+		padding-left: 7px;
+		text-shadow: 0 0 3px white;
+		img{
+			max-height: 40px;
+		}
+	}
 }
 
 .glyphicon.glyphicon-home, .glyphicon.glyphicon-circle-arrow-right {
@@ -306,6 +333,17 @@ selected-card {
 	-moz-background-size: contain;
 	-o-background-size: contain;
 	background-size: contain;
+	.resources {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		img {
+			height: 35px;
+		}
+	}
+	.wonders{
+		margin-left: -230px;
+	}
 }
 
 .modal-dialog.modal-large {
@@ -352,4 +390,15 @@ width: 100%;
     position: fixed; 
     left: 0px; 
     top: 0px;
-  }
+}
+
+
+.board-footer {
+	width: 100%;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	height: 110px;
+	overflow: hidden;
+}
+
