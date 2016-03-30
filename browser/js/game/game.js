@@ -155,7 +155,6 @@ app.controller('GameController', function ($scope, $state) {
                 option.right.shift();
               }
             }
-            console.log('look', wonderNeeds)
             $scope.tradeOptions = null;
             $scope.wonderTrades = wonderNeeds;
           } else if (option === "wonder paid by own resources"){
@@ -164,7 +163,6 @@ app.controller('GameController', function ($scope, $state) {
           else if (typeof option !== 'string' && !option.wonder) {
             var needed = [];
             for (var i = 0; i < option.total.length; i++){
-              console.log('here', option, needed)
               var arr = [[],[]];
               arr[0].push(option.total[i]);
               needed.push(arr);
