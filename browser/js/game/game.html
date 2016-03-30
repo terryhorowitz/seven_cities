@@ -64,17 +64,20 @@
 
 			<br style="clear:both" />
 
-			<div class="resources pull-left">
-				<img src='/img/board_resources/{{me.board.name}}.png'>
-			</div>
+			<div class="board-footer">
 
-			<div class='wonders'>
-				<div ng-click="expandPile(wonder)" ng-repeat="wonder in wonderOptions" ng-class="{wonderexpand: wonder === clickedPile}" class="test">
-					<img src='/img/wonders/{{me.board.name}}_{{wonder}}.png'>
+				<div class="resources pull-left">
+					<img src='/img/board_resources/{{me.board.name}}.png'>
 				</div>
-			</div>
 
-			<!-- <div class="chat-box pull-right"> -->
+				<div class='wonders'>
+					<div ng-click="expandPile(wonder)" ng-repeat="wonder in wonderOptions" ng-class="{wonderexpand: wonder === clickedPile}" class="test">
+						<img src='/img/wonders/{{me.board.name}}_{{wonder}}.png'>
+					</div>
+				</div>
+
+				<!-- <div class="chat-box pull-right"> -->
+			</div>
 			<chat></chat>
 
 		</div>
