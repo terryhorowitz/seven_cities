@@ -18,6 +18,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.playername = $state.params.playername;
 
     $scope.firstPlayer = false;
+    $scope.currentEra = 0;
     $scope.builtCards;
     $scope.players;
     $scope.money;
@@ -107,6 +108,9 @@ app.controller('GameController', function ($scope, $state) {
       })
 
       socket.on('your hand', function(data) {
+        if(data.length === 7) {
+          $scope.currentEra++;
+        }
         $scope.myHand = data;
         $scope.waitingOn = null;
         $scope.$digest();
