@@ -1,22 +1,14 @@
 <div>
     <ul class="nav navbar-nav">
-
-
-
-
         <li ng-style="{'background': 'url(img/background/' + left.board.name + '.png) no-repeat center center'}" class="other-player-icons neighbor-icons">
             <a ng-click='showNeighbor(left)'>{{left.name}}</a>
-<!--             <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
- ng-click='showNeighbor(left)'
- -->        </li>
+		</li>
         <li ng-style="{'background': 'url(img/background/' + player.board.name + '.png) no-repeat center center'}" class="other-player-icons" ng-repeat="player in other" ng-show="true">
             <a ng-click='showNeighbor(player)'>{{player.name}}</a>
-<!--             <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
- -->        </li>
+	    </li>
         <li ng-style="{'background': 'url(img/background/' + right.board.name + '.png) no-repeat center center'}" class="other-player-icons neighbor-icons">
             <a ng-click='showNeighbor(right)'>{{right.name}}</a>
-<!--             <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
- -->        </li>
+		</li>
     </ul>
 </div>
 <!-- <div ng-show='neighborView'> -->

@@ -6,9 +6,9 @@ body {
 	min-height: 100%;
 }
 
-#player-view {
+#player-view, .modal-body {
 	h1, h2, h3 {
-		-webkit-text-stroke: 1px #614A00;
+		text-shadow: 1px 1px 0 #614A00, 1px -1px 0 #614A00, -1px 1px 0 #614A00, -1px -1px 0 #614A00;
 		font-weight: bold;
 		color: #e9e9e9;
 	}
