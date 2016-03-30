@@ -3,14 +3,12 @@ var getGameResources = require('./game_resources')().getGameResources;
 var db_getters = require('./db_getters.js')
 
 function buildPlayerResources(player, resources) {
-  console.log('before', resources)
   if (resources === "Raw Resource"){
     resources = "wood/stone/ore/clay"
   }
   else if (resources === "Processed Resource"){ 
     resources = "glass/textile/papyrus"
   }
-  console.log('after', resources)
   var gameResources = getGameResources(player.gameId);
   var playersResources = gameResources[player.id].self;
     for (var i = 0; i < resources.length; i++) {
@@ -27,6 +25,7 @@ function buildPlayerResources(player, resources) {
       } 
       else playersResources[resources[i]]++;
     }
+  console.log('check combos', playersResources)
   return player.save();
 }
 
