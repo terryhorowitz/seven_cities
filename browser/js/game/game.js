@@ -269,7 +269,6 @@ app.controller('GameController', function ($scope, $state) {
       // chat stuff
       $scope.msgs = [];
       $scope.sendMsg = function() {
-        console.log("sending")
         $scope.msg.player = $scope.playername
         socket.emit('send msg', {'player': $scope.msg.player, 'content': $scope.msg.text})
         $scope.msg.text = ''
@@ -287,7 +286,6 @@ app.controller('GameController', function ($scope, $state) {
       }
 
       socket.on('get msg', function(data) {
-        console.log("getting")
         $scope.msgs.push(data)
         $scope.$digest()
         var objDiv = document.getElementById("messageList");
