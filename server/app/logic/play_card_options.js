@@ -52,14 +52,12 @@ module.exports = function () {
     var costCopy = _.cloneDeep(cost);
     var playersResources = Resources.getGameResources(player.gameId)[player.id];
     var ownResourcesCopy = _.cloneDeep(playersResources.self);
-    console.log('payment info', costCopy, ownResourcesCopy)
     for (var i = 0; i < cost.length; i++) {
       if (!!ownResourcesCopy[cost[i]]) {
         ownResourcesCopy[cost[i]]--;
         _.pullAt(costCopy, costCopy.indexOf(cost[i]))
       }
     }
-    console.log('re if', costCopy, cost, ownResourcesCopy)
     if (!costCopy.length) return 'paid by own resources';
     else {
       return canIBuyFromMyNeighbors(player, costCopy);
