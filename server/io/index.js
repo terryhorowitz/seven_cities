@@ -29,6 +29,7 @@ module.exports = function (server) {
 		var counter = 0;
 		var players = [];
 		var gameObject;
+		currentRoom = Object.keys(socket.rooms)[Object.keys(socket.rooms).length-1];
 		//join all players to the correct room
 		socket.on('create', function(data) {
 			//this whole if is for dealing with a user refreshing during a game. local storage!
@@ -67,6 +68,7 @@ module.exports = function (server) {
 		});
 		//when first player decides to start the game with the current num of players
 		socket.on('startGame', function() {
+			currentRoom = Object.keys(socket.rooms)[Object.keys(socket.rooms).length-1];
 			var hands = [];
 			counter = 0;
 			for (var key in clients.sockets) {
@@ -114,6 +116,7 @@ module.exports = function (server) {
 			}
 		});
 	socket.on('choice made', function(data) {
+		currentRoom = Object.keys(socket.rooms)[Object.keys(socket.rooms).length-1];
 		//needs to check if the choice is ok and then emit
 		var cardId = data.card;
 		var playerId = data.player;
