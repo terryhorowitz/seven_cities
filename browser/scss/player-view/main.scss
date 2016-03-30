@@ -63,7 +63,6 @@ li {
 }
 
 .hand {
-	
 	ul {
 		display: block; 
 		text-align:center;
@@ -89,6 +88,11 @@ li {
 	}
 }
 
+.hand.ng-hide {
+	-webkit-transition:all linear 0.5s;
+  	transition:all linear 0.5s;
+}
+
 
 #built-cards {
 	/*border: solid fuchsia 1px;*/
@@ -106,7 +110,8 @@ li {
 		float: left;
 		ul {
 			display: flex;
-			justify-content: space-between;
+			flex-direction: row;
+			/*justify-content: space-between;*/
 			padding: 0;
 			padding-right: 30px;
 			/*border: solid yellow 1px;*/
@@ -146,10 +151,12 @@ li {
 	.pile.expand {
 		transition: all 0.5s ease-in-out;
 		position: absolute;
-		left: 70px;
+		left: 100px;
 		ul {
+			display: flex;
+			flex-direction: row;
 			transition: all 0.5s ease-in-out;
-			width: 800px;
+			width: 700px;
 			li {
 				width: 190px;
 				transform:scale(1.8,1.8);
@@ -284,9 +291,9 @@ selected-card {
     border-color: #663300;
     box-shadow: 3px;
     -webkit-box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
-		-moz-box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
-		box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
-		font-family: 'Lato', sans-serif;
+	-moz-box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
+	box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
+	font-family: 'Lato', sans-serif;
   }
 
 	#chatMessage {
