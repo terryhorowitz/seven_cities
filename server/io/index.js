@@ -103,7 +103,7 @@ module.exports = function (server) {
 					players = players.map(function(player) {
 						var current = _.find(gameObject.GamePlayers, {'socket': player.socket})
 							player.playerId = current.id;
-							console.log('!!!!!!! right before emitting')
+							// console.log('!!!!!!! right before emitting')
 							io.sockets.connected[player.socket].emit('your id', current.id);
 							return player;
 					})
@@ -141,10 +141,12 @@ module.exports = function (server) {
         var peopleInRoom = 0;
       
         clients = io.sockets.adapter.rooms[currentRoom];
-        for (var key in clients.sockets) {
-            peopleInRoom++;
-        }
+	        for (var key in clients.sockets) {
+	            peopleInRoom++;
+	        }
+
 		playersChoices.push(data)
+
         if (playersChoices.length === peopleInRoom){
           return playCard(playersChoices)
           .then(function(game) {

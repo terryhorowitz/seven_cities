@@ -52,13 +52,14 @@ module.exports = function () {
     var costCopy = _.cloneDeep(cost);
     var playersResources = Resources.getGameResources(player.gameId)[player.id];
     var ownResourcesCopy = _.cloneDeep(playersResources.self);
-    
+    console.log('payment info', costCopy, ownResourcesCopy)
     for (var i = 0; i < cost.length; i++) {
       if (!!ownResourcesCopy[cost[i]]) {
         ownResourcesCopy[cost[i]]--;
         _.pullAt(costCopy, cost.indexOf(cost[i]))
       }
     }
+    console.log('re if', costCopy, cost, ownResourcesCopy)
     if (!costCopy.length) return 'paid by own resources';
     else {
       return canIBuyFromMyNeighbors(player, costCopy);
@@ -98,6 +99,7 @@ module.exports = function () {
   function checkIfPlayerCanBuildWonder(playerId){
     return db_getters.getPlayer(playerId)
     .then(function(player){
+      console.log('built wonders', player.wondersBuilt)
       if (player.wondersBuilt === 0) return checkResourcePaymentMethods(player, player.board.wonder1Cost);
       if (player.wondersBuilt === 1) return checkResourcePaymentMethods(player, player.board.wonder2Cost);
       if (player.wondersBuilt === 2) return checkResourcePaymentMethods(player, player.board.wonder3Cost);
