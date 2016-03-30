@@ -32,8 +32,13 @@ var eraEnded = function(game, currentEra) {
       return ending.calculatePoints(player)
       .then(function(data) {
         console.log('result from ending',data)
-        return player;
+        return data;
       })
+    })
+    .then(function(allPlayers) {
+      console.log('allPlayers',allPlayers)
+      var test = ending.findWinner(allPlayers)
+      console.log('########### test', test)
     })
   } else {
     return Promise.map(playersArr, function(player){
