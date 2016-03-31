@@ -298,6 +298,7 @@ app.controller('GameController', function ($scope, $state) {
         }
         else {
           document.getElementById('messageList').style.height = '0px';
+          document.getElementById('messageList').style.padding = '5px';
           $scope.minimizeChat = true;
         }
       }
