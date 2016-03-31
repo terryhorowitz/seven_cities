@@ -39,12 +39,7 @@ module.exports = function () {
           }
         }
       }
-      var payment = checkResourcePaymentMethods(player, card.cost);
-      if (typeof payment === "string") return payment;
-      else {//include total to figure out trade options on frontend
-        payment.total = card.cost;
-        return payment;
-      }
+      return checkResourcePaymentMethods(player, card.cost);
     })
   }
   
@@ -59,41 +54,73 @@ module.exports = function () {
       }
     }
     if (!costCopy.length) return 'paid by own resources';
-    else {
-      return canIBuyFromMyNeighbors(player, costCopy);
-    }
+    else return checkOtherPossibilities(playersResources, costCopy);
   }
   
-  function canIBuyFromMyNeighbors(player, cost) {
-    var playersResources = Resources.getGameResources(player.gameId)[player.id];
-    var leftResourcesCopy = _.cloneDeep(playersResources.left);
-    var rightResourcesCopy = _.cloneDeep(playersResources.right);
-    var trade = {};
-    var leftContribution = [];
-    var rightContribution = [];
-    var costCopy = _.cloneDeep(cost);
+  function combiningFunc(objValue, srcValue){
+      if (_.isArray(objValue)){
+        return objValue.concat(srcValue);
+      }
+      else {
+        if (objValue && srcValue){
+          return objValue + srcValue;
+        }
+        else if (objValue){
+          return objValue;
+        }
+        else if (srcValue) return srcValue;
+      }
+  }
+  
+  function checkOtherPossibilities(resources, leftOverCost){
+    var ownResourcesComboCopy = _.cloneDeep(resources.self.combo) || [];
+    var allResources = _.merge(resources.left, resources.right, combiningFunc);
+    allResources.combo = allResources.combo || [];
+    allResources.combo = allResources.combo.concat(ownResourcesComboCopy);
+    //remove unnecessary key values
+    for (var resource in allResources){
+      if (leftOverCost.indexOf(resource) === -1 && resource !== 'combo') delete allResources[resource];
+    }
+    //remove unhelpful combos
+    allResources.combo = allResources.combo.filter(function(r){
+      return r.some(function(e){
+        return leftOverCost.indexOf(e) > -1;
+      });
+    })
+    var costForRecursion = _.cloneDeep(leftOverCost);
+    var resourcesForRecursion = _.cloneDeep(allResources);
+    if (recursivelyCheckCombos(resourcesForRecursion, costForRecursion)){
+      return {
+        self: resources.self.combo,
+        left: resources.left,
+        right: resources.right,
+        cost: leftOverCost
+      }
+    }
+    else return 'no trade available!';
+  }
+  
+  function recursivelyCheckCombos(allResources, leftOverCost){
+    var costCopy = _.cloneDeep(leftOverCost);
+    for (var i = 0; i < costCopy.length; i++){
+      if (allResources[leftOverCost[i]]){
+        allResources[leftOverCost[i]]--;
+        _.pullAt(leftOverCost, leftOverCost.indexOf(leftOverCost[i]));
+      }
+    }
+    if (!leftOverCost.length) return true;
+    if (!allResources.combo.length) return false;
+    
+    var comboToCheck = allResources.combo.pop();
+    for (var j = 0; j < comboToCheck.length; j++){
+      var cost = _.cloneDeep(leftOverCost);
+      var rscCopy = _.cloneDeep(allResources);
+      if (!rscCopy[comboToCheck[j]]) rscCopy[comboToCheck[j]] = 1;
+      else rscCopy[comboToCheck[j]]++;
+      recursivelyCheckCombos(rscCopy, costCopy);
+    }
+  }
 
-    for (var i = 0; i < cost.length; i++){
-      if (leftResourcesCopy[cost[i]]){
-        leftResourcesCopy[cost[i]]--;
-        leftContribution.push(cost[i]);
-        _.pullAt(costCopy, costCopy.indexOf(cost[i]));
-      }
-      if (rightResourcesCopy[cost[i]]){
-        rightResourcesCopy[cost[i]]--;
-        rightContribution.push(cost[i]);
-        if (costCopy.indexOf(cost[i]) > -1) _.pullAt(costCopy, costCopy.indexOf(cost[i]));
-      }
-    }
-    //check if a player can AFFORD!!!!
-    if (costCopy.length > 0) return 'no trade available!';
-    if (leftContribution.length) trade.left = leftContribution;
-    else trade.left = null;
-    if (rightContribution.length) trade.right = rightContribution;
-    else trade.right = null;
-    return trade;
-  }
-  
   function checkIfPlayerCanBuildWonder(playerId){
     return db_getters.getPlayer(playerId)
     .then(function(player){

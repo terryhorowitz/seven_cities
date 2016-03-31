@@ -135,6 +135,7 @@ app.controller('GameController', function ($scope, $state) {
         }
                 
       socket.on('your options', function(options) {
+        console.log('options', options)
         $scope.wonderTrades = null;
         $scope.tradeOptions = null;
         $scope.playOptions = options.map(function(option) {
