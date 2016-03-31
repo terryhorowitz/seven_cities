@@ -3,31 +3,29 @@ app.directive('warResults', function ($rootScope, $state, $uibModal) {
 
     return {
         restrict: 'E',
-        // scope: {
-        //     warResults: '='
-        // },
+        scope: {
+            
+        },
         templateUrl: 'js/war-results/war-results.html',
         link: function(scope){
 
             // scope.warResults = [];
 
-            scope.warResults = [
-                'vdfsvd', 'vdfsvd', 'aaaaa', 'vdfsvd',
-            ]
+            // scope.warResults = [
+            //     'sdc', 'vdfvfrsvd', 'aaaaa', 'vdfsvd',
+            // ]
 
-
-            // var socket = io(window.location.origin);
             scope.showWarResults = function() {
                 $uibModal.open({
                     animation: scope.animationsEnabled,
                     templateUrl: 'warResultsModal',
-                    size: 'small'
-                    // ,
-                    // scope: scope
+                    size: 'small',
+                    scope: scope
                 })
 
             }
             // scope.showWarResults();
+            // console.log(scope.warResults);
 
             scope.$on('warHappened', function(data, args) {
                 scope.warResults = args;
