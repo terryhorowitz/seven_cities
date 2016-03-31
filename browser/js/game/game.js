@@ -23,7 +23,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.players;
     $scope.money;
     $scope.currentlyPlaying = false;
-    $scope.me;
+    //$scope.me;
     $scope.myHand;
     $scope.rightNeighbor;
     $scope.leftNeighbor;
@@ -284,32 +284,14 @@ app.controller('GameController', function ($scope, $state) {
       }
 
       // chat stuff
-      $scope.msgs = [];
-      $scope.sendMsg = function() {
-        $scope.msg.player = $scope.playername
-        socket.emit('send msg', {'player': $scope.msg.player, 'content': $scope.msg.text})
-        $scope.msg.text = ''
-      } 
 
-      $scope.hideChat = function() {
-        if ($scope.minimizeChat) {
-          document.getElementById('messageList').style.height = '250px';
-          $scope.minimizeChat = false;
-        }
-        else {
-          document.getElementById('messageList').style.height = '0px';
-          $scope.minimizeChat = true;
-        }
-      }
+      $scope.$on('messageSent', function(data, args) {
+        socket.emit('send msg', args)
+      });
 
-      socket.on('get msg', function(data) {
-        $scope.msgs.push(data)
-        $scope.$digest()
-        var objDiv = document.getElementById("messageList");
-        objDiv.scrollTop = objDiv.scrollHeight
-      })
-
-
+      socket.on('get msg', function(message) {
+        $scope.$broadcast('messageReceived', message)
+      });
 
       //************* war results *****************
 
@@ -324,7 +306,6 @@ app.controller('GameController', function ($scope, $state) {
             }
 
       socket.on('war results', function(warResults) {
-        console.log('@@@@@@@@@@war results', warResults);
         $scope.$broadcast('warHappened', warResults)
 
       });
