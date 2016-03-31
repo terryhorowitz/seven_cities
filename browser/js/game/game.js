@@ -31,6 +31,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.nonNeighbors = [];
     $scope.submitted = false;
     $scope.background = {background: 'url(/img/map.jpg) no-repeat center center fixed', 'background-size': 'cover', 'min-height': '100%'};
+    $scope.warResults = false;
 
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
 
@@ -307,6 +308,26 @@ app.controller('GameController', function ($scope, $state) {
         var objDiv = document.getElementById("messageList");
         objDiv.scrollTop = objDiv.scrollHeight
       })
+
+
+
+      //************* war results *****************
+
+      $scope.showWarResults = function() {
+                $uibModal.open({
+                    animation: scope.animationsEnabled,
+                    templateUrl: 'warResultsModal',
+                    size: 'small'
+                    // ,
+                    // scope: scope
+                })
+            }
+
+      socket.on('war results', function(warResults) {
+        console.log('@@@@@@@@@@war results', warResults);
+        $scope.$broadcast('warHappened', warResults)
+
+      });
 
 
 

@@ -35,3 +35,7 @@ h1, h2, h3 {
 @import 'tutorial/main';
 @import 'login/main';
 @import 'player-view/main';
+
+a {
+  cursor: pointer;
+}

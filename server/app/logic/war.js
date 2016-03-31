@@ -13,8 +13,8 @@
 var Game = require('../../db/models').Game
 var Player = require('../../db/models').Player
 var Promise = require('bluebird');
-// var endOfEra = require('./endOfEra.js');
 var warResults = [];
+// var endOfEra = require('./endOfEra.js');
 
 var getEraAwardPoints = function(era) {
   if (era===1) {
@@ -55,14 +55,14 @@ var eachPlayerWar = function(player, era) {
     if (leftNeighborWarCards.length) leftNeighborWarPoints = countWarPoints(leftNeighborWarCards)
 
     if (playerWarPoints > leftNeighborWarPoints) {
-      newPlayerToken.push(playerWarPoints * warPoints)
+      newPlayerToken.push(warPoints)
       newNeighborToken.push(-1)
-      results = `${player.name} beats ${leftNeighbor.name}. ${player.name} wins ${newPlayerToken[0]} token. ${leftNeighbor.name} loses 1.`
+      results = `${player.name} beats ${leftNeighbor.name}. ${player.name} wins ${newPlayerToken[newPlayerToken.length-1]} token. ${leftNeighbor.name} loses 1.`
     }
     else if (leftNeighborWarPoints > playerWarPoints) {
-      newNeighborToken.push(leftNeighborWarPoints * warPoints)
+      newNeighborToken.push(warPoints)
       newPlayerToken.push(-1)
-      results = `${leftNeighbor.name} beats ${player.name}. ${leftNeighbor.name} wins ${newNeighborToken[0]} token. ${player.name} loses 1.`
+      results = `${leftNeighbor.name} beats ${player.name}. ${leftNeighbor.name} wins ${newNeighborToken[newNeighborToken.length-1]} token. ${player.name} loses 1.`
     }
     else {
       results = `${leftNeighbor.name} and ${player.name} tie. No tokens won or lost.`
@@ -73,7 +73,6 @@ var eachPlayerWar = function(player, era) {
 }
 
 var goToWar = function(game, era) {
-  
   return game.getGamePlayers()
   .then(function(playersArr){
     return playersArr.reduce(function(promiseAccumulator, p){
@@ -82,8 +81,9 @@ var goToWar = function(game, era) {
       })
     }, Promise.resolve())
     .then(function(){
-      console.log('???????? war results inside goToWar', warResults)
-      return [warResults, era];
+      var localWarResults = warResults
+      warResults = [];
+      return [localWarResults, era];
     })
   })
 }
