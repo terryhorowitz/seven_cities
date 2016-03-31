@@ -1,9 +1,9 @@
-<div class="row play-options">
+<div class="play-options">
     <h3>Chosen Card</h3>
-    <div class="col-xs-4">
+    <div class="card-side">
         <img src="img/{{cardSelection.picture}}">
     </div>
-    <div class="col-xs-8">
+    <div class="text-side">
         <div ng-repeat='option in playOptions track by $index'>
             <a ng-click="submitChoice(option)">{{option.msg || option}}</a>
         </div>
