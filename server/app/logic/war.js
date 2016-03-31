@@ -13,7 +13,8 @@
 var Game = require('../../db/models').Game
 var Player = require('../../db/models').Player
 var Promise = require('bluebird');
-var endOfEra = require('./endOfEra.js');
+// var endOfEra = require('./endOfEra.js');
+var warResults = [];
 
 var getEraAwardPoints = function(era) {
   if (era===1) {
@@ -41,6 +42,7 @@ var eachPlayerWar = function(player, era) {
   var warPoints = getEraAwardPoints(era);
   var newPlayerToken; 
   var newNeighborToken;
+  var results;
 
   return Promise.join(Player.findById(player.id), player.getLeftNeighbor())
   .spread(function(player, leftNeighbor) {
@@ -55,16 +57,23 @@ var eachPlayerWar = function(player, era) {
     if (playerWarPoints > leftNeighborWarPoints) {
       newPlayerToken.push(playerWarPoints * warPoints)
       newNeighborToken.push(-1)
+      results = `${player.name} beats ${leftNeighbor.name}. ${player.name} wins ${newPlayerToken[0]} token. ${leftNeighbor.name} loses 1.`
     }
     else if (leftNeighborWarPoints > playerWarPoints) {
       newNeighborToken.push(leftNeighborWarPoints * warPoints)
       newPlayerToken.push(-1)
+      results = `${leftNeighbor.name} beats ${player.name}. ${leftNeighbor.name} wins ${newNeighborToken[0]} token. ${player.name} loses 1.`
     }
+    else {
+      results = `${leftNeighbor.name} and ${player.name} tie. No tokens won or lost.`
+    }
+    warResults.push(results);
     return Promise.join(player.update({tokens: newPlayerToken}), leftNeighbor.update({tokens: newNeighborToken}))
   })
 }
 
 var goToWar = function(game, era) {
+  
   return game.getGamePlayers()
   .then(function(playersArr){
     return playersArr.reduce(function(promiseAccumulator, p){
@@ -73,7 +82,8 @@ var goToWar = function(game, era) {
       })
     }, Promise.resolve())
     .then(function(){
-      return endOfEra.eraEnded(game, era);
+      console.log('???????? war results inside goToWar', warResults)
+      return [warResults, era];
     })
   })
 }

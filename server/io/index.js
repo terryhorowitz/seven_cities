@@ -13,6 +13,8 @@ var _ = require('lodash');
 var playerReload = require('../app/logic/playerReload.js');
 var createPlayers = require('../app/logic/createPlayersObject.js');
 var playCard = require('../app/logic/play_card.js')();
+var endOfEra = require('../app/logic/endOfEra.js');
+
 
 module.exports = function (server) {
   if (io) return io;
@@ -158,11 +160,14 @@ module.exports = function (server) {
     if (playersChoices.length === peopleInRoom){
       console.log('!!!!!!!!!!! before play card')
       return playCard(playersChoices)
-      .then(function(game, players, era) {
-        if (players && era) {
+      .then(function(results) { //[game, [warResults, era]]
+        if (results.length>1) {
+	        let game = results[0];
+        	let warResults = results[1][0];
+        	let era = results[1][1];
+        	io.to(currentRoom).emit('war results', warResults);
           return endOfEra.eraEnded(game, era)
           .then(function(game){
-            console.log('********************AFTER PLAY CARD')
             playersChoices = [];
             players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
             io.to(currentRoom).emit('new round', players);
@@ -171,14 +176,19 @@ module.exports = function (server) {
             })
           })
         }
-        console.log('********************AFTER PLAY CARD')
-      	playersChoices = [];
-      	players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
-      	io.to(currentRoom).emit('new round', players);
-      	game.GamePlayers.forEach(function(player) {
-            io.sockets.connected[player.socket].emit('your hand', player.Temporary);
-      	})
-      })
+        else {
+        	let game = results;
+	        console.log('********************No war')
+	      	playersChoices = [];
+	      	players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
+	      	io.to(currentRoom).emit('new round', players);
+	      	game.GamePlayers.forEach(function(player) {
+	            io.sockets.connected[player.socket].emit('your hand', player.Temporary);
+	      	})
+	      }
+        	
+        })
+
     } else {
     	var waiting = allPlayers[socket.id][0]
     	console.log('waiting', waiting)
