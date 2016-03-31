@@ -13,8 +13,8 @@
 var Game = require('../../db/models').Game
 var Player = require('../../db/models').Player
 var Promise = require('bluebird');
-// var endOfEra = require('./endOfEra.js');
 var warResults = [];
+// var endOfEra = require('./endOfEra.js');
 
 var getEraAwardPoints = function(era) {
   if (era===1) {
@@ -73,8 +73,6 @@ var eachPlayerWar = function(player, era) {
 }
 
 var goToWar = function(game, era) {
-  // var localWarResults = warResults;
-  // warResults = [];
   return game.getGamePlayers()
   .then(function(playersArr){
     return playersArr.reduce(function(promiseAccumulator, p){
@@ -83,8 +81,9 @@ var goToWar = function(game, era) {
       })
     }, Promise.resolve())
     .then(function(){
-      console.log('???????? war results inside goToWar', warResults)
-      return [warResults, era];
+      var localWarResults = warResults
+      warResults = [];
+      return [localWarResults, era];
     })
   })
 }
