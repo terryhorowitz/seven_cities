@@ -39,7 +39,7 @@
 					<div ng-hide="submitted" class='hand'>
 						<ul>
 							<li ng-repeat="card in myHand" ng-click='selectCard(card)'>
-								<img src='img/{{card.picture}}'>
+								<img ng-src='img/{{card.picture}}'>
 							</li>
 						</ul>
 					</div>
@@ -56,7 +56,7 @@
 				<div ng-click="expandPile(pile)" ng-class="{expand: pile === clickedPile}" class="pile" ng-repeat="pile in me.builtView" ng-click>
 					<ul>
 						<li ng-repeat="card in pile">
-							<img class="pile-card-img" src='{{card}}'>
+							<img class="pile-card-img" ng-src='{{card}}'>
 						</li>
 					</ul>
 				</div>
@@ -67,12 +67,12 @@
 			<div class="board-footer">
 
 				<div class="resources pull-left">
-					<img src='/img/board_resources/{{me.board.name}}.png'>
+					<img ng-src='/img/board_resources/{{me.board.name}}.png'>
 				</div>
 
 				<div class='wonders'>
 					<div ng-click="expandPile(wonder)" ng-repeat="wonder in wonderOptions" ng-class="{wonderexpand: wonder === clickedPile}" class="test">
-						<img src='/img/wonders/{{me.board.name}}_{{wonder}}.png'>
+						<img ng-src='/img/wonders/{{me.board.name}}_{{wonder}}.png'>
 					</div>
 				</div>
 
