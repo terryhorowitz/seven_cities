@@ -73,8 +73,8 @@ var eachPlayerWar = function(player, era) {
 }
 
 var goToWar = function(game, era) {
-  var localWarResults = warResults;
-  warResults = [];
+  // var localWarResults = warResults;
+  // warResults = [];
   return game.getGamePlayers()
   .then(function(playersArr){
     return playersArr.reduce(function(promiseAccumulator, p){
@@ -83,8 +83,8 @@ var goToWar = function(game, era) {
       })
     }, Promise.resolve())
     .then(function(){
-      console.log('???????? war results inside goToWar', localWarResults)
-      return [localWarResults, era];
+      console.log('???????? war results inside goToWar', warResults)
+      return [warResults, era];
     })
   })
 }
