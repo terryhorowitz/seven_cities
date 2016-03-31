@@ -46,6 +46,7 @@ module.exports = function () {
   function checkResourcePaymentMethods(player, cost) {
     var costCopy = _.cloneDeep(cost);
     var playersResources = Resources.getGameResources(player.gameId)[player.id];
+    console.log('early', playersResources)
     var ownResourcesCopy = _.cloneDeep(playersResources.self);
     for (var i = 0; i < cost.length; i++) {
       if (!!ownResourcesCopy[cost[i]]) {
@@ -53,6 +54,7 @@ module.exports = function () {
         _.pullAt(costCopy, costCopy.indexOf(cost[i]))
       }
     }
+    console.log('before recurse/exit', costCopy)
     if (!costCopy.length) return 'paid by own resources';
     else return checkOtherPossibilities(playersResources, costCopy);
   }
@@ -90,15 +92,19 @@ module.exports = function () {
   }
   
   function checkOtherPossibilities(resources, leftOverCost){
+    console.log('own stuff', resources.self)
     var ownResourcesComboCopy = _.cloneDeep(resources.self.combo) || [];
     var allResources = _.merge(_.cloneDeep(resources.left), _.cloneDeep(resources.right), combiningFunc);
+    console.log('pre filter',allResources, ownResourcesComboCopy)
     allResources.combo = allResources.combo || [];
     allResources.combo = allResources.combo.concat(ownResourcesComboCopy);
     filterResourceKeys(allResources, leftOverCost);
     allResources.combo = filterCombo(allResources, leftOverCost);
     var costForRecursion = _.cloneDeep(leftOverCost);
     var resourcesForRecursion = _.cloneDeep(allResources);
+    console.log('checking',resourcesForRecursion, costForRecursion)
     if (recursivelyCheckCombos(resourcesForRecursion, costForRecursion)){
+      console.log('true things', resources, leftOverCost)
       filterResourceKeys(resources.left, leftOverCost);
       filterResourceKeys(resources.right, leftOverCost);
       resources.left.combo = filterCombo(resources.left, leftOverCost);
@@ -122,6 +128,7 @@ module.exports = function () {
         _.pullAt(leftOverCost, leftOverCost.indexOf(leftOverCost[i]));
       }
     }
+    console.log('recurse', leftOverCost, allResources)
     if (!leftOverCost.length) return true;
     if (!allResources.combo.length) return false;
     
@@ -131,7 +138,8 @@ module.exports = function () {
       var rscCopy = _.cloneDeep(allResources);
       if (!rscCopy[comboToCheck[j]]) rscCopy[comboToCheck[j]] = 1;
       else rscCopy[comboToCheck[j]]++;
-      recursivelyCheckCombos(rscCopy, costCopy);
+      if (recursivelyCheckCombos(rscCopy, costCopy)) return true;
+      if (!recursivelyCheckCombos(rscCopy, costCopy)) return false;
     }
   }
 

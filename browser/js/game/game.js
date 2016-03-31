@@ -140,49 +140,62 @@ app.controller('GameController', function ($scope, $state) {
         $scope.tradeOptions = null;
         $scope.playOptions = options.map(function(option) {
           if (typeof option !== 'string' && option.wonder) {
-            var wonderNeeds = [];
-            var leftPayment = option.left || [];
-            var rightPayment = option.right || [];
-            option.total = leftPayment.concat(rightPayment)
-
-            for (var i = 0; i < option.total.length; i++){
-              var arr = [[],[]];
-              arr[0].push(option.total[i]);
-              wonderNeeds.push(arr);
-            }
-            for (var j = 0; j < wonderNeeds.length; j++){
-              if (option.left && option.left.length && wonderNeeds[j][0][0] === option.left[0]){
-                wonderNeeds[j][1].push('left');
-                option.left.shift();
-              }
-              if (option.right && option.right.length && wonderNeeds[j][0][0] === option.right[0]){
-                wonderNeeds[j][1].push('right');
-                option.right.shift();
+            var leftArr = [], rightArr = [];
+            for (var key in option.left){
+              if (key !== 'combo'){
+                while (option.left[key] > 0){
+                  leftArr.push(key);
+                  option.left[key]--;
+                }
               }
             }
-            $scope.tradeOptions = null;
-            $scope.wonderTrades = wonderNeeds;
+            for (var key in option.right){
+              if (key !== 'combo'){
+                while (option.right[key] > 0){
+                  rightArr.push(key);
+                  option.right[key]--;
+                }
+              }
+            }
+            $scope.leftWonderTradeOptions = {
+              combo: option.left.combo,
+              other: leftArr
+            }
+            $scope.rightWonderTradeOptions = {
+              combo: option.right.combo,
+              other: rightArr
+            }
+            $scope.playerWonderTradeOptions = option.self;
           } else if (option === "wonder paid by own resources"){
             return "Build Wonder"
           }
           else if (typeof option !== 'string' && !option.wonder) {
-            var needed = [];
-            for (var i = 0; i < option.total.length; i++){
-              var arr = [[],[]];
-              arr[0].push(option.total[i]);
-              needed.push(arr);
+            var leftArr = [], rightArr = [];
+            for (var key in option.left){
+              if (key !== 'combo'){
+                while (option.left[key] > 0){
+                  leftArr.push(key);
+                  option.left[key]--;
+                }
+              }
             }
-            for (var j = 0; j < needed.length; j++){
-              if (option.left && option.left.length && needed[j][0][0] === option.left[0]){
-                needed[j][1].push('left');
-                option.left.shift();
+            for (var key in option.right){
+              if (key !== 'combo'){
+                while (option.right[key] > 0){
+                  rightArr.push(key);
+                  option.right[key]--;
+                }
               }
-              if (option.right && option.right.length && needed[j][0][0] === option.right[0]){
-                needed[j][1].push('right');
-                option.right.shift();
-              }
-          }
-            $scope.tradeOptions = needed;
+            }
+            $scope.leftTradeOptions = {
+              combo: option.left.combo,
+              other: leftArr
+            }
+            $scope.rightTradeOptions = {
+              combo: option.right.combo,
+              other: rightArr
+            }
+            $scope.playerTradeOptions = option.self;
           } else if (option === 'Discard') {
             return option;
           } else if (option === 'get free' || option === 'paid by own resources') {
@@ -197,24 +210,25 @@ app.controller('GameController', function ($scope, $state) {
         })
         $scope.$digest();
       })
-      
-      $scope.trade = {}
 
+      $scope.trade = {}
+      $scope.test = {};
+      $scope.attempt = {};
       $scope.submitTrade = function(){
-        var tradeObj = {};
-        tradeObj.left = [];
-        tradeObj.right = [];
-        for (var key in $scope.trade){
-          tradeObj[$scope.trade[key][0]].push($scope.trade[key][1]);
-        }
-        
-        if (!tradeObj.left.length) tradeObj.left = null;
-        if (!tradeObj.right.length) tradeObj.right = null;
-        tradeObj.wonder = false;
-        $scope.playOptions = null;
-        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+        console.log("scopes", $scope.trade)
+//        var tradeObj = {};
+//        tradeObj.left = [];
+//        tradeObj.right = [];
+//        for (var key in $scope.trade){
+//          tradeObj[$scope.trade[key][0]].push($scope.trade[key][1]);
+//        }
+//        
+//        if (!tradeObj.left.length) tradeObj.left = null;
+//        if (!tradeObj.right.length) tradeObj.right = null;
+//        tradeObj.wonder = false;
+//        $scope.playOptions = null;
+//        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
       }; 
-      
       $scope.tradeForWonder = {};
       $scope.submitWonderTrade = function () {
         var tradeObj = {};
