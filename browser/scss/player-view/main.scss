@@ -249,11 +249,19 @@ nav {
 }
 
 .play-options {
+	white-space: nowrap;
 	background-color: rgba(255,255,255,0.5);
 	border-radius: 8px;
-	padding: 10px;
+	padding: 15px;
 	font-size:16px;
 	font-weight: 900;
+	.card-side, .text-side {
+		display: inline-block;
+		vertical-align: top;
+	}
+	.text-side {
+		padding-left: 5px;
+	}
 	a {
 		color: inherit;
 		transition: all 0.3s ease-in-out;
