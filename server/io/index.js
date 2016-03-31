@@ -158,7 +158,19 @@ module.exports = function (server) {
     if (playersChoices.length === peopleInRoom){
       console.log('!!!!!!!!!!! before play card')
       return playCard(playersChoices)
-      .then(function(game) {
+      .then(function(game, players, era) {
+        if (players && era) {
+          return endOfEra.eraEnded(game, era)
+          .then(function(game){
+            console.log('********************AFTER PLAY CARD')
+            playersChoices = [];
+            players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
+            io.to(currentRoom).emit('new round', players);
+            game.GamePlayers.forEach(function(player) {
+                io.sockets.connected[player.socket].emit('your hand', player.Temporary);
+            })
+          })
+        }
         console.log('********************AFTER PLAY CARD')
       	playersChoices = [];
       	players = createPlayers.createPlayersObjectRefresh(game.GamePlayers)
