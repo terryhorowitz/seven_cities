@@ -228,6 +228,7 @@ module.exports = function () {
     
   function shiftHandFromPlayers(startPlayerId, era){
     var startPlayer;
+    var warResults;
     return db_getters.getPlayer(startPlayerId)
     .then(function(_startPlayer){
       startPlayer = _startPlayer;
@@ -245,6 +246,9 @@ module.exports = function () {
       }
       if (newTempCards[startPlayerId].length === 1) {
         return war.goToWar(game, era)
+        .then(function(resultsAndEra) {
+          warResults = resultsAndEra;
+        })
 
       } else {
         var lastPlayer = _.find(game.GamePlayers, function(eachPlayer) {
@@ -258,7 +262,14 @@ module.exports = function () {
       }
     })
     .then(function(){
-      return db_getters.getGame(startPlayer.gameId);
+      console.log('^^^^^^^^^ after go to war')
+      if (warResults) {
+        return Promise.join(db_getters.getGame(startPlayer.gameId), warResults)
+        // .spread(function(game, warResults) {
+        //   return 
+        // })
+      }
+      else return db_getters.getGame(startPlayer.gameId)
     })
   }
 

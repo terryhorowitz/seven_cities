@@ -13,6 +13,8 @@ var _ = require('lodash');
 var playerReload = require('../app/logic/playerReload.js');
 var helpers = require('../app/logic/socketHelpers.js');
 var playCard = require('../app/logic/play_card.js')();
+var endOfEra = require('../app/logic/endOfEra.js');
+
 
 module.exports = function (server) {
   if (io) return io;
@@ -111,7 +113,7 @@ module.exports = function (server) {
 
 	socket.on('submit choice', function(data) {
 		currentRoom = helpers.findRoomName(socket.rooms);
-    var peopleInRoom = 0;
+                var peopleInRoom = 0;
       
     clients = io.sockets.adapter.rooms[currentRoom];
       for (var key in clients.sockets) {
@@ -122,17 +124,42 @@ module.exports = function (server) {
 
     if (playersChoices.length === peopleInRoom){
       return playCard(playersChoices)
-      .then(function(game) {
-    	console.log('playersChoices', playersChoices)
-      	playersChoices = [];
-      	console.log('game.GamePlayers in new round', game.GamePlayers)
-      	players = helpers.createPlayersObjectRefresh(game.GamePlayers)
-      	console.log('new round players', players)
-      	io.to(currentRoom).emit('new round', players);
-      	game.GamePlayers.forEach(function(player) {
-            io.sockets.connected[player.socket].emit('your hand', player.Temporary);
-      	})
-      })
+
+      .then(function(results) { //[game, [warResults, era]]
+        console.log('playersChoices', playersChoices)
+        if (results.length>1) {
+	        let game = results[0];
+        	let warResults = results[1][0];
+        	let era = results[1][1];
+        	io.to(currentRoom).emit('war results', warResults);
+          return endOfEra.eraEnded(game, era)
+          .then(function(game){
+                playersChoices = [];
+                console.log('game.GamePlayers in new round', game.GamePlayers)
+                players = helpers.createPlayersObjectRefresh(game.GamePlayers)
+                console.log('new round players', players)
+                io.to(currentRoom).emit('new round', players);
+                game.GamePlayers.forEach(function(player) {
+                io.sockets.connected[player.socket].emit('your hand', player.Temporary);
+        })
+        })
+        }
+        else {
+        	let game = results;
+	        // console.log('********************No war')
+	        // can refactor this repetion
+	      	playersChoices = [];
+	      	console.log('game.GamePlayers in new round', game.GamePlayers)
+	      	players = helpers.createPlayersObjectRefresh(game.GamePlayers)
+	        console.log('new round players', players)
+	      	io.to(currentRoom).emit('new round', players);
+	      	game.GamePlayers.forEach(function(player) {
+	            io.sockets.connected[player.socket].emit('your hand', player.Temporary);
+	      	})
+	      }
+        	
+        })
+
     } else {
     	var waiting = allPlayers[socket.id][0]
     	io.to(currentRoom).emit('waiting on', waiting);
