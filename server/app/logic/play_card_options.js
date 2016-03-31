@@ -71,25 +71,39 @@ module.exports = function () {
         else if (srcValue) return srcValue;
       }
   }
+
+  function filterCombo (rsc, cost){
+    if (!rsc.combo) return [];
+    return rsc.combo.filter(function(r){
+      return r.some(function(e){
+        return cost.indexOf(e) > -1;      
+      })
+    })
+  }
+  
+  function filterResourceKeys (rscs, cost){
+    for (var resource in rscs) {
+      if (cost.indexOf(resource) === -1 && resource !== 'combo'){
+        delete rscs[resource];
+      }
+    }
+  }
   
   function checkOtherPossibilities(resources, leftOverCost){
     var ownResourcesComboCopy = _.cloneDeep(resources.self.combo) || [];
-    var allResources = _.merge(resources.left, resources.right, combiningFunc);
+    var allResources = _.merge(_.cloneDeep(resources.left), _.cloneDeep(resources.right), combiningFunc);
     allResources.combo = allResources.combo || [];
     allResources.combo = allResources.combo.concat(ownResourcesComboCopy);
-    //remove unnecessary key values
-    for (var resource in allResources){
-      if (leftOverCost.indexOf(resource) === -1 && resource !== 'combo') delete allResources[resource];
-    }
-    //remove unhelpful combos
-    allResources.combo = allResources.combo.filter(function(r){
-      return r.some(function(e){
-        return leftOverCost.indexOf(e) > -1;
-      });
-    })
+    filterResourceKeys(allResources, leftOverCost);
+    allResources.combo = filterCombo(allResources, leftOverCost);
     var costForRecursion = _.cloneDeep(leftOverCost);
     var resourcesForRecursion = _.cloneDeep(allResources);
     if (recursivelyCheckCombos(resourcesForRecursion, costForRecursion)){
+      filterResourceKeys(resources.left, leftOverCost);
+      filterResourceKeys(resources.right, leftOverCost);
+      resources.left.combo = filterCombo(resources.left, leftOverCost);
+      resources.right.combo = filterCombo(resources.right, leftOverCost);
+      resources.self.combo = filterCombo(resources.self, leftOverCost);
       return {
         self: resources.self.combo,
         left: resources.left,
