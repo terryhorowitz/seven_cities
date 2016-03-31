@@ -55,12 +55,12 @@ var eachPlayerWar = function(player, era) {
     if (leftNeighborWarCards.length) leftNeighborWarPoints = countWarPoints(leftNeighborWarCards)
 
     if (playerWarPoints > leftNeighborWarPoints) {
-      newPlayerToken.push(playerWarPoints * warPoints)
+      newPlayerToken.push(warPoints)
       newNeighborToken.push(-1)
       results = `${player.name} beats ${leftNeighbor.name}. ${player.name} wins ${newPlayerToken[newPlayerToken.length-1]} token. ${leftNeighbor.name} loses 1.`
     }
     else if (leftNeighborWarPoints > playerWarPoints) {
-      newNeighborToken.push(leftNeighborWarPoints * warPoints)
+      newNeighborToken.push(warPoints)
       newPlayerToken.push(-1)
       results = `${leftNeighbor.name} beats ${player.name}. ${leftNeighbor.name} wins ${newNeighborToken[newNeighborToken.length-1]} token. ${player.name} loses 1.`
     }
