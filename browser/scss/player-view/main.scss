@@ -286,6 +286,8 @@ selected-card {
 }
 
 .chat-box {
+		padding: 10px;
+		font-family: 'PT Serif', serif;
     position: absolute;
     overflow-y: scroll;
     bottom: 40px;
@@ -300,10 +302,10 @@ selected-card {
     -webkit-box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
 	-moz-box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
 	box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
-	font-family: 'Lato', sans-serif;
   }
 
 	#chatMessage {
+		font-family: 'PT Serif', serif;
     position: fixed;
     word-wrap: break-word;
     bottom: 0;
@@ -456,3 +458,5 @@ board-name {
 .wonder-trades {
 	border: 1px #fff solid;
 }
+
+@import url(https://fonts.googleapis.com/css?family=PT+Serif);
