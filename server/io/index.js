@@ -88,7 +88,7 @@ module.exports = function (server) {
 			}
 		});
 	socket.on('choice made', function(data) {
-<<<<<<< HEAD
+
       currentRoom = helpers.findRoomName(socket.rooms);
       //needs to check if the choice is ok and then emit
       var cardId = data.card;
@@ -110,25 +110,6 @@ module.exports = function (server) {
             //check if player can build wonders
         })
       });
-=======
-		currentRoom = helpers.findRoomName(socket.rooms);
-		//needs to check if the choice is ok and then emit
-		var cardId = data.card;
-		var playerId = data.player;
-		var response;
-		var options = ['Discard'];
-//		return playCardOptions.checkSelectedCardOptions(playerId, cardId)
-    return Promise.join(playCardOptions.checkSelectedCardOptions(playerId, cardId), playCardOptions.checkIfPlayerCanBuildWonder(playerId))
-		.spread(function(cardOptions, wonderOptions) {
-      if (typeof wonderOptions !== "string") wonderOptions.wonder = true;
-      else if (typeof wonderOptions === "string") wonderOptions = "wonder " + wonderOptions;
-      if (typeof cardOptions !== 'string') cardOptions.wonder = false;
-			options.push(cardOptions);
-      options.push(wonderOptions);
-			io.sockets.connected[socket.id].emit('your options', options);
-		})
-	});
->>>>>>> master
 
 	socket.on('send msg', function(data){
 		currentRoom = helpers.findRoomName(socket.rooms);
