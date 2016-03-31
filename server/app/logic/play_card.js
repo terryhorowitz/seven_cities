@@ -244,7 +244,7 @@ module.exports = function () {
         newTempCards[playerSwapping.id] = _.find(game.GamePlayers, {id: playerSwapping[swapNeighbor]}).Temporary;
         playerSwapping = _.find(game.GamePlayers, {id: playerSwapping[swapNeighbor]});
       }
-      if (newTempCards[startPlayerId].length === 1) {
+      if (newTempCards[startPlayerId].length === 5) {
         return war.goToWar(game, era)
         .then(function(resultsAndEra) {
           warResults = resultsAndEra;
