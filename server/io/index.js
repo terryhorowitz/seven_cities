@@ -137,7 +137,7 @@ module.exports = function (server) {
           return endOfEra.eraEnded(game, era)
           .then(function(game){
                 playersChoices = [];
-                // console.log('game.GamePlayers in new round', game.GamePlayers)
+                console.log('game.GamePlayers in new round', game.GamePlayers)
                 players = helpers.createPlayersObjectRefresh(game.GamePlayers)
                 // console.log('new round players', players)
                 io.to(currentRoom).emit('new round', players);
