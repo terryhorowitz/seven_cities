@@ -8,9 +8,12 @@
             <a ng-click="submitChoice(option)">{{option.msg || option}}</a>
         </div>
       
-      <form ng-show="hasTrade">Select Resources To Pay:
-        need: {{tradeCost}}
-        <div ng-show="playerTradeOptions.combo.length > 0">Self
+      <form ng-show="hasTrade">
+        <div>
+          Select Resources To Pay:
+          need: {{tradeCost}}
+        </div>
+        <div ng-show="playerTradeOptions.length > 0">Self
           <div class="btn-group" ng-repeat="combo in playerTradeOptions track by $index">
             <label class="btn btn-primary" ng-model="trade.self[$parent.$index]" uib-btn-radio="{{combo}}{{[$index]}}" ng-repeat="item in combo track by $index" uncheckable>{{item}}</label>
           </div>
@@ -32,9 +35,12 @@
           <a type="submit" ng-click="submitTrade()">submit</a>
       </form>
         
-      <form ng-show="hasWonderTrade">Select resources to build wonder: 
+      <form ng-show="hasWonderTrade">
+        <div>
+        Select resources to build wonder:
         need: {{wonderTradeCost}}
-        <div ng-show="playerWonderTradeOptions.combo.length > 0">Self
+        </div>
+        <div ng-show="playerWonderTradeOptions.length > 0">Self
           <div class="btn-group" ng-repeat="combo in playerWonderTradeOptions track by $index">
             <label class="btn btn-primary" ng-model="wonderTrade.self[$parent.$index]" uib-btn-radio="{{combo}}{{[$index]}}" ng-repeat="item in combo track by $index" uncheckable>{{item}}</label>
           </div>

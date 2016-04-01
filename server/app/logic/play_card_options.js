@@ -95,7 +95,7 @@ module.exports = function () {
   function removeTradingResources (neighborResourcesCombo){
     if (!neighborResourcesCombo) return [];
     return neighborResourcesCombo.filter(function(r){
-      return !r.length > 2;
+      return r.length === 2;
     })
   }
   
@@ -109,6 +109,7 @@ module.exports = function () {
     allResources.combo = filterCombo(allResources, leftOverCost);
     var costForRecursion = _.cloneDeep(leftOverCost);
     var resourcesForRecursion = _.cloneDeep(allResources);
+    console.log('before if', costForRecursion, resourcesForRecursion)
     if (recursivelyCheckCombos(resourcesForRecursion, costForRecursion)){
       filterResourceKeys(resources.left, leftOverCost);
       filterResourceKeys(resources.right, leftOverCost);
@@ -146,9 +147,9 @@ module.exports = function () {
       var rscCopy = _.cloneDeep(allResources);
       if (!rscCopy[comboToCheck[j]]) rscCopy[comboToCheck[j]] = 1;
       else rscCopy[comboToCheck[j]]++;
-      if (recursivelyCheckCombos(rscCopy, costCopy)) return true;
-      if (!recursivelyCheckCombos(rscCopy, costCopy)) return false;
+      if (recursivelyCheckCombos(rscCopy, cost)) return true;
     }
+    return false;
   }
 
   function checkIfPlayerCanBuildWonder(playerId){
