@@ -241,6 +241,7 @@ other-players {
 
 nav {
 	li.other-player-icons {
+		margin-top: 4px;
 		width: 80px;
 		height: 80px;
 		border-radius: 50%;
@@ -265,8 +266,6 @@ nav {
 	}
 
 	.neighbor-icons {
-				text-align: center;
-
 		width: 100px;
 		height: 100px;
 	}
@@ -276,6 +275,10 @@ nav {
 	display: table-cell;
 	text-align: center;
 	vertical-align: middle;
+}
+
+.navbar {
+	margin-top: 8px;
 }
 
 .play-options {
