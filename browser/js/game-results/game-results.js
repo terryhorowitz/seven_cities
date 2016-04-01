@@ -11,9 +11,7 @@ app.directive('gameResults', function ($rootScope, $state, $uibModal) {
 
             // scope.warResults = [];
 
-            // scope.warResults = [
-            //     'sdc', 'vdfvfrsvd', 'aaaaa', 'vdfsvd', 'klscnsdkf', 'jfosiefjoso', 'jsdfoies', 'fcjsidioer', 'jsfihf'
-            // ]
+
 
             scope.showGameResults = function() {
                 $uibModal.open({
@@ -28,9 +26,9 @@ app.directive('gameResults', function ($rootScope, $state, $uibModal) {
             // console.log(scope.warResults);
 
             scope.$on('gameEnded', function(data, args) {
-                scope.gameResults = args;
+                // scope.gameResults = args;
                 console.log('got to the directive', scope.gameResults);
-                scope.listOfPlayers = args[0];
+                scope.gameResults = args[0];
                 scope.winner = args[1];
                 scope.$digest();
                 scope.showGameResults();

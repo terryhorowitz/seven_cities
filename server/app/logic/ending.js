@@ -182,9 +182,9 @@ module.exports = function () {
 		var winner = _.filter(allPlayers, {'points': topScore[0].points });
 		// console.log('winner', winner)
 		if (winner.length === 1) {
-			console.log('winner', winner[0])
-			console.log('winner', winner[0].player.dataValues.name)
-			return [topScore, winner[0]]
+			// console.log('winner', winner[0])
+			// console.log('winner', winner[0].player.dataValues.name)
+			return [topScore, winner[0].player.dataValues.name]
 		}
 		else if (winner.length > 1) {
 			console.log('more than one winner')
