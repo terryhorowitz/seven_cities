@@ -207,6 +207,10 @@ li {
 	}
 }
 
+#built-cards.other-boards {
+	top: 110px;
+}
+
 .wonders{
 	.test {
 		transition: all 0.5s ease-in-out;
@@ -428,7 +432,7 @@ selected-card {
 
 .modal-content {
 	background: url(img/war_helmet2.jpg) no-repeat center center; 
-	width: 550px;
+	/*width: 550px;*/
 	margin: 0 auto;
 	-webkit-background-size: contain;
 	-moz-background-size: contain;
