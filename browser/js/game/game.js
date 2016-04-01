@@ -55,7 +55,7 @@ app.controller('GameController', function ($scope, $state) {
       })
 
       socket.on('your id', function(data) {
-        $scope.me.playerId = data;
+        $scope.playerId = data;
         localStorage.setItem('playerId', data)
       })
 
@@ -131,7 +131,7 @@ app.controller('GameController', function ($scope, $state) {
 
           $scope.submitChoice = function(selection){
             $scope.submitted = true;
-          socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+          socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.playerId});
           $scope.playOptions = null;
         }
                 
@@ -212,7 +212,7 @@ app.controller('GameController', function ($scope, $state) {
         if (!tradeObj.right.length) tradeObj.right = null;
         tradeObj.wonder = false;
         $scope.playOptions = null;
-        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.playerId});
       }; 
       
       $scope.tradeForWonder = {};
@@ -228,7 +228,7 @@ app.controller('GameController', function ($scope, $state) {
         if (!tradeObj.right.length) tradeObj.right = null;
         tradeObj.wonder = true;
         $scope.playOptions = null;
-        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.playerId});
       }
 
       socket.on('err', function(data) {
@@ -265,7 +265,7 @@ app.controller('GameController', function ($scope, $state) {
       //player submits their choice
       $scope.selectCard = function(card) {
         $scope.cardSelection = card;
-        socket.emit('choice made', {player: $scope.me.playerId, card: card.id});
+        socket.emit('choice made', {player: $scope.playerId, card: card.id});
       };
 
       $scope.dismiss = function() {
