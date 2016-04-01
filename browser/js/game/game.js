@@ -46,6 +46,7 @@ app.controller('GameController', function ($scope, $state) {
     socket.on('connect', function(){
       console.log('I have made a persistent two-way connection to the server!');
       var tempId = localStorage.getItem('playerId');
+      if (tempId) $scope.playerId = tempId;
       socket.emit('create', {roomname: $scope.roomname, playername: $scope.playername, localId: tempId});
 
       socket.on('in room', function(data) {
