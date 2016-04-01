@@ -126,7 +126,7 @@ app.controller('GameController', function ($scope, $state) {
         $scope.$digest();
       })
       
-          $scope.submitChoice = function(selection){
+        $scope.submitChoice = function(selection){
           $scope.submitted = true;
           socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
           $scope.playOptions = null;
@@ -166,6 +166,7 @@ app.controller('GameController', function ($scope, $state) {
             }
             $scope.playerWonderTradeOptions = option.self;
             $scope.wonderTradeCost = option.cost.join(', ');
+            $scope.wonderTradeCostArr = option.cost;
           } else if (option === "wonder paid by own resources"){
             return "Build Wonder"
           }
@@ -197,6 +198,7 @@ app.controller('GameController', function ($scope, $state) {
               other: rightArr
             }
             $scope.playerTradeOptions = option.self;
+            $scope.tradeCostArr = option.cost;
             $scope.tradeCost = option.cost.join(', ');
           } else if (option === 'Discard') {
             return option;
@@ -223,30 +225,48 @@ app.controller('GameController', function ($scope, $state) {
         right: [],
         self: []
       };
-      
+
       $scope.submitTrade = function(){
-        var tradeObj = {};
-        tradeObj.left = $scope.trade.left;
-        tradeObj.right = $scope.trade.right; 
-        if (!tradeObj.left.length) tradeObj.left = null;
-        if (!tradeObj.right.length) tradeObj.right = null;
-        tradeObj.wonder = false;
-        $scope.playOptions = null;
-        $scope.submitted = true;
-        console.log('before emit trade', tradeObj)
-        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+        if ($scope.trade.left.length + $scope.trade.right.length + $scope.trade.self.length < $scope.tradeCostArr.length){
+          $scope.tradeAlert = {type: 'warning', msg: 'not a trade!'};
+        }
+        else {
+          var tradeObj = {};
+          tradeObj.left = $scope.trade.left;
+          tradeObj.right = $scope.trade.right; 
+          if (!tradeObj.left.length) tradeObj.left = null;
+          if (!tradeObj.right.length) tradeObj.right = null;
+          tradeObj.wonder = false;
+          $scope.playOptions = null;
+          $scope.submitted = true;
+          console.log('before emit trade', tradeObj)
+          socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+        }
       }; 
       
       $scope.submitWonderTrade = function () {
-        var tradeObj = {};
-        tradeObj.left = $scope.wonderTrade.left;
-        tradeObj.right = $scope.wonderTrade.right;
-        if (!tradeObj.left.length) tradeObj.left = null;
-        if (!tradeObj.right.length) tradeObj.right = null;
-        tradeObj.wonder = true;
-        $scope.playOptions = null;
-        $scope.submitted = true;
-        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+        if ($scope.wonderTrade.left.length + $scope.wonderTrade.right.length + $scope.wonderTrade.self.length < $scope.wonderTradeCostArr.length){
+          $scope.wonderTradeAlert = {type: 'warning', msg: 'not a trade!'};
+        }
+        else {
+          var tradeObj = {};
+          tradeObj.left = $scope.wonderTrade.left;
+          tradeObj.right = $scope.wonderTrade.right;
+          if (!tradeObj.left.length) tradeObj.left = null;
+          if (!tradeObj.right.length) tradeObj.right = null;
+          tradeObj.wonder = true;
+          $scope.playOptions = null;
+          $scope.submitted = true;
+          socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId}); 
+        }
+      }
+      
+      $scope.closeWonderTradeAlert = function(){
+        $scope.wonderTradeAlert = null;
+      }
+      
+      $scope.closeTradeAlert = function(){
+        $scope.tradeAlert = null;
       }
 
       socket.on('err', function(data) {

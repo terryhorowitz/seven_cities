@@ -35,6 +35,7 @@
           </div>
         </div>
           <a type="submit" ng-click="submitTrade()">submit</a>
+          <uib-alert type="{{tradeAlert.type}}" close="closetradeAlert()" ng-show="tradeAlert">{{tradeAlert.msg}}</uib-alert>
       </form>
         
       <form ng-show="hasWonderTrade">
@@ -63,6 +64,7 @@
           </div>
         </div>
           <a type="submit" ng-click="submitWonderTrade()">submit</a>
+          <uib-alert type="{{wonderTradeAlert.type}}" close="closeWonderTradeAlert()" ng-show="wonderTradeAlert">{{wonderTradeAlert.msg}}</uib-alert>
       </form>
         
     </div>
