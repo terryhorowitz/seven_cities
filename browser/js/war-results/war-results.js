@@ -12,14 +12,14 @@ app.directive('warResults', function ($rootScope, $state, $uibModal) {
             // scope.warResults = [];
 
             // scope.warResults = [
-            //     'sdc', 'vdfvfrsvd', 'aaaaa', 'vdfsvd',
+            //     'sdc', 'vdfvfrsvd', 'aaaaa', 'vdfsvd', 'klscnsdkf', 'jfosiefjoso', 'jsdfoies', 'fcjsidioer', 'jsfihf'
             // ]
 
             scope.showWarResults = function() {
                 $uibModal.open({
                     animation: scope.animationsEnabled,
                     templateUrl: 'warResultsModal',
-                    size: 'small',
+                    // size: 'small',
                     scope: scope
                 })
 
