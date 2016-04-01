@@ -165,7 +165,7 @@ app.controller('GameController', function ($scope, $state) {
               other: rightArr
             }
             $scope.playerWonderTradeOptions = option.self;
-            $scope.wonderTradeCost = option.cost;
+            $scope.wonderTradeCost = option.cost.join(', ');
           } else if (option === "wonder paid by own resources"){
             return "Build Wonder"
           }
@@ -197,7 +197,7 @@ app.controller('GameController', function ($scope, $state) {
               other: rightArr
             }
             $scope.playerTradeOptions = option.self;
-            $scope.tradeCost = option.cost;
+            $scope.tradeCost = option.cost.join(', ');
           } else if (option === 'Discard') {
             return option;
           } else if (option === 'get free' || option === 'paid by own resources') {
