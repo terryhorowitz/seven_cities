@@ -23,7 +23,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.players;
     $scope.money;
     $scope.currentlyPlaying = false;
-    $scope.me;
+//    $scope.me;
     $scope.myHand;
     $scope.rightNeighbor;
     $scope.leftNeighbor;
@@ -211,9 +211,17 @@ app.controller('GameController', function ($scope, $state) {
         $scope.$digest();
       })
 
-      $scope.trade = {}
-      $scope.test = {};
-      $scope.attempt = {};
+      $scope.trade = {
+        left: [],
+        right: [],
+        self: []
+      };
+      $scope.wonderTrade = {
+        left: [],
+        right: [],
+        self: []
+      };
+      
       $scope.submitTrade = function(){
         console.log("scopes", $scope.trade)
 //        var tradeObj = {};
@@ -231,18 +239,19 @@ app.controller('GameController', function ($scope, $state) {
       }; 
       $scope.tradeForWonder = {};
       $scope.submitWonderTrade = function () {
-        var tradeObj = {};
-        tradeObj.left = [];
-        tradeObj.right = [];
-        for (var key in $scope.tradeForWonder){
-          tradeObj[$scope.tradeForWonder[key][0]].push($scope.tradeForWonder[key][1]);
-        }
-        
-        if (!tradeObj.left.length) tradeObj.left = null;
-        if (!tradeObj.right.length) tradeObj.right = null;
-        tradeObj.wonder = true;
-        $scope.playOptions = null;
-        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+        console.log('wonder scopes', $scope.wonderTrade)
+//        var tradeObj = {};
+//        tradeObj.left = [];
+//        tradeObj.right = [];
+//        for (var key in $scope.tradeForWonder){
+//          tradeObj[$scope.tradeForWonder[key][0]].push($scope.tradeForWonder[key][1]);
+//        }
+//        
+//        if (!tradeObj.left.length) tradeObj.left = null;
+//        if (!tradeObj.right.length) tradeObj.right = null;
+//        tradeObj.wonder = true;
+//        $scope.playOptions = null;
+//        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
       }
 
       socket.on('err', function(data) {

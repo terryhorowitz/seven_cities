@@ -7,53 +7,51 @@
         <div ng-repeat='option in playOptions track by $index'>
             <a ng-click="submitChoice(option)">{{option.msg || option}}</a>
         </div>
-<!--
-        <form ng-show="tradeOptions">
-          Trade for Resources:
-          <div ng-repeat="resource in tradeOptions">
-            {{resource[0][0]}}
-
-               <input name="{{$index}}" type="radio" ng-model="trade[$index]" ng-value="{{['left', resource[0][0]]}}" ng-show="resource[1][0] === 'left'"><span ng-show="resource[1][0] === 'left'">Left</span>
-               <input name="{{$index}}" type="radio" ng-model="trade[$index]" ng-value="{{['right', resource[0][0]]}}" ng-show="resource[1][0] === 'right' || resource[1][1] === 'right'"><span ng-show="resource[1][0] === 'right' || resource[1][1] === 'right'">Right</span><br>
-
-          </div>
-          <div><a ng-click='submitTrade()'>submit trade</a></div>
-        </form>
-        <form ng-show="wonderTrades">
-          Build A Wonder:
-            <div ng-repeat="wt in wonderTrades">
-              {{wt[0][0]}}
-
-                <input name="{{$index}}" type="radio" ng-model="tradeForWonder[$index]" ng-value="{{['left', wt[0][0]]}}" ng-show="wt[1][0] === 'left'"><span ng-show="wt[1][0] === 'left'">Left</span>
-               <input name="{{$index}}" type="radio" ng-model="trade[$index]" ng-value="{{['right', wt[0][0]]}}" ng-show="wt[1][0] === 'right' || wt[1][1] === 'right'"><span ng-show="wt[1][0] === 'right' || wt[1][1] === 'right'">Right</span><br>
-            </div>
-            <div><a ng-click='submitWonderTrade()'>Build Wonder</a></div>
-        </form>
--->
       
-      <form>
+      <form>Trade To Buy Resources: <br>
         <div>Self
-          <div class="btn-group" ng-repeat="combo in playerTradeOptions" ng-model="trade">
-            <label class="btn btn-primary" ng-repeat="resource in combo" ng-model="attempt.self[$index]" ng-model="trade.self" uib-btn-radio="{{combo}}{{[$index]}}" uncheckable>{{resource}}</label>
-        </div>
-          
+          <div class="btn-group" ng-repeat="combo in playerTradeOptions track by $index">
+            <label class="btn btn-primary" ng-model="trade.self[$parent.$index]" uib-btn-radio="{{combo}}{{[$index]}}" ng-repeat="item in combo track by $index" uncheckable>{{item}}</label>
+          </div>
+        </div> 
+        
         <div>Left
-          <button type="button" class="btn btn-primary" ng-model="trade[$index]" uib-btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0" ng-repeat="resource in leftTradeOptions.other">{{resource}}</button>
-          <div class="btn-group" ng-repeat="combo in leftTradeOptions.combo" ng-model="trade">
-            <label class="btn btn-primary" ng-model="trade.left" ng-repeat="item in combo" uib-btn-radio="{{combo}}{{[$index]}}" uncheckable>{{item}}</label>
+          <button type="button" class="btn btn-primary" ng-model="trade.left[$index]" ng-repeat="resource in leftTradeOptions.other track by $index" uib-btn-checkbox btn-checkbox-true="{{leftTradeOptions.other}}{{[$index]}}">{{resource}}</button>
+          <div class="btn-group" ng-repeat="combo in leftTradeOptions.combo track by $index">
+            <label class="btn btn-primary" ng-model="trade.left[$parent.$index + leftTradeOptions.other.length]" uib-btn-radio="{{combo}}{{[$index]}}" ng-repeat="item in combo track by $index" uncheckable>{{item}}</label>
           </div>
         </div>
           
         <div>Right
-          <button type="button" class="btn btn-primary" ng-model="test.right[$index]" uib-btn-checkbox btn-checkbox-true="1" btn-checkbox-false="0" ng-repeat="resource in rightTradeOptions.other">{{resource}}</button>
-          <div class="btn-group" ng-repeat="combo in rightTradeOptions.combo" ng-model="trade">
-            <label class="btn btn-primary" ng-model="trade.right" uib-btn-radio="{{combo}}{{[$index]}}" ng-repeat="item in combo" uncheckable>{{item}}</label>
+          <button type="button" class="btn btn-primary" ng-model="trade.right[$index]"ng-repeat="resource in rightTradeOptions.other track by $index" uib-btn-checkbox btn-checkbox-true="{{rightTradeOptions.other}}{{[$index]}}">{{resource}}</button>
+          <div class="btn-group" ng-repeat="combo in rightTradeOptions.combo track by $index">
+            <label class="btn btn-primary" ng-model="trade.right[$parent.$index + rightTradeOptions.other]" uib-btn-radio="{{combo}}{{[$index]}}" ng-repeat="item in combo track by $index" uncheckable>{{item}}</label>
           </div>
         </div>
-          <pre>things: {{trade}}
-          {{test}}
-          </pre>
           <a type="submit" ng-click="submitTrade()">submit</a>
       </form>
+        
+      <form>Trade to Build Wonder: <br>
+        <div>Self
+          <div class="btn-group" ng-repeat="combo in playerWonderTradeOptions track by $index">
+            <label class="btn btn-primary" ng-model="wonderTrade.self[$parent.$index]" uib-btn-radio="{{combo}}{{[$index]}}" ng-repeat="item in combo track by $index" uncheckable>{{item}}</label>
+          </div>
+        </div> 
+        <div>Left
+          <button type="button" class="btn btn-primary" ng-model="wonderTrade.left[$index]" ng-repeat="resource in leftWonderTradeOptions.other track by $index" uib-btn-checkbox btn-checkbox-true="{{leftWonderTradeOptions.other}}{{[$index]}}">{{resource}}</button>
+          <div class="btn-group" ng-repeat="combo in leftWonderTradeOptions.combo track by $index">
+            <label class="btn btn-primary" ng-model="wonderTrade.left[$parent.$index + leftWonderTradeOptions.other]" uib-btn-radio="{{combo}}{{[$index]}}" ng-repeat="item in combo track by $index" uncheckable>{{item}}</label>
+          </div>
+        </div>
+          
+        <div>Right
+          <button type="button" class="btn btn-primary" ng-model="wonderTrade.right[$index] "ng-repeat="resource in rightWonderTradeOptions.other track by $index" uib-btn-checkbox btn-checkbox-true="{{rightWonderTradeOptions.other}}{{[$index]}}">{{resource}}</button>
+          <div class="btn-group" ng-repeat="combo in rightWonderTradeOptions.combo track by $index">
+            <label class="btn btn-primary" ng-model="wonderTrade.right[$parent.$index + rightWonderTradeOptions.other]" uib-btn-radio="{{combo}}{{[$index]}}" ng-repeat="item in combo track by $index" uncheckable>{{item}}</label>
+          </div>
+        </div>
+          <a type="submit" ng-click="submitWonderTrade()">submit</a>
+      </form>
+        
     </div>
 </div>

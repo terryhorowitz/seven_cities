@@ -55,8 +55,9 @@ module.exports = function () {
       }
     }
     console.log('before recurse/exit', costCopy)
+    var copyAllPlayerResources = _.cloneDeep(playersResources);
     if (!costCopy.length) return 'paid by own resources';
-    else return checkOtherPossibilities(playersResources, costCopy);
+    else return checkOtherPossibilities(copyAllPlayerResources, costCopy);
   }
   
   function combiningFunc(objValue, srcValue){
@@ -92,7 +93,7 @@ module.exports = function () {
   }
   
   function checkOtherPossibilities(resources, leftOverCost){
-    console.log('own stuff', resources.self)
+    console.log('own stuff - should not mutate!!', resources)
     var ownResourcesComboCopy = _.cloneDeep(resources.self.combo) || [];
     var allResources = _.merge(_.cloneDeep(resources.left), _.cloneDeep(resources.right), combiningFunc);
     console.log('pre filter',allResources, ownResourcesComboCopy)
@@ -122,6 +123,7 @@ module.exports = function () {
   
   function recursivelyCheckCombos(allResources, leftOverCost){
     var costCopy = _.cloneDeep(leftOverCost);
+    console.log('pre for', allResources, leftOverCost)
     for (var i = 0; i < costCopy.length; i++){
       if (allResources[leftOverCost[i]]){
         allResources[leftOverCost[i]]--;
