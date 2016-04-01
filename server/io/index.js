@@ -131,8 +131,8 @@ module.exports = function (server) {
 	        let game = results[0];
         	let warResults = results[1][0];
         	let era = results[1][1];
-        	console.log('***************warResults from socket back end', warResults)
-        	console.log('***************current room', currentRoom)
+        	// console.log('***************warResults from socket back end', warResults)
+        	// console.log('***************current room', currentRoom)
         	io.to(currentRoom).emit('war results', warResults);
           return endOfEra.eraEnded(game, era)
           .then(function(game){
