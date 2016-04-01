@@ -124,22 +124,20 @@ app.controller('GameController', function ($scope, $state) {
         }
         $scope.$digest();
       })
-
-      //{"left":null,"right":["ore"]}
-      //{"left":null,"right":["papyrus"]}
-
+      
           $scope.submitChoice = function(selection){
-            $scope.submitted = true;
+          $scope.submitted = true;
           socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
           $scope.playOptions = null;
         }
                 
       socket.on('your options', function(options) {
         console.log('options', options)
-        $scope.wonderTrades = null;
-        $scope.tradeOptions = null;
+        $scope.hasWonderTrade = false;
+        $scope.hasTrade = false;
         $scope.playOptions = options.map(function(option) {
           if (typeof option !== 'string' && option.wonder) {
+            $scope.hasWonderTrade = true;
             var leftArr = [], rightArr = [];
             for (var key in option.left){
               if (key !== 'combo'){
@@ -166,10 +164,12 @@ app.controller('GameController', function ($scope, $state) {
               other: rightArr
             }
             $scope.playerWonderTradeOptions = option.self;
+            $scope.wonderTradeCost = option.cost;
           } else if (option === "wonder paid by own resources"){
             return "Build Wonder"
           }
           else if (typeof option !== 'string' && !option.wonder) {
+            $scope.hasTrade = true;
             var leftArr = [], rightArr = [];
             for (var key in option.left){
               if (key !== 'combo'){
@@ -196,6 +196,7 @@ app.controller('GameController', function ($scope, $state) {
               other: rightArr
             }
             $scope.playerTradeOptions = option.self;
+            $scope.tradeCost = option.cost;
           } else if (option === 'Discard') {
             return option;
           } else if (option === 'get free' || option === 'paid by own resources') {
@@ -223,35 +224,28 @@ app.controller('GameController', function ($scope, $state) {
       };
       
       $scope.submitTrade = function(){
-        console.log("scopes", $scope.trade)
-//        var tradeObj = {};
-//        tradeObj.left = [];
-//        tradeObj.right = [];
-//        for (var key in $scope.trade){
-//          tradeObj[$scope.trade[key][0]].push($scope.trade[key][1]);
-//        }
-//        
-//        if (!tradeObj.left.length) tradeObj.left = null;
-//        if (!tradeObj.right.length) tradeObj.right = null;
-//        tradeObj.wonder = false;
-//        $scope.playOptions = null;
-//        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+        var tradeObj = {};
+        tradeObj.left = $scope.trade.left;
+        tradeObj.right = $scope.trade.right; 
+        if (!tradeObj.left.length) tradeObj.left = null;
+        if (!tradeObj.right.length) tradeObj.right = null;
+        tradeObj.wonder = false;
+        $scope.playOptions = null;
+        $scope.submitted = true;
+        console.log('before emit trade', tradeObj)
+        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
       }; 
-      $scope.tradeForWonder = {};
+      
       $scope.submitWonderTrade = function () {
-        console.log('wonder scopes', $scope.wonderTrade)
-//        var tradeObj = {};
-//        tradeObj.left = [];
-//        tradeObj.right = [];
-//        for (var key in $scope.tradeForWonder){
-//          tradeObj[$scope.tradeForWonder[key][0]].push($scope.tradeForWonder[key][1]);
-//        }
-//        
-//        if (!tradeObj.left.length) tradeObj.left = null;
-//        if (!tradeObj.right.length) tradeObj.right = null;
-//        tradeObj.wonder = true;
-//        $scope.playOptions = null;
-//        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+        var tradeObj = {};
+        tradeObj.left = $scope.wonderTrade.left;
+        tradeObj.right = $scope.wonderTrade.right;
+        if (!tradeObj.left.length) tradeObj.left = null;
+        if (!tradeObj.right.length) tradeObj.right = null;
+        tradeObj.wonder = true;
+        $scope.playOptions = null;
+        $scope.submitted = true;
+        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
       }
 
       socket.on('err', function(data) {

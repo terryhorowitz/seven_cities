@@ -92,12 +92,20 @@ module.exports = function () {
     }
   }
   
+  function removeTradingResources (neighborResources){
+    if (!neighborResources.combo) return [];
+    return neighborResources.combo.filter(function(r){
+      return !r.length > 2;
+    })
+  }
+  
   function checkOtherPossibilities(resources, leftOverCost){
     console.log('own stuff - should not mutate!!', resources)
     var ownResourcesComboCopy = _.cloneDeep(resources.self.combo) || [];
     var allResources = _.merge(_.cloneDeep(resources.left), _.cloneDeep(resources.right), combiningFunc);
     console.log('pre filter',allResources, ownResourcesComboCopy)
     allResources.combo = allResources.combo || [];
+    allResources = removeTradingResources(allResources);
     allResources.combo = allResources.combo.concat(ownResourcesComboCopy);
     filterResourceKeys(allResources, leftOverCost);
     allResources.combo = filterCombo(allResources, leftOverCost);
