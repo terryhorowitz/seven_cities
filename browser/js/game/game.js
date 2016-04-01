@@ -311,7 +311,9 @@ app.controller('GameController', function ($scope, $state) {
         objDiv.scrollTop = objDiv.scrollHeight
       })
 
-
+      $scope.set_wonder = function(wonder) {
+        console.log('wonder', wonder, $scope.me)
+      }
 
       //************* war results *****************
 
