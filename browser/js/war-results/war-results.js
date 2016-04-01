@@ -11,9 +11,9 @@ app.directive('warResults', function ($rootScope, $state, $uibModal) {
 
             // scope.warResults = [];
 
-            scope.warResults = [
-                'sdc', 'vdfvfrsvd', 'aaaaa', 'vdfsvd', 'klscnsdkf', 'jfosiefjoso', 'jsdfoies', 'fcjsidioer', 'jsfihf'
-            ]
+            // scope.warResults = [
+            //     'sdc', 'vdfvfrsvd', 'aaaaa', 'vdfsvd', 'klscnsdkf', 'jfosiefjoso', 'jsdfoies', 'fcjsidioer', 'jsfihf'
+            // ]
 
             scope.showWarResults = function() {
                 $uibModal.open({
@@ -24,7 +24,7 @@ app.directive('warResults', function ($rootScope, $state, $uibModal) {
                 })
 
             }
-            scope.showWarResults();
+            // scope.showWarResults();
             // console.log(scope.warResults);
 
             scope.$on('warHappened', function(data, args) {
