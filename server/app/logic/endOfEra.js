@@ -31,12 +31,13 @@ var eraEnded = function(game, currentEra) {
     return Promise.map(playersArr, function(player) {
       return ending.calculatePoints(player)
       .then(function(data) {
+        console.log('data after point calculation')
         return data;
       })
     })
     .then(function(allPlayers) {
-      var test = ending.findWinner(allPlayers)
-      console.log('########### test', test)
+      let test = ending.findWinner(allPlayers)
+        console.log('########### winner', test)
     })
   } else {
     return Promise.map(playersArr, function(player){

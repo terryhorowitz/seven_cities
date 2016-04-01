@@ -108,7 +108,7 @@ module.exports = function () {
 			if (board.name === "Babylon" && wonders > 1) technologyCards[idx]++;
 
 			//add victory points for repeating cards
-			console.log('add to total points Math.pow(technologyCards[0], 2)', Math.pow(technologyCards[0], 2) + Math.pow(technologyCards[1], 2))
+			// console.log('add to total points Math.pow(technologyCards[0], 2)', Math.pow(technologyCards[0], 2) + Math.pow(technologyCards[1], 2))
 			totalPoints += Math.pow(technologyCards[0], 2) + Math.pow(technologyCards[1], 2) + Math.pow(technologyCards[2], 2);
 
 			//find the minimum value of the technology cards
@@ -174,16 +174,26 @@ module.exports = function () {
 	//player.points = calculatePoints(player);
 
 	var findWinner = function (allPlayers) {
+		// console.log('allPlayers inside findWinner', allPlayers)
 		var topScore = allPlayers.sort(function(a,b) {
 	    	return a.points<b.points;
 		});
+		// console.log('********** inside find Winner topScore', topScore)
 		var winner = _.filter(allPlayers, {'points': topScore[0].points });
-		if (winner.length === 1) return winner[0].name;
+		// console.log('winner', winner)
+		if (winner.length === 1) {
+			console.log('winner', winner[0])
+			console.log('winner', winner[0].player.dataValues.name)
+			return winner[0].player.dataValues.name;
+		}
 		else if (winner.length > 1) {
+			console.log('more than one winner')
 			var topMoney = winner.sort(function(a,b) {
 				return a.money<b.money;
 			});
+			console.log('topMoney', topMoney)
 			var moneyWinner = _.filter(allPlayers, {'money': topMoney[0].money });
+			console.log('moneyWinner', moneyWinner)
 			return moneyWinner;
 		} else {
 			return "There was an error determining the winner";

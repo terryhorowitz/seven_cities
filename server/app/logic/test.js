@@ -73,7 +73,7 @@ var findWinner = function (allPlayers) {
     }
   }
 
-  console.log(findWinner(p))
+  console.log('the winner is', findWinner(p))
 
 
   // function maxBy(array, iteratee) {
