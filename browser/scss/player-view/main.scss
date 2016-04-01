@@ -7,8 +7,13 @@ body {
 }
 
 #player-view, .modal-body {
-	h1, h2, h3 {
+	h2, h3 {
 		text-shadow: 1px 1px 0 #614A00, 1px -1px 0 #614A00, -1px 1px 0 #614A00, -1px -1px 0 #614A00;
+		font-weight: bold;
+		color: #e9e9e9;
+	}
+	h1 {
+		text-shadow: 2px 2px 0 #614A00, 2px -2px 0 #614A00, -2px 2px 0 #614A00, -2px -2px 0 #614A00;
 		font-weight: bold;
 		color: #e9e9e9;
 	}
@@ -64,7 +69,17 @@ li {
 	margin: 0 auto;
 }
 
+.temp-card-interface {
+	position: absolute;
+	top: 128px;
+	/*height: 170px;*/
+	width: 100%;
+	/*overflow: hidden;*/
+}
+
 .hand {
+	/*height: 200px;*/
+	/*overflow: hidden;*/
 	ul {
 		display: block; 
 		text-align:center;
@@ -100,10 +115,10 @@ li {
 	position: absolute;
 	display: inline-flex;
 	padding-left: 100px;
-	padding-top: 30px;
+	/*padding-top: 30px;*/
 	left: 0;
 	right: 0;
-	top: 300px;
+	top: 330px;
     /*bottom: 80px;*/
 	.pile {
 		display: flex;
@@ -197,6 +212,10 @@ li {
 	}
 }
 
+#built-cards.other-boards {
+	top: 110px;
+}
+
 .wonders{
 	.test {
 		transition: all 0.5s ease-in-out;
@@ -282,6 +301,7 @@ nav {
 }
 
 .play-options {
+	width: 360px;
 	white-space: nowrap;
 	background-color: rgba(255,255,255,0.5);
 	border-radius: 8px;
@@ -308,6 +328,13 @@ nav {
 }
 
 selected-card {
+	display: inline-block;
+	position: absolute;
+	width: 380px;
+	/*margin-right: 15px;*/
+	right: 20px;
+	/*top: 180px;*/
+	z-index: 100;
 	/*transition: all 1s ease-in-out !important;*/
 	h3 {
 		margin-top: -5px;
@@ -319,8 +346,8 @@ selected-card {
 }
 
 .chat-box {
-		padding: 10px;
-		font-family: 'PT Serif', serif;
+	padding: 10px;
+	font-family: 'PT Serif', serif;
     position: absolute;
     overflow-y: scroll;
     bottom: 40px;
@@ -404,19 +431,21 @@ selected-card {
 	}
 }
 
-.war-background {
-	padding: 15px 35px;
-}
-
-.modal-content {
-	background: url(img/war_helmet2.jpg) no-repeat center center; 
-	width: 550px;
-	margin: 0 auto;
-	-webkit-background-size: contain;
-	-moz-background-size: contain;
-	-o-background-size: contain;
-	background-size: cover;
-	border-radius: 6px;
+.war-modal {
+	.modal-content {
+		background: url(img/war_helmet2.jpg) no-repeat center center; 
+		width: 550px;
+		margin: 0 auto;
+		-webkit-background-size: contain;
+		-moz-background-size: contain;
+		-o-background-size: contain;
+		background-size: cover;
+		border-radius: 6px;
+		.war-background {
+			width: 550px;
+			padding: 15px 35px;
+		}
+	}
 }
 
 .modal-content:before {
@@ -521,6 +550,33 @@ board-name {
 
 .wonder-trades {
 	border: 1px #fff solid;
+}
+
+.trade-btn {
+  background-color: #EBC79E;
+  color: #fcf8e3;
+  border-color: #EBC79E;
+  font-size: 10px;
+  font-family: 'Cinzel Decorative', cursive;
+}
+
+.pay-cost {
+  font-size: 14px;
+}
+
+.trade-btn.active {
+  background-color: #B58346;
+  border-color: #B58346;
+}
+
+.trade-btn.active:hover {
+  background-color: #8C693E;
+  border-color: #8C693E;
+}
+
+.trade-btn:hover {
+  background-color: #8C693E;
+  border-color: #8C693E;
 }
 
 @import url(https://fonts.googleapis.com/css?family=PT+Serif);
