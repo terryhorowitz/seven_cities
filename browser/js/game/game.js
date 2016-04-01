@@ -362,5 +362,15 @@ app.controller('GameController', function ($scope, $state) {
 
 
 
+      //************* game results *****************
+
+      socket.on('game results', function(gameResults) {
+        console.log('@@@@@@@@@@game results', gameResults);
+        $scope.$broadcast('gameEnded', gameResults)
+
+      });
+
+
+
 });
 

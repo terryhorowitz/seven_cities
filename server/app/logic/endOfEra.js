@@ -26,7 +26,7 @@ var eraEnded = function(game, currentEra) {
   let newPlayerHand, shuffledDeck;
   let playersArr = game.GamePlayers;
   let era = currentEra + 1;
-  if (era === 2) {
+  if (era === 2) {// should be era === 3
     // console.log('!!!!!!!!!!!!!!end of game')
     return Promise.map(playersArr, function(player) {
       return ending.calculatePoints(player)
@@ -36,8 +36,9 @@ var eraEnded = function(game, currentEra) {
       })
     })
     .then(function(allPlayers) {
-      let test = ending.findWinner(allPlayers)
-        console.log('########### winner', test)
+      let gameResults = ending.findWinner(allPlayers)
+        console.log('########### gameResults inside era Ended', gameResults)
+        return gameResults;
     })
   } else {
     return Promise.map(playersArr, function(player){

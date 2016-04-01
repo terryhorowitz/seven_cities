@@ -184,7 +184,7 @@ module.exports = function () {
 		if (winner.length === 1) {
 			console.log('winner', winner[0])
 			console.log('winner', winner[0].player.dataValues.name)
-			return winner[0].player.dataValues.name;
+			return [topScore, winner[0]]
 		}
 		else if (winner.length > 1) {
 			console.log('more than one winner')
@@ -194,7 +194,7 @@ module.exports = function () {
 			console.log('topMoney', topMoney)
 			var moneyWinner = _.filter(allPlayers, {'money': topMoney[0].money });
 			console.log('moneyWinner', moneyWinner)
-			return moneyWinner;
+			return [topScore, moneyWinner];
 		} else {
 			return "There was an error determining the winner";
 		}

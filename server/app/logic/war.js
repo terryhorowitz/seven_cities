@@ -81,7 +81,7 @@ var goToWar = function(game, era) {
       })
     }, Promise.resolve())
     .then(function(){
-      var localWarResults = warResults
+      var localWarResults = warResults;
       warResults = [];
       return [localWarResults, era];
     })
