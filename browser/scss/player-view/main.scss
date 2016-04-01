@@ -552,4 +552,31 @@ board-name {
 	border: 1px #fff solid;
 }
 
+.trade-btn {
+  background-color: #EBC79E;
+  color: #fcf8e3;
+  border-color: #EBC79E;
+  font-size: 10px;
+  font-family: 'Cinzel Decorative', cursive;
+}
+
+.pay-cost {
+  font-size: 14px;
+}
+
+.trade-btn.active {
+  background-color: #B58346;
+  border-color: #B58346;
+}
+
+.trade-btn.active:hover {
+  background-color: #8C693E;
+  border-color: #8C693E;
+}
+
+.trade-btn:hover {
+  background-color: #8C693E;
+  border-color: #8C693E;
+}
+
 @import url(https://fonts.googleapis.com/css?family=PT+Serif);

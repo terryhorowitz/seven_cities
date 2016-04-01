@@ -114,7 +114,7 @@ module.exports = function () {
   ///////
   
   function doSomethingBasedOnBuildingACard(){
-    if (newResources.indexOf(card.type) > -1 || newResources.indexOf(card.name) > -1){ 
+    if (newResources.indexOf(card.type) > -1 || newResources.indexOf(card.name) > -1){
       return addToPlayerResources.buildPlayerResources(player, card.functionality);
     }
     if (tradingSites.indexOf(card.name) > -1){
@@ -262,7 +262,6 @@ module.exports = function () {
       }
     })
     .then(function(){
-      console.log('^^^^^^^^^ after go to war')
       if (warResults) {
         return Promise.join(db_getters.getGame(startPlayer.gameId), warResults)
         // .spread(function(game, warResults) {
