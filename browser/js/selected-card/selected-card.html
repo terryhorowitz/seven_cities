@@ -15,7 +15,7 @@
         <div class="pay-cost">
           need: {{tradeCost}}
         </div>
-        <div ng-show="playerTradeOptions.length > 0">Self
+        <div ng-show="playerTradeOptions.length > 0">Own
           <div class="btn-group" ng-repeat="combo in playerTradeOptions track by $index">
             <label class="btn btn-primary trade-btn" ng-model="trade.self[$parent.$index]" uib-btn-radio="{{combo}}{{[$index]}}" ng-repeat="item in combo track by $index" uncheckable>{{item}}</label>
           </div>
@@ -44,7 +44,7 @@
         <div class="pay-cost">
         need: {{wonderTradeCost}}
         </div>
-        <div ng-show="playerWonderTradeOptions.length > 0">Self
+        <div ng-show="playerWonderTradeOptions.length > 0">Own
           <div class="btn-group" ng-repeat="combo in playerWonderTradeOptions track by $index">
             <label class="btn btn-primary trade-btn" ng-model="wonderTrade.self[$parent.$index]" uib-btn-radio="{{combo}}{{[$index]}}" ng-repeat="item in combo track by $index" uncheckable>{{item}}</label>
           </div>

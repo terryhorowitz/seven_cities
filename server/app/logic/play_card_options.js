@@ -132,9 +132,9 @@ module.exports = function () {
     var costCopy = _.cloneDeep(leftOverCost);
     console.log('pre for', allResources, leftOverCost)
     for (var i = 0; i < costCopy.length; i++){
-      if (allResources[leftOverCost[i]]){
-        allResources[leftOverCost[i]]--;
-        _.pullAt(leftOverCost, leftOverCost.indexOf(leftOverCost[i]));
+      if (allResources[costCopy[i]]){
+        allResources[costCopy[i]]--;
+        _.pullAt(leftOverCost, leftOverCost.indexOf(costCopy[i]));
       }
     }
     console.log('recurse', leftOverCost, allResources)
