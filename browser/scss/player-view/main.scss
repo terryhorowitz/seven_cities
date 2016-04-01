@@ -251,6 +251,8 @@ nav {
 		background-size: cover !important;
 		a {
 			line-height: 44px;
+			padding-left: 0;
+			padding-right: 0;
 			text-align: center;
 			cursor: pointer;
 			border-radius: 50%;
@@ -263,6 +265,8 @@ nav {
 	}
 
 	.neighbor-icons {
+				text-align: center;
+
 		width: 100px;
 		height: 100px;
 	}
