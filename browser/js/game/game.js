@@ -23,7 +23,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.players;
     $scope.money;
     $scope.currentlyPlaying = false;
-    //$scope.me;
+    // $scope.me;
     $scope.myHand;
     $scope.rightNeighbor;
     $scope.leftNeighbor;
