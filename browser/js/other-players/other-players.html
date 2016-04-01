@@ -1,25 +1,16 @@
-<div>
+
     <ul class="nav navbar-nav">
-
-
-
-
         <li ng-style="{'background': 'url(img/background/' + left.board.name + '.png) no-repeat center center'}" class="other-player-icons neighbor-icons">
             <a ng-click='showNeighbor(left)'>{{left.name}}</a>
-<!--             <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
- ng-click='showNeighbor(left)'
- -->        </li>
+		</li>
         <li ng-style="{'background': 'url(img/background/' + player.board.name + '.png) no-repeat center center'}" class="other-player-icons" ng-repeat="player in other" ng-show="true">
             <a ng-click='showNeighbor(player)'>{{player.name}}</a>
-<!--             <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
- -->        </li>
+	    </li>
         <li ng-style="{'background': 'url(img/background/' + right.board.name + '.png) no-repeat center center'}" class="other-player-icons neighbor-icons">
             <a ng-click='showNeighbor(right)'>{{right.name}}</a>
-<!--             <a ui-sref-active="active" ui-sref="{{ player.state }}"></a>
- -->        </li>
+		</li>
     </ul>
-</div>
-<div ng-show="true">Waiting on {{  }}...</div>
+
 <!-- <div ng-show='neighborView'> -->
     <!-- <view-neighbor></view-neighbor> -->
     <script type="text/ng-template" id="myModalContent">
@@ -35,19 +26,25 @@
 			</div> -->
 
 
-			<div id="built-cards">
+			<div id="built-cards" class="other-boards">
 				<div ng-click="expandPile(pile)" ng-class="{expand: pile === clickedPile}" class="pile" ng-repeat="pile in neighbor.builtView">
 					<ul>
 						<li ng-repeat="card in pile">
-							<img class="pile-card-img" src='{{card}}'>
+							<img class="pile-card-img" ng-src='{{card}}'>
 						</li>
 					</ul>
 				</div>
 			</div>
 
+			<br style="clear:both" />
+
+			<div class="resources pull-left">
+				<img ng-src='/img/board_resources/{{neighbor.board.name}}.png'>
+			</div>
+
 			<div class='wonders'>
 				<div class="test" ng-repeat="wonder in neighborWonders">
-					<img src='/img/wonders/{{neighbor.board.name}}_{{wonder}}.png'>
+					<img ng-src='/img/wonders/{{neighbor.board.name}}_{{wonder}}.png'>
 				</div>
 			</div>
 

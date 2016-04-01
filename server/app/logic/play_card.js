@@ -29,7 +29,7 @@ module.exports = function () {
     "Upgrade for free": buildCard,
     "paid by own resources": buildCard,
     "Pay 1 coin": payForCard,
-    "Build wonder": buildWonder,
+    "Build Wonder": buildWonder,
     "Discard": discard
   }
   
@@ -96,19 +96,8 @@ module.exports = function () {
   }
   
   function buildWonder(){
-    return playOptions.checkIfPlayerCanBuildWonder(player.id)
-    .then(function(response){
-      player.wondersBuilt++;
-      if (typeof response === 'string'){
-        return player.removeTemporary(card); //remove from player but do not include in game discard
-      }
-      else {
-        var wonderCost = {};
-        wonderCost.wonder = response;
-        return tradeForCard(wonderCost);
-      }
-      //need to consider outcome(functionality) of building wonder
-    })
+    player.wondersBuilt = player.wondersBuilt + 1;
+        return Promise.join(player.removeTemporary(card), player.save(), getWonderOutcome()); 
   }
   
   function discard(){
@@ -153,17 +142,17 @@ module.exports = function () {
     // this is weird because functionality array holds mixed types by design, don't worry about it 
     if (card.functionality[0] === "left"){
       return Promise.join(countNeighborCardsOfType(), countOwnCardsOfType())
-      .spread(function(leftAmount, rightAmount){
-        player.money += leftAmount + rightAmount;
-        return buildCard();
+      .spread(function(neighAmount, ownAmount){
+        player.money = player.money + neighAmount + ownAmount;
+        return player.save();
       })
     } 
     // if first element in functionality array is not left, then you only have to update own resources 
     else {
       return countOwnCardsOfType()
       .then(function(amount){
-        player.money += amount;
-        return buildCard();
+        player.money = player.money + amount;
+        return player.save();
       })
     }  
   }
@@ -190,33 +179,21 @@ module.exports = function () {
   
   function tradeForCard(tradeParams){
     //obj that needs to be recieved: {left: ['wood', 'clay'], right: ['clay]} OR {left: ['ore'], right: null} etc).
-    var forWonder = false;
-    if (tradeParams.wonder) {
-      forWonder = true;
-      tradeParams = tradeParams.wonder;
-    }
-    var payLeft, payRight;
+    var forWonder, payLeft, payRight;
+    tradeParams.wonder ? forWonder = true : forWonder = false;
     tradeParams.left !== null ? payLeft = trade(tradeParams.left, 'left') : payLeft = 0;
     tradeParams.right !== null ? payRight = trade(tradeParams.right, 'right') : payRight = 0;
     return db_getters.getNeighbors(player)
     .spread(function(leftNeighbor, rightNeighbor){
-      if (tradeParams.left !== null && tradeParams.right !== null){
-        player.money -= payLeft - payRight;
-        leftNeighbor.money += payLeft;
-        rightNeighbor.money += payRight;
-      }
-      else if (!tradeParams.right) {
-        player.money -= payLeft;
-        leftNeighbor.money += payLeft;
-      }
-      else if (!tradeParams.left) {
-        player.money -= payRight;
-        rightNeighbor.money += payRight;
-      }
+      player.money = player.money - payLeft - payRight;
+      leftNeighbor.money += payLeft;
+      rightNeighbor.money += payRight;
       return Promise.join(leftNeighbor.save(), rightNeighbor.save(), player.save())
     })
     .then(function(leftNeighbor, rightNeighbor){
-      if (forWonder) return getWonderOutcome();
+      if (forWonder) {
+        return buildWonder();
+      }
       return buildCard();
     })
   }
@@ -251,6 +228,7 @@ module.exports = function () {
     
   function shiftHandFromPlayers(startPlayerId, era){
     var startPlayer;
+    var warResults;
     return db_getters.getPlayer(startPlayerId)
     .then(function(_startPlayer){
       startPlayer = _startPlayer;
@@ -268,6 +246,9 @@ module.exports = function () {
       }
       if (newTempCards[startPlayerId].length === 4) {
         return war.goToWar(game, era)
+        .then(function(resultsAndEra) {
+          warResults = resultsAndEra;
+        })
 
       } else {
         var lastPlayer = _.find(game.GamePlayers, function(eachPlayer) {
@@ -281,7 +262,13 @@ module.exports = function () {
       }
     })
     .then(function(){
-      return db_getters.getGame(startPlayer.gameId);
+      if (warResults) {
+        return Promise.join(db_getters.getGame(startPlayer.gameId), warResults)
+        // .spread(function(game, warResults) {
+        //   return 
+        // })
+      }
+      else return db_getters.getGame(startPlayer.gameId)
     })
   }
 

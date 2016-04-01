@@ -6,9 +6,14 @@ body {
 	min-height: 100%;
 }
 
-#player-view {
-	h1, h2, h3 {
-		-webkit-text-stroke: 1px #614A00;
+#player-view, .modal-body {
+	h2, h3 {
+		text-shadow: 1px 1px 0 #614A00, 1px -1px 0 #614A00, -1px 1px 0 #614A00, -1px -1px 0 #614A00;
+		font-weight: bold;
+		color: #e9e9e9;
+	}
+	h1 {
+		text-shadow: 2px 2px 0 #614A00, 2px -2px 0 #614A00, -2px 2px 0 #614A00, -2px -2px 0 #614A00;
 		font-weight: bold;
 		color: #e9e9e9;
 	}
@@ -43,6 +48,8 @@ $card-v-space: 10px;
 $card-h-space: 5px;
 $card-h-space-expand: 120px;
 $pile-width: 115px;
+$built-card-left: 100px;
+$expanded-position-h: 170px;
 
 
 li {
@@ -62,8 +69,17 @@ li {
 	margin: 0 auto;
 }
 
+.temp-card-interface {
+	position: absolute;
+	top: 128px;
+	/*height: 170px;*/
+	width: 100%;
+	/*overflow: hidden;*/
+}
+
 .hand {
-	
+	/*height: 200px;*/
+	/*overflow: hidden;*/
 	ul {
 		display: block; 
 		text-align:center;
@@ -74,6 +90,7 @@ li {
 			display: inline-block;
 			margin-right: 10px;
 			&:hover {
+				transition: all 0.3s ease-in-out;
 				z-index: 10 !important;
 				box-shadow: 0px 12px 22px 1px #333;
 				transform:scale(1.3,1.3);
@@ -88,34 +105,44 @@ li {
 	}
 }
 
+/*.hand.ng-hide {
+	-webkit-transition:all linear 0.5s;
+  	transition:all linear 0.5s;
+}*/
 
 #built-cards {
 	/*border: solid fuchsia 1px;*/
 	position: absolute;
-	display: flex;
+	display: inline-flex;
 	padding-left: 100px;
+	/*padding-top: 30px;*/
 	left: 0;
 	right: 0;
-    bottom: 80px;
+	top: 330px;
+    /*bottom: 80px;*/
 	.pile {
+		display: flex;
 		transition: all 0.5s ease-in-out;
-		height: 200px;
+		height: 300px;
 		width: $pile-width;
-		position:relative;
-		float: left;
+		position:absolute;
+		/*float: left;*/
 		ul {
+			position: absolute;
 			display: flex;
-			justify-content: space-between;
+			flex-direction: row;
+			/*justify-content: space-between;*/
 			padding: 0;
 			padding-right: 30px;
 			/*border: solid yellow 1px;*/
 			width: 70px;
 		    transition: all 0.5s ease-in-out;
 			li {
+				z-index: 1;
 				transition: all 0.5s ease-in-out;
 				cursor: pointer;
 				border-radius: 5px;
-				position: relative;
+				/*position: relative;*/
 				width: 5px;
 				height: 5px;
 
@@ -140,15 +167,36 @@ li {
 					top: 4*$card-v-space;
 				}
 			}
-		}	
+			
+		}
+		&:nth-of-type(1) {
+			left: $built-card-left;
+		}
+		&:nth-of-type(2) {
+			left: $pile-width + $built-card-left;
+		}
+		&:nth-of-type(3) {
+			left: 2*$pile-width + $built-card-left;
+		}
+		&:nth-of-type(4) {
+			left: 3*$pile-width + $built-card-left;
+		}
+		&:nth-of-type(5) {
+			left: 4*$pile-width + $built-card-left;
+		}
+		&:nth-of-type(6) {
+			left: 5*$pile-width + $built-card-left;
+		}
 	}
 	.pile.expand {
 		transition: all 0.5s ease-in-out;
 		position: absolute;
-		left: 70px;
+		left: 100px;
 		ul {
+			/*display: flex;
+			flex-direction: row;*/
 			transition: all 0.5s ease-in-out;
-			width: 800px;
+			width: 700px;
 			li {
 				width: 190px;
 				transform:scale(1.8,1.8);
@@ -162,6 +210,10 @@ li {
 			}
 		}		
 	}
+}
+
+#built-cards.other-boards {
+	top: 110px;
 }
 
 .wonders{
@@ -187,6 +239,7 @@ li {
 	@include not-last-of-type('.test') {
 	    margin-right: 50px;
 	}
+	/*overflow: hidden;*/
 }
 
 .resources {
@@ -198,8 +251,16 @@ li {
 	}
 }
 
+other-players {
+	height: 80px;
+/*	position: absolute;
+	top: 10px;
+	margin: 0 auto;*/
+}
+
 nav {
 	li.other-player-icons {
+		margin-top: 4px;
 		width: 80px;
 		height: 80px;
 		border-radius: 50%;
@@ -210,6 +271,8 @@ nav {
 		background-size: cover !important;
 		a {
 			line-height: 44px;
+			padding-left: 0;
+			padding-right: 0;
 			text-align: center;
 			cursor: pointer;
 			border-radius: 50%;
@@ -233,7 +296,46 @@ nav {
 	vertical-align: middle;
 }
 
+.navbar {
+	margin-top: 8px;
+}
+
+.play-options {
+	width: 360px;
+	white-space: nowrap;
+	background-color: rgba(255,255,255,0.5);
+	border-radius: 8px;
+	padding: 15px;
+	font-size:16px;
+	font-weight: 900;
+	.card-side, .text-side {
+		display: inline-block;
+		vertical-align: top;
+	}
+	.text-side {
+		padding-left: 5px;
+	}
+	a {
+		color: inherit;
+		transition: all 0.3s ease-in-out;
+		cursor: pointer;
+		&:hover{
+			text-shadow: 0 0 4px #F7E1C5;
+			transition: all 0.3s ease-in-out;
+			text-decoration: none;
+		}
+	}
+}
+
 selected-card {
+	display: inline-block;
+	position: absolute;
+	width: 380px;
+	/*margin-right: 15px;*/
+	right: 20px;
+	/*top: 180px;*/
+	z-index: 100;
+	/*transition: all 1s ease-in-out !important;*/
 	h3 {
 		margin-top: -5px;
 	}
@@ -244,6 +346,8 @@ selected-card {
 }
 
 .chat-box {
+	padding: 10px;
+	font-family: 'PT Serif', serif;
     position: absolute;
     overflow-y: scroll;
     bottom: 40px;
@@ -256,12 +360,12 @@ selected-card {
     border-color: #663300;
     box-shadow: 3px;
     -webkit-box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
-		-moz-box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
-		box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
-		font-family: 'Lato', sans-serif;
+	-moz-box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
+	box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
   }
 
 	#chatMessage {
+		font-family: 'PT Serif', serif;
     position: fixed;
     word-wrap: break-word;
     bottom: 0;
@@ -275,7 +379,7 @@ selected-card {
     border-color: #663300;  }
 
 #messageList {
-  height: 250px;
+  height: 0px;
 }
 
 .card-highlight {
@@ -284,8 +388,16 @@ selected-card {
 	}
 }
 
-.token img{
-	max-width: 40px;
+.token-nav {
+	padding-right: 15px;
+	height: 80px;
+	.token {
+		padding-left: 7px;
+		text-shadow: 0 0 3px #fff;
+		img{
+			max-height: 40px;
+		}
+	}
 }
 
 .glyphicon.glyphicon-home, .glyphicon.glyphicon-circle-arrow-right {
@@ -306,6 +418,50 @@ selected-card {
 	-moz-background-size: contain;
 	-o-background-size: contain;
 	background-size: contain;
+	.resources {
+		position: absolute;
+		left: 0;
+		bottom: 0;
+		img {
+			height: 35px;
+		}
+	}
+	.wonders{
+		margin-left: -230px;
+	}
+}
+
+.war-modal {
+	.modal-content {
+		background: url(img/war_helmet2.jpg) no-repeat center center; 
+		width: 550px;
+		margin: 0 auto;
+		-webkit-background-size: contain;
+		-moz-background-size: contain;
+		-o-background-size: contain;
+		background-size: cover;
+		border-radius: 6px;
+		.war-background {
+			width: 550px;
+			padding: 15px 35px;
+		}
+	}
+}
+
+.modal-content:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(255,255,255, 0.5);
+	-moz-transition: background .3s linear;
+	-webkit-transition: background .3s linear;
+	-o-transition: background .3s linear;
+	transition: background .3s linear;
+	border-radius: 6px;
 }
 
 .modal-dialog.modal-large {
@@ -347,9 +503,80 @@ selected-card {
 }
 
 #wait-container {
-width: 100%; 
+	width: 100%; 
     height: 100%; 
     position: fixed; 
     left: 0px; 
     top: 0px;
-  }
+}
+
+
+.board-footer {
+	width: 100%;
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	height: 110px;
+	overflow: hidden;
+}
+
+board-name {
+	margin-left: 30px;
+	margin-right: 40px;
+}
+
+.already-played, .player-info {
+	background-color: rgba(255, 255, 255, 0.5);
+	margin-top: 12px;
+	padding: 0 10px;
+	h4 {
+		/*font-family: 'Cinzel';*/
+		font-size: 18px;
+		font-weight: bold;
+		text-shadow: 0 0 2px #fff;
+	}
+	border-radius: 5px;
+}
+
+/*.already-played {
+	padding-top: 15px;
+}*/
+
+.player-info {
+	background-color: rgba(255, 255, 255, 0.5);
+	margin-right: 30px;
+	font-size: 22px;
+}
+
+.wonder-trades {
+	border: 1px #fff solid;
+}
+
+.trade-btn {
+  background-color: #EBC79E;
+  color: #fcf8e3;
+  border-color: #EBC79E;
+  font-size: 10px;
+  font-family: 'Cinzel Decorative', cursive;
+}
+
+.pay-cost {
+  font-size: 14px;
+}
+
+.trade-btn.active {
+  background-color: #B58346;
+  border-color: #B58346;
+}
+
+.trade-btn.active:hover {
+  background-color: #8C693E;
+  border-color: #8C693E;
+}
+
+.trade-btn:hover {
+  background-color: #8C693E;
+  border-color: #8C693E;
+}
+
+@import url(https://fonts.googleapis.com/css?family=PT+Serif);

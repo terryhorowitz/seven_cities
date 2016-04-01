@@ -13,23 +13,25 @@ app.config(function ($stateProvider) {
 app.controller('GameController', function ($scope, $state) {
 
     var socket = io(window.location.origin); 
-
+    $scope.socket = socket;
     $scope.roomname = $state.params.roomname;
     $scope.playername = $state.params.playername;
 
     $scope.firstPlayer = false;
+    $scope.currentEra = 0;
     $scope.builtCards;
     $scope.players;
     $scope.money;
     $scope.currentlyPlaying = false;
-    $scope.me;
+//    $scope.me;
     $scope.myHand;
     $scope.rightNeighbor;
     $scope.leftNeighbor;
     $scope.wonderOptions = [1, 2, 3];
     $scope.nonNeighbors = [];
-    
+    $scope.submitted = false;
     $scope.background = {background: 'url(/img/map.jpg) no-repeat center center fixed', 'background-size': 'cover', 'min-height': '100%'};
+    $scope.warResults = false;
 
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
 
@@ -44,6 +46,7 @@ app.controller('GameController', function ($scope, $state) {
     socket.on('connect', function(){
       console.log('I have made a persistent two-way connection to the server!');
       var tempId = localStorage.getItem('playerId');
+      if (tempId) $scope.playerId = tempId;
       socket.emit('create', {roomname: $scope.roomname, playername: $scope.playername, localId: tempId});
 
       socket.on('in room', function(data) {
@@ -53,7 +56,7 @@ app.controller('GameController', function ($scope, $state) {
       })
 
       socket.on('your id', function(data) {
-        $scope.me.playerId = data;
+        $scope.playerId = data;
         localStorage.setItem('playerId', data)
       })
 
@@ -66,7 +69,6 @@ app.controller('GameController', function ($scope, $state) {
         $scope.currentlyPlaying = true;
         // console.log('game started')
         $scope.players = data;
-        console.log('players', $scope.players)
         //find myself
         for (var i = 0; i < data.length; i++) {
           var thisSocket = $scope.players[i].socket.slice(2);
@@ -108,42 +110,97 @@ app.controller('GameController', function ($scope, $state) {
       })
 
       socket.on('your hand', function(data) {
-        console.log('my hand', data)
+        if(data.length === 7) {
+          $scope.currentEra++;
+        }
         $scope.myHand = data;
+        $scope.waitingOn = null;
         $scope.$digest();
       })
 
-      //{"left":null,"right":["ore"]}
-      //{"left":null,"right":["papyrus"]}
+      socket.on('waiting on', function(data) {
+        if ($scope.waitingOn) {
+          $scope.waitingOn += ', ' + data;
+        } else {
+          $scope.waitingOn = data;
+        }
+        $scope.$digest();
+      })
 
           $scope.submitChoice = function(selection){
-          console.log('submission', selection)
-          socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+            $scope.submitted = true;
+          socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.playerId});
           $scope.playOptions = null;
         }
                 
       socket.on('your options', function(options) {
-//        $scope.playOptions = options;
+        console.log('options', options)
+        $scope.hasWonderTrade = false;
+        $scope.hasTrade = false;
         $scope.playOptions = options.map(function(option) {
-          if (typeof option !== 'string') {
-            var needed = [];
-            for (var i = 0; i < option.total.length; i++){
-              var arr = [[],[]];
-              arr[0].push(option.total[i]);
-              needed.push(arr);
+          if (typeof option !== 'string' && option.wonder) {
+            $scope.hasWonderTrade = true;
+            var leftArr = [], rightArr = [];
+            for (var key in option.left){
+              if (key !== 'combo'){
+                while (option.left[key] > 0){
+                  leftArr.push(key);
+                  option.left[key]--;
+                }
+              }
             }
-            for (var j = 0; j < needed.length; j++){
-              if (option.left && option.left.length && needed[j][0][0] === option.left[0]){
-                needed[j][1].push('left');
-                option.left.shift();
+            for (var key in option.right){
+              if (key !== 'combo'){
+                while (option.right[key] > 0){
+                  rightArr.push(key);
+                  option.right[key]--;
+                }
               }
-              if (option.right && option.right.length && needed[j][0][0] === option.right[0]){
-                needed[j][1].push('right');
-                option.right.shift();
-              }
+            }
+            $scope.leftWonderTradeOptions = {
+              combo: option.left.combo,
+              other: leftArr
+            }
+            $scope.rightWonderTradeOptions = {
+              combo: option.right.combo,
+              other: rightArr
+            }
+            $scope.playerWonderTradeOptions = option.self;
+            $scope.wonderTradeCost = option.cost.join(', ');
+            $scope.wonderTradeCostArr = option.cost;
+          } else if (option === "wonder paid by own resources"){
+            return "Build Wonder"
           }
-            console.log('needed', needed)
-            $scope.tradeOptions = needed;
+          else if (typeof option !== 'string' && !option.wonder) {
+            $scope.hasTrade = true;
+            var leftArr = [], rightArr = [];
+            for (var key in option.left){
+              if (key !== 'combo'){
+                while (option.left[key] > 0){
+                  leftArr.push(key);
+                  option.left[key]--;
+                }
+              }
+            }
+            for (var key in option.right){
+              if (key !== 'combo'){
+                while (option.right[key] > 0){
+                  rightArr.push(key);
+                  option.right[key]--;
+                }
+              }
+            }
+            $scope.leftTradeOptions = {
+              combo: option.left.combo,
+              other: leftArr
+            }
+            $scope.rightTradeOptions = {
+              combo: option.right.combo,
+              other: rightArr
+            }
+            $scope.playerTradeOptions = option.self;
+            $scope.tradeCostArr = option.cost;
+            $scope.tradeCost = option.cost.join(', ');
           } else if (option === 'Discard') {
             return option;
           } else if (option === 'get free' || option === 'paid by own resources') {
@@ -158,25 +215,61 @@ app.controller('GameController', function ($scope, $state) {
         })
         $scope.$digest();
       })
-      
-      $scope.trade = {}
-      
+
+      $scope.trade = {
+        left: [],
+        right: [],
+        self: []
+      };
+      $scope.wonderTrade = {
+        left: [],
+        right: [],
+        self: []
+      };
+
       $scope.submitTrade = function(){
-        var tradeObj = {
-          left: [],
-          right: []
-        };
-        for (var key in $scope.trade){
-          var arr = $scope.trade[key].split("/");
-          var direction = arr[0];
-          var resource = arr[1];
-          tradeObj[direction].push(resource);
+        if ($scope.trade.left.length + $scope.trade.right.length + $scope.trade.self.length < $scope.tradeCostArr.length){
+          $scope.tradeAlert = {type: 'warning', msg: 'not a trade!'};
         }
-        
-        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
-        $scope.playOptions = null;
-        
+        else {
+          var tradeObj = {};
+          tradeObj.left = $scope.trade.left.filter(function(e){ return e; });
+          tradeObj.right = $scope.trade.right.filter(function(e){ return e; }); 
+          if (!tradeObj.left.length) tradeObj.left = null;
+          if (!tradeObj.right.length) tradeObj.right = null;
+          tradeObj.wonder = false;
+          $scope.playOptions = null;
+          $scope.submitted = true;
+          console.log('before emit trade', tradeObj)
+          socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.playerId});
+        }
       }; 
+      
+      $scope.submitWonderTrade = function () {
+        console.log($scope.wonderTrade)
+        if ($scope.wonderTrade.left.length + $scope.wonderTrade.right.length + $scope.wonderTrade.self.length !== $scope.wonderTradeCostArr.length){
+          $scope.wonderTradeAlert = {type: 'warning', msg: 'not a trade!'};
+        }
+        else {
+          var tradeObj = {};
+          tradeObj.left = $scope.wonderTrade.left;
+          tradeObj.right = $scope.wonderTrade.right;
+          if (!tradeObj.left.length) tradeObj.left = null;
+          if (!tradeObj.right.length) tradeObj.right = null;
+          tradeObj.wonder = true;
+          $scope.playOptions = null;
+          $scope.submitted = true;
+          socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.playerId}); 
+        }
+      }
+      
+      $scope.closeWonderTradeAlert = function(){
+        $scope.wonderTradeAlert = null;
+      }
+      
+      $scope.closeTradeAlert = function(){
+        $scope.tradeAlert = null;
+      }
 
       socket.on('err', function(data) {
         $scope.err = data.message;
@@ -184,8 +277,8 @@ app.controller('GameController', function ($scope, $state) {
       })
 
       socket.on('new round', function(data) {
+        $scope.submitted = false;
         $scope.players = data;
-        console.log('data', data)
         for (var i = 0; i < data.length; i++) {
           var thisSocket = $scope.players[i].socket.slice(2);
           if (thisSocket == socket.id) {
@@ -207,56 +300,20 @@ app.controller('GameController', function ($scope, $state) {
             $scope.nonNeighbors.push($scope.players[i]);
           }
         }
-        console.log('this is players', $scope.players)
-
         $scope.$digest();
       })
       //player submits their choice
       $scope.selectCard = function(card) {
         $scope.cardSelection = card;
-        socket.emit('choice made', {player: $scope.me.playerId, card: card.id});
+        socket.emit('choice made', {player: $scope.playerId, card: card.id});
       };
 
       $scope.dismiss = function() {
         $scope.err = null;
       };
 
-      //waiting for other players
-
-
-      //show all plays and update view
-
-
-      //give player new cards
-
 
     });
-
-      
-
-      // $scope.builtCards = [
-      //   [ {image: 'img/3_arena_3.png'},
-      //     {image: 'img/3_garden_3.png'},
-      //     {image: 'img/3_haven_3.png'},
-      //     {image: 'img/3_arsenal_3.png'},
-      //     {image: 'img/3_palace_3.png'}
-      //   ],
-      //   [ {image: 'img/3_observatory_3.png'},
-      //     {image: 'img/3_pantheon_3.png'},
-      //     {image: 'img/3_study_3.png'},
-      //     {image: 'img/3_lodge_3.png'},
-      //     {image: 'img/3_fortifications_3.png'}
-      //   ]
-      // ]
-
-      // $scope.wonders = [
-      //   {image: 'img/wonders/alexandria_1.png'},
-      //   {image: 'img/wonders/alexandria_2.png'},
-      //   {image: 'img/wonders/alexandria_3.png'}
-      // ]
-
-
-        // console.log($scope.wonders)
 
       $scope.clickedPile = false;
       $scope.minimizeChat = true;
@@ -281,6 +338,7 @@ app.controller('GameController', function ($scope, $state) {
         }
         else {
           document.getElementById('messageList').style.height = '0px';
+          document.getElementById('messageList').style.padding = '5px';
           $scope.minimizeChat = true;
         }
       }
@@ -291,6 +349,16 @@ app.controller('GameController', function ($scope, $state) {
         var objDiv = document.getElementById("messageList");
         objDiv.scrollTop = objDiv.scrollHeight
       })
+
+
+
+      //************* war results *****************
+
+      socket.on('war results', function(warResults) {
+        console.log('@@@@@@@@@@war results', warResults);
+        $scope.$broadcast('warHappened', warResults)
+
+      });
 
 
 

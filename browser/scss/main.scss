@@ -9,6 +9,9 @@ body {
   background: #fdfdfd;
   font-family: 'Julius Sans One', sans-serif;
   font-weight: bold;
+  color: #1e1e1e;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 h1, h2, h3 {
@@ -34,3 +37,7 @@ h1, h2, h3 {
 @import 'tutorial/main';
 @import 'login/main';
 @import 'player-view/main';
+
+a {
+  cursor: pointer;
+}

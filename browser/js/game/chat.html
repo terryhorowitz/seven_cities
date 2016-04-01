@@ -1,5 +1,5 @@
 <div id="messageList" class="chat-box pull-right" ng-click="hideChat()">
-      <p ng-repeat= "msg in msgs">{{msg.player}}: {{msg.content}}</p>
+      <p ng-hide='minimizeChat' ng-repeat= "msg in msgs">{{msg.player}}: {{msg.content}}</p>
     <form ng-submit="sendMsg()" name="chat-form">
       <input id="chatMessage" type="text" ng-model="msg.text" placeholder=' Chat'>
     </form>
