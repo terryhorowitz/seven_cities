@@ -426,19 +426,20 @@ selected-card {
 	}
 }
 
-
-.modal-content.war-modal {
-	background: url(img/war_helmet2.jpg) no-repeat center center; 
-	/*width: 550px;*/
-	margin: 0 auto;
-	-webkit-background-size: contain;
-	-moz-background-size: contain;
-	-o-background-size: contain;
-	background-size: cover;
-	border-radius: 6px;
-	.war-background {
+.war-modal {
+	.modal-content {
+		background: url(img/war_helmet2.jpg) no-repeat center center; 
 		width: 550px;
-		padding: 15px 35px;
+		margin: 0 auto;
+		-webkit-background-size: contain;
+		-moz-background-size: contain;
+		-o-background-size: contain;
+		background-size: cover;
+		border-radius: 6px;
+		.war-background {
+			width: 550px;
+			padding: 15px 35px;
+		}
 	}
 }
 
