@@ -46,7 +46,6 @@ module.exports = function () {
   function checkResourcePaymentMethods(player, cost) {
     var costCopy = _.cloneDeep(cost);
     var playersResources = Resources.getGameResources(player.gameId)[player.id];
-    console.log('early', playersResources)
     var ownResourcesCopy = _.cloneDeep(playersResources.self);
     for (var i = 0; i < cost.length; i++) {
       if (!!ownResourcesCopy[cost[i]]) {
@@ -54,7 +53,6 @@ module.exports = function () {
         _.pullAt(costCopy, costCopy.indexOf(cost[i]))
       }
     }
-    console.log('before recurse/exit', costCopy)
     var copyAllPlayerResources = _.cloneDeep(playersResources);
     if (!costCopy.length) return 'paid by own resources';
     else return checkOtherPossibilities(copyAllPlayerResources, costCopy);
@@ -100,7 +98,6 @@ module.exports = function () {
   }
   
   function checkOtherPossibilities(resources, leftOverCost){
-    console.log('own stuff - should not mutate!!', resources)
     var ownResourcesComboCopy = _.cloneDeep(resources.self.combo) || [];
     var allResources = _.merge(_.cloneDeep(resources.left), _.cloneDeep(resources.right), combiningFunc);
     allResources.combo = removeTradingResources(allResources.combo);
@@ -109,7 +106,6 @@ module.exports = function () {
     allResources.combo = filterCombo(allResources, leftOverCost);
     var costForRecursion = _.cloneDeep(leftOverCost);
     var resourcesForRecursion = _.cloneDeep(allResources);
-    console.log('before if', costForRecursion, resourcesForRecursion)
     if (recursivelyCheckCombos(resourcesForRecursion, costForRecursion)){
       filterResourceKeys(resources.left, leftOverCost);
       filterResourceKeys(resources.right, leftOverCost);
@@ -130,14 +126,12 @@ module.exports = function () {
   
   function recursivelyCheckCombos(allResources, leftOverCost){
     var costCopy = _.cloneDeep(leftOverCost);
-    console.log('pre for', allResources, leftOverCost)
     for (var i = 0; i < costCopy.length; i++){
       if (allResources[costCopy[i]]){
         allResources[costCopy[i]]--;
         _.pullAt(leftOverCost, leftOverCost.indexOf(costCopy[i]));
       }
     }
-    console.log('recurse', leftOverCost, allResources)
     if (!leftOverCost.length) return true;
     if (!allResources.combo.length) return false;
     

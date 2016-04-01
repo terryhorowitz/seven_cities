@@ -233,8 +233,8 @@ app.controller('GameController', function ($scope, $state) {
         }
         else {
           var tradeObj = {};
-          tradeObj.left = $scope.trade.left;
-          tradeObj.right = $scope.trade.right; 
+          tradeObj.left = $scope.trade.left.filter(function(e){ return e; });
+          tradeObj.right = $scope.trade.right.filter(function(e){ return e; }); 
           if (!tradeObj.left.length) tradeObj.left = null;
           if (!tradeObj.right.length) tradeObj.right = null;
           tradeObj.wonder = false;
@@ -246,7 +246,8 @@ app.controller('GameController', function ($scope, $state) {
       }; 
       
       $scope.submitWonderTrade = function () {
-        if ($scope.wonderTrade.left.length + $scope.wonderTrade.right.length + $scope.wonderTrade.self.length < $scope.wonderTradeCostArr.length){
+        console.log($scope.wonderTrade)
+        if ($scope.wonderTrade.left.length + $scope.wonderTrade.right.length + $scope.wonderTrade.self.length !== $scope.wonderTradeCostArr.length){
           $scope.wonderTradeAlert = {type: 'warning', msg: 'not a trade!'};
         }
         else {

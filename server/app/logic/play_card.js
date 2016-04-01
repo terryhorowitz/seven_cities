@@ -48,7 +48,6 @@ module.exports = function () {
   
   /////// Public API/////////////
   function orchestrator(playersSelections){
-    console.log('player selects', playersSelections)
     return playersSelections.reduce(function(promiseAccumulator, playerChoice){
       choice = playerChoice.choice;
       return promiseAccumulator
@@ -116,7 +115,6 @@ module.exports = function () {
   
   function doSomethingBasedOnBuildingACard(){
     if (newResources.indexOf(card.type) > -1 || newResources.indexOf(card.name) > -1){
-      console.log('add it', card.name)
       return addToPlayerResources.buildPlayerResources(player, card.functionality);
     }
     if (tradingSites.indexOf(card.name) > -1){
@@ -264,7 +262,6 @@ module.exports = function () {
       }
     })
     .then(function(){
-      console.log('^^^^^^^^^ after go to war')
       if (warResults) {
         return Promise.join(db_getters.getGame(startPlayer.gameId), warResults)
         // .spread(function(game, warResults) {
