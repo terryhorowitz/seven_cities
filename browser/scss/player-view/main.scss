@@ -43,6 +43,8 @@ $card-v-space: 10px;
 $card-h-space: 5px;
 $card-h-space-expand: 120px;
 $pile-width: 115px;
+$built-card-left: 100px;
+$expanded-position-h: 170px;
 
 
 li {
@@ -96,18 +98,22 @@ li {
 #built-cards {
 	/*border: solid fuchsia 1px;*/
 	position: absolute;
-	display: flex;
+	display: inline-flex;
 	padding-left: 100px;
+	padding-top: 30px;
 	left: 0;
 	right: 0;
-    bottom: 80px;
+	top: 300px;
+    /*bottom: 80px;*/
 	.pile {
+		display: flex;
 		transition: all 0.5s ease-in-out;
-		height: 200px;
+		height: 300px;
 		width: $pile-width;
-		position:relative;
-		float: left;
+		position:absolute;
+		/*float: left;*/
 		ul {
+			position: absolute;
 			display: flex;
 			flex-direction: row;
 			/*justify-content: space-between;*/
@@ -117,10 +123,11 @@ li {
 			width: 70px;
 		    transition: all 0.5s ease-in-out;
 			li {
+				z-index: 1;
 				transition: all 0.5s ease-in-out;
 				cursor: pointer;
 				border-radius: 5px;
-				position: relative;
+				/*position: relative;*/
 				width: 5px;
 				height: 5px;
 
@@ -145,15 +152,34 @@ li {
 					top: 4*$card-v-space;
 				}
 			}
-		}	
+			
+		}
+		&:nth-of-type(1) {
+			left: $built-card-left;
+		}
+		&:nth-of-type(2) {
+			left: $pile-width + $built-card-left;
+		}
+		&:nth-of-type(3) {
+			left: 2*$pile-width + $built-card-left;
+		}
+		&:nth-of-type(4) {
+			left: 3*$pile-width + $built-card-left;
+		}
+		&:nth-of-type(5) {
+			left: 4*$pile-width + $built-card-left;
+		}
+		&:nth-of-type(6) {
+			left: 5*$pile-width + $built-card-left;
+		}
 	}
 	.pile.expand {
 		transition: all 0.5s ease-in-out;
 		position: absolute;
 		left: 100px;
 		ul {
-			display: flex;
-			flex-direction: row;
+			/*display: flex;
+			flex-direction: row;*/
 			transition: all 0.5s ease-in-out;
 			width: 700px;
 			li {
@@ -215,6 +241,7 @@ other-players {
 
 nav {
 	li.other-player-icons {
+		margin-top: 4px;
 		width: 80px;
 		height: 80px;
 		border-radius: 50%;
@@ -225,6 +252,8 @@ nav {
 		background-size: cover !important;
 		a {
 			line-height: 44px;
+			padding-left: 0;
+			padding-right: 0;
 			text-align: center;
 			cursor: pointer;
 			border-radius: 50%;
@@ -246,6 +275,10 @@ nav {
 	display: table-cell;
 	text-align: center;
 	vertical-align: middle;
+}
+
+.navbar {
+	margin-top: 8px;
 }
 
 .play-options {
@@ -286,6 +319,8 @@ selected-card {
 }
 
 .chat-box {
+		padding: 10px;
+		font-family: 'PT Serif', serif;
     position: absolute;
     overflow-y: scroll;
     bottom: 40px;
@@ -300,10 +335,10 @@ selected-card {
     -webkit-box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
 	-moz-box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
 	box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
-	font-family: 'Lato', sans-serif;
   }
 
 	#chatMessage {
+		font-family: 'PT Serif', serif;
     position: fixed;
     word-wrap: break-word;
     bottom: 0;
@@ -367,6 +402,37 @@ selected-card {
 	.wonders{
 		margin-left: -230px;
 	}
+}
+
+.war-background {
+	padding: 15px 35px;
+}
+
+.modal-content {
+	background: url(img/war_helmet2.jpg) no-repeat center center; 
+	width: 550px;
+	margin: 0 auto;
+	-webkit-background-size: contain;
+	-moz-background-size: contain;
+	-o-background-size: contain;
+	background-size: cover;
+	border-radius: 6px;
+}
+
+.modal-content:before {
+	content: "";
+	display: block;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(255,255,255, 0.5);
+	-moz-transition: background .3s linear;
+	-webkit-transition: background .3s linear;
+	-o-transition: background .3s linear;
+	transition: background .3s linear;
+	border-radius: 6px;
 }
 
 .modal-dialog.modal-large {
@@ -456,3 +522,5 @@ board-name {
 .wonder-trades {
 	border: 1px #fff solid;
 }
+
+@import url(https://fonts.googleapis.com/css?family=PT+Serif);

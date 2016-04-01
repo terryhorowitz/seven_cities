@@ -30,7 +30,7 @@
 				<div ng-click="expandPile(pile)" ng-class="{expand: pile === clickedPile}" class="pile" ng-repeat="pile in neighbor.builtView">
 					<ul>
 						<li ng-repeat="card in pile">
-							<img class="pile-card-img" src='{{card}}'>
+							<img class="pile-card-img" ng-src='{{card}}'>
 						</li>
 					</ul>
 				</div>
@@ -39,12 +39,12 @@
 			<br style="clear:both" />
 
 			<div class="resources pull-left">
-				<img src='/img/board_resources/{{neighbor.board.name}}.png'>
+				<img ng-src='/img/board_resources/{{neighbor.board.name}}.png'>
 			</div>
 
 			<div class='wonders'>
 				<div class="test" ng-repeat="wonder in neighborWonders">
-					<img src='/img/wonders/{{neighbor.board.name}}_{{wonder}}.png'>
+					<img ng-src='/img/wonders/{{neighbor.board.name}}_{{wonder}}.png'>
 				</div>
 			</div>
 
