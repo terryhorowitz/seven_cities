@@ -426,11 +426,8 @@ selected-card {
 	}
 }
 
-.war-background {
-	padding: 15px 35px;
-}
 
-.modal-content {
+.modal-content.war-modal {
 	background: url(img/war_helmet2.jpg) no-repeat center center; 
 	/*width: 550px;*/
 	margin: 0 auto;
@@ -439,6 +436,10 @@ selected-card {
 	-o-background-size: contain;
 	background-size: cover;
 	border-radius: 6px;
+	.war-background {
+		width: 550px;
+		padding: 15px 35px;
+	}
 }
 
 .modal-content:before {

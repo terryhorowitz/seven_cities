@@ -11,28 +11,29 @@ app.directive('warResults', function ($rootScope, $state, $uibModal) {
 
             // scope.warResults = [];
 
-            // scope.warResults = [
-            //     'sdc', 'vdfvfrsvd', 'aaaaa', 'vdfsvd', 'klscnsdkf', 'jfosiefjoso', 'jsdfoies', 'fcjsidioer', 'jsfihf'
-            // ]
+            scope.warResults = [
+                'sdc', 'vdfvfrsvd', 'aaaaa', 'vdfsvd', 'klscnsdkf', 'jfosiefjoso', 'jsdfoies', 'fcjsidioer', 'jsfihf'
+            ]
 
             scope.showWarResults = function() {
                 $uibModal.open({
                     animation: scope.animationsEnabled,
                     templateUrl: 'warResultsModal',
                     // size: 'small',
-                    scope: scope
+                    scope: scope,
+                    windowClass: 'war-modal'
                 })
 
             }
-            // scope.showWarResults();
+            scope.showWarResults();
             // console.log(scope.warResults);
 
-            scope.$on('warHappened', function(data, args) {
-                scope.warResults = args;
-                console.log(scope.warResults);
-                scope.$digest();
-                scope.showWarResults();
-            })
+            // scope.$on('warHappened', function(data, args) {
+            //     scope.warResults = args;
+            //     console.log(scope.warResults);
+            //     scope.$digest();
+            //     scope.showWarResults();
+            // })
 
             // socket.on('war results', function(warResults) {
             //     console.log('@@@@@@@@@@war results inside the DIRECTIVE')
