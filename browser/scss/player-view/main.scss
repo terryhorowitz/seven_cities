@@ -43,6 +43,8 @@ $card-v-space: 10px;
 $card-h-space: 5px;
 $card-h-space-expand: 120px;
 $pile-width: 115px;
+$built-card-left: 100px;
+$expanded-position-h: 170px;
 
 
 li {
@@ -96,18 +98,22 @@ li {
 #built-cards {
 	/*border: solid fuchsia 1px;*/
 	position: absolute;
-	display: flex;
+	display: inline-flex;
 	padding-left: 100px;
+	padding-top: 30px;
 	left: 0;
 	right: 0;
-    bottom: 80px;
+	top: 300px;
+    /*bottom: 80px;*/
 	.pile {
+		display: flex;
 		transition: all 0.5s ease-in-out;
-		height: 200px;
+		height: 300px;
 		width: $pile-width;
-		position:relative;
-		float: left;
+		position:absolute;
+		/*float: left;*/
 		ul {
+			position: absolute;
 			display: flex;
 			flex-direction: row;
 			/*justify-content: space-between;*/
@@ -117,10 +123,11 @@ li {
 			width: 70px;
 		    transition: all 0.5s ease-in-out;
 			li {
+				z-index: 1;
 				transition: all 0.5s ease-in-out;
 				cursor: pointer;
 				border-radius: 5px;
-				position: relative;
+				/*position: relative;*/
 				width: 5px;
 				height: 5px;
 
@@ -145,15 +152,34 @@ li {
 					top: 4*$card-v-space;
 				}
 			}
-		}	
+			
+		}
+		&:nth-of-type(1) {
+			left: $built-card-left;
+		}
+		&:nth-of-type(2) {
+			left: $pile-width + $built-card-left;
+		}
+		&:nth-of-type(3) {
+			left: 2*$pile-width + $built-card-left;
+		}
+		&:nth-of-type(4) {
+			left: 3*$pile-width + $built-card-left;
+		}
+		&:nth-of-type(5) {
+			left: 4*$pile-width + $built-card-left;
+		}
+		&:nth-of-type(6) {
+			left: 5*$pile-width + $built-card-left;
+		}
 	}
 	.pile.expand {
 		transition: all 0.5s ease-in-out;
 		position: absolute;
 		left: 100px;
 		ul {
-			display: flex;
-			flex-direction: row;
+			/*display: flex;
+			flex-direction: row;*/
 			transition: all 0.5s ease-in-out;
 			width: 700px;
 			li {
