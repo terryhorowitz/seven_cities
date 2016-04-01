@@ -16,8 +16,8 @@
           need: {{tradeCost}}
         </div>
         <div ng-show="playerTradeOptions.length > 0">Self
-          <div class="btn-group trade-btn" ng-repeat="combo in playerTradeOptions track by $index">
-            <label class="btn btn-primary" ng-model="trade.self[$parent.$index]" uib-btn-radio="{{combo}}{{[$index]}}" ng-repeat="item in combo track by $index" uncheckable>{{item}}</label>
+          <div class="btn-group" ng-repeat="combo in playerTradeOptions track by $index">
+            <label class="btn btn-primary trade-btn" ng-model="trade.self[$parent.$index]" uib-btn-radio="{{combo}}{{[$index]}}" ng-repeat="item in combo track by $index" uncheckable>{{item}}</label>
           </div>
         </div> 
         
