@@ -34,8 +34,8 @@
 
 		<div class="player-view-container container-fluid">
 			<war-results></war-results>
-			<div class="row">	
-				<div class="col-xs-8">
+			<div class="temp-card-interface">	
+				<div class="">
 					<div ng-hide="submitted" class='hand'>
 						<ul>
 							<li ng-repeat="card in myHand" ng-click='selectCard(card)'>
@@ -45,7 +45,7 @@
 					</div>
 				</div>
 
-				<div ng-show='playOptions' class="col-xs-4">
+				<div ng-show='playOptions' class="">
 					<selected-card card='cardSelection' playOptions='playOptions'></selected-card>
 				</div>
 			</div>

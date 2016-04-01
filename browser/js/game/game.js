@@ -315,16 +315,6 @@ app.controller('GameController', function ($scope, $state) {
 
       //************* war results *****************
 
-      $scope.showWarResults = function() {
-                $uibModal.open({
-                    animation: scope.animationsEnabled,
-                    templateUrl: 'warResultsModal',
-                    size: 'small'
-                    // ,
-                    // scope: scope
-                })
-            }
-
       socket.on('war results', function(warResults) {
         console.log('@@@@@@@@@@war results', warResults);
         $scope.$broadcast('warHappened', warResults)

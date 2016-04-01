@@ -19,8 +19,8 @@ app.directive('warResults', function ($rootScope, $state, $uibModal) {
                 $uibModal.open({
                     animation: scope.animationsEnabled,
                     templateUrl: 'warResultsModal',
-                    // size: 'small',
-                    scope: scope
+                    scope: scope,
+                    windowClass: 'war-modal'
                 })
 
             }
