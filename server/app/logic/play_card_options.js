@@ -92,9 +92,9 @@ module.exports = function () {
     }
   }
   
-  function removeTradingResources (neighborResources){
-    if (!neighborResources.combo) return [];
-    return neighborResources.combo.filter(function(r){
+  function removeTradingResources (neighborResourcesCombo){
+    if (!neighborResourcesCombo) return [];
+    return neighborResourcesCombo.filter(function(r){
       return !r.length > 2;
     })
   }
@@ -103,19 +103,17 @@ module.exports = function () {
     console.log('own stuff - should not mutate!!', resources)
     var ownResourcesComboCopy = _.cloneDeep(resources.self.combo) || [];
     var allResources = _.merge(_.cloneDeep(resources.left), _.cloneDeep(resources.right), combiningFunc);
-    console.log('pre filter',allResources, ownResourcesComboCopy)
-    allResources.combo = allResources.combo || [];
-    allResources = removeTradingResources(allResources);
+    allResources.combo = removeTradingResources(allResources.combo);
     allResources.combo = allResources.combo.concat(ownResourcesComboCopy);
     filterResourceKeys(allResources, leftOverCost);
     allResources.combo = filterCombo(allResources, leftOverCost);
     var costForRecursion = _.cloneDeep(leftOverCost);
     var resourcesForRecursion = _.cloneDeep(allResources);
-    console.log('checking',resourcesForRecursion, costForRecursion)
     if (recursivelyCheckCombos(resourcesForRecursion, costForRecursion)){
-      console.log('true things', resources, leftOverCost)
       filterResourceKeys(resources.left, leftOverCost);
       filterResourceKeys(resources.right, leftOverCost);
+      resources.right.combo = removeTradingResources(resources.right.combo);
+      resources.left.combo = removeTradingResources(resources.left.combo);
       resources.left.combo = filterCombo(resources.left, leftOverCost);
       resources.right.combo = filterCombo(resources.right, leftOverCost);
       resources.self.combo = filterCombo(resources.self, leftOverCost);
