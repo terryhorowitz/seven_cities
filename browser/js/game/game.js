@@ -134,10 +134,9 @@ app.controller('GameController', function ($scope, $state) {
         }
                 
       socket.on('your options', function(options) {
-        console.log('options', options)
         $scope.hasWonderTrade = false;
         $scope.hasTrade = false;
-        $scope.playOptions = options.map(function(option) {
+        var opts = options.map(function(option) {
           if (typeof option !== 'string' && option.wonder) {
             $scope.hasWonderTrade = true;
             var leftArr = [], rightArr = [];
@@ -213,6 +212,9 @@ app.controller('GameController', function ($scope, $state) {
             return 'Build wonder';
           } else return "";
         })
+        $scope.playOptions = opts.filter(function(o){
+          return typeof o === 'string' && o.length > 0;
+        })
         $scope.$digest();
       })
 
@@ -261,6 +263,18 @@ app.controller('GameController', function ($scope, $state) {
           $scope.submitted = true;
           socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.playerId}); 
         }
+      }
+      
+      $scope.tradeCollapse = true;
+      $scope.toggleTradeCollapse = function () {
+        $scope.wonderTradeCollapse = true;
+        $scope.tradeCollapse ? $scope.tradeCollapse = false : $scope.tradeCollapse = true;
+      }
+      
+      $scope.wonderTradeCollapse = true;
+      $scope.toggleWonderTradeCollapse = function () {
+        $scope.tradeCollapse = true;
+        $scope.wonderTradeCollapse ? $scope.wonderTradeCollapse = false : $scope.wonderTradeCollapse = true;
       }
       
       $scope.closeWonderTradeAlert = function(){
