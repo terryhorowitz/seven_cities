@@ -134,7 +134,7 @@ module.exports = function (server) {
 
       .then(function(results) { //[game, [warResults, era]]
         console.log('playersChoices', playersChoices)
-        console.log('results', results)
+        console.log('results.id and .name', results.id, results.name)
         if (results.length>1) {
 	        let game = results[0];
         	let warResults = results[1][0];
