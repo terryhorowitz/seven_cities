@@ -10,7 +10,7 @@ app.config(function ($stateProvider) {
 
 });
 
-app.controller('GameController', function ($scope, $state) {
+app.controller('GameController', function ($scope, $state, TradeFactory) {
 
     var socket = io(window.location.origin); 
     $scope.socket = socket;
@@ -230,8 +230,8 @@ app.controller('GameController', function ($scope, $state) {
       };
 
       $scope.submitTrade = function(){
-        if ($scope.trade.left.length + $scope.trade.right.length + $scope.trade.self.length < $scope.tradeCostArr.length){
-          $scope.tradeAlert = {type: 'warning', msg: 'not a trade!'};
+        if (!TradeFactory.isValidTrade($scope.trade, $scope.tradeCostArr)){
+          $scope.tradeAlert = {type: 'warning', msg: 'wrong resources'};
         }
         else {
           var tradeObj = {};
@@ -248,9 +248,8 @@ app.controller('GameController', function ($scope, $state) {
       }; 
       
       $scope.submitWonderTrade = function () {
-        console.log($scope.wonderTrade)
-        if ($scope.wonderTrade.left.length + $scope.wonderTrade.right.length + $scope.wonderTrade.self.length !== $scope.wonderTradeCostArr.length){
-          $scope.wonderTradeAlert = {type: 'warning', msg: 'not a trade!'};
+        if (!TradeFactory.isValidTrade($scope.wonderTrade, $scope.wonderTradeCostArr)){
+          $scope.wonderTradeAlert = {type: 'warning', msg: 'wrong resources'};
         }
         else {
           var tradeObj = {};
