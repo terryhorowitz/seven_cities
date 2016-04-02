@@ -39,7 +39,6 @@ app.directive('warResults', function ($rootScope, $state, $uibModal) {
             scope.showWinner = function () {
                 scope.end = true;
                 scope.warResults = false;
-                // scope.victory = true;
             }
 
             scope.leaveGame = function () {
@@ -47,27 +46,18 @@ app.directive('warResults', function ($rootScope, $state, $uibModal) {
                 localStorage.clear();
                 $state.go('home');
                 //clear game from db
-                console.log('right before broadcast in directive')
                 scope.$emit('leave game')
             }
-            // scope.showWarResults();
-            // console.log(scope.warResults);
 
             scope.$on('warHappened', function(data, args) {
                 scope.warResults = args;
-                // console.log('war results directive', scope.warResults);
-                // scope.$digest();
                 scope.showWarResults();
             })
 
             scope.$on('gameEnded', function(data, args) {
                 scope.victory = true;
-                // scope.gameResults = args;
                 scope.gameResults = args[0];
                 scope.winners = args[1];
-                // scope.$digest();
-                console.log('game results winners', scope.winners);
-                // scope.showGameResults();
             })
 
         }

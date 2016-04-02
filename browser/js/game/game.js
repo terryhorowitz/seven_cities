@@ -326,9 +326,9 @@ app.controller('GameController', function ($scope, $state) {
       // chat stuff
       $scope.msgs = [];
       $scope.sendMsg = function() {
-        $scope.msg.player = $scope.playername
-        socket.emit('send msg', {'player': $scope.msg.player, 'content': $scope.msg.text})
-        $scope.msg.text = ''
+        $scope.msg.player = $scope.playername;
+        socket.emit('send msg', {'player': $scope.msg.player, 'content': $scope.msg.text});
+        $scope.msg.text = '';
       } 
 
       $scope.hideChat = function() {
@@ -344,10 +344,10 @@ app.controller('GameController', function ($scope, $state) {
       }
 
       socket.on('get msg', function(data) {
-        $scope.msgs.push(data)
-        $scope.$digest()
+        $scope.msgs.push(data);
+        $scope.$digest();
         var objDiv = document.getElementById("messageList");
-        objDiv.scrollTop = objDiv.scrollHeight
+        objDiv.scrollTop = objDiv.scrollHeight;
       })
 
 
@@ -355,7 +355,7 @@ app.controller('GameController', function ($scope, $state) {
       //************* war results *****************
 
       socket.on('war results', function(warResults) {
-        console.log('@@@@@@@@@@war results', warResults);
+        // console.log('@@@@@@@@@@war results', warResults);
         $scope.$broadcast('warHappened', warResults)
       });
 
@@ -364,8 +364,8 @@ app.controller('GameController', function ($scope, $state) {
       //************* game results *****************
 
       socket.on('game results', function(gameResults) {
-        console.log('@@@@@@@@@@game results', gameResults);
-        $scope.$broadcast('gameEnded', gameResults)
+        // console.log('@@@@@@@@@@game results', gameResults);
+        $scope.$broadcast('gameEnded', gameResults);
       });
 
 
@@ -374,18 +374,8 @@ app.controller('GameController', function ($scope, $state) {
 
       $scope.$on('leave game', function() {
         console.log('@@@@@@@@@@leaving game');
-        socket.emit('delete game')
+        socket.emit('delete game');
       });
-
-      // $scope.leaveGame = function () {
-      //           //redirect to home page
-      //           // localStorage.clear();
-      //           // $state.go('home');
-      //           //clear game from db
-      //           console.log('right before broadcast in directive')
-      //           // scope.$broadcast('leave game')
-      //       }
-
 
 
 });

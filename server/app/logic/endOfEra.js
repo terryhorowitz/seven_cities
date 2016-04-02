@@ -26,18 +26,18 @@ var eraEnded = function(game, currentEra) {
   let newPlayerHand, shuffledDeck;
   let playersArr = game.GamePlayers;
   let era = currentEra + 1;
-  if (era === 2) {// should be era === 3
+  if (era === 4) {// change to era === 2 for testing
     // console.log('!!!!!!!!!!!!!!end of game')
     return Promise.map(playersArr, function(player) {
       return ending.calculatePoints(player)
       .then(function(data) {
-        console.log('data after point calculation')
+        // console.log('data after point calculation')
         return data;
       })
     })
     .then(function(allPlayers) {
       let gameResults = ending.findWinner(allPlayers)
-        console.log('########### gameResults inside era Ended', gameResults)
+        // console.log('########### gameResults inside era Ended', gameResults)
         return gameResults;
     })
   } else {
