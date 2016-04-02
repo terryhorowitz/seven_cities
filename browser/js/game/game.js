@@ -67,7 +67,6 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
       //need to initiate game when all players are ready (create a game in the db)
       socket.on('game initialized', function(data) {
         $scope.currentlyPlaying = true;
-        // console.log('game started')
         $scope.players = data;
         //find myself
         for (var i = 0; i < data.length; i++) {
@@ -127,8 +126,8 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
         $scope.$digest();
       })
 
-          $scope.submitChoice = function(selection){
-            $scope.submitted = true;
+        $scope.submitChoice = function(selection){
+          $scope.submitted = true;
           socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.playerId});
           $scope.playOptions = null;
         }
@@ -378,7 +377,6 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
             }
 
       socket.on('war results', function(warResults) {
-        console.log('@@@@@@@@@@war results', warResults);
         $scope.$broadcast('warHappened', warResults)
 
       });

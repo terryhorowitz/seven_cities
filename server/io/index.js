@@ -129,14 +129,11 @@ module.exports = function (server) {
 
     if (playersChoices.length === peopleInRoom){
       return playCard(playersChoices)
-
       .then(function(results) { //[game, [warResults, era]]
         if (results.length>1) {
 	        let game = results[0];
         	let warResults = results[1][0];
         	let era = results[1][1];
-        	// console.log('***************warResults from socket back end', warResults)
-        	// console.log('***************current room', currentRoom)
         	io.to(currentRoom).emit('war results', warResults);
           return endOfEra.eraEnded(game, era)
           .then(function(game){
@@ -155,12 +152,9 @@ module.exports = function (server) {
 
         else {
         	let game = results;
-	        // console.log('********************No war')
 	        // can refactor this repetion
 	      	playersChoices = [];
-	      	// console.log('game.GamePlayers in new round', game.GamePlayers)
 	      	players = helpers.createPlayersObjectRefresh(game.GamePlayers)
-	        // console.log('new round players', players)
 	      	io.to(currentRoom).emit('new round', players);
 	      	game.GamePlayers.forEach(function(player) {
 	            io.sockets.connected[player.socket].emit('your hand', player.Temporary);
