@@ -48,6 +48,7 @@ module.exports = function () {
   
   /////// Public API/////////////
   function orchestrator(playersSelections){
+    console.log('orch', playersSelections)
     return playersSelections.reduce(function(promiseAccumulator, playerChoice){
       choice = playerChoice.choice;
       return promiseAccumulator
@@ -62,6 +63,7 @@ module.exports = function () {
     }, Promise.resolve())
     .then(function(){
       //rotate hands
+      console.log('before shift')
       return shiftHandFromPlayers(playersSelections[0].playerId, card.dataValues.era)
     })
     .catch(function(err){ console.error('error executing', err) })
