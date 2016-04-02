@@ -1,7 +1,6 @@
 'use strict';
 
 var Sequelize = require('sequelize');
-
 var gameDB;
 
 if(process.env.HEROKU_POSTGRESQL_PUCE_URL){

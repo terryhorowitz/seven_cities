@@ -10,7 +10,7 @@ app.config(function ($stateProvider) {
 
 });
 
-app.controller('GameController', function ($scope, $state) {
+app.controller('GameController', function ($scope, $state, TradeFactory) {
 
     var socket = io(window.location.origin); 
     $scope.socket = socket;
@@ -67,7 +67,6 @@ app.controller('GameController', function ($scope, $state) {
       //need to initiate game when all players are ready (create a game in the db)
       socket.on('game initialized', function(data) {
         $scope.currentlyPlaying = true;
-        // console.log('game started')
         $scope.players = data;
         //find myself
         for (var i = 0; i < data.length; i++) {
@@ -127,17 +126,16 @@ app.controller('GameController', function ($scope, $state) {
         $scope.$digest();
       })
 
-          $scope.submitChoice = function(selection){
-            $scope.submitted = true;
+        $scope.submitChoice = function(selection){
+          $scope.submitted = true;
           socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.playerId});
           $scope.playOptions = null;
         }
                 
       socket.on('your options', function(options) {
-        console.log('options', options)
         $scope.hasWonderTrade = false;
         $scope.hasTrade = false;
-        $scope.playOptions = options.map(function(option) {
+        var opts = options.map(function(option) {
           if (typeof option !== 'string' && option.wonder) {
             $scope.hasWonderTrade = true;
             var leftArr = [], rightArr = [];
@@ -210,8 +208,11 @@ app.controller('GameController', function ($scope, $state) {
           } else if (option === 'upgrade') {
             return 'Upgrade for free'
           } else if (option === 'build wonder') {
-            return 'Build wonder';
+            return 'Build wonder for free';
           } else return "";
+        })
+        $scope.playOptions = opts.filter(function(o){
+          return typeof o === 'string' && o.length > 0;
         })
         $scope.$digest();
       })
@@ -226,10 +227,10 @@ app.controller('GameController', function ($scope, $state) {
         right: [],
         self: []
       };
-
+      $scope.tradeAlert = null;
       $scope.submitTrade = function(){
-        if ($scope.trade.left.length + $scope.trade.right.length + $scope.trade.self.length < $scope.tradeCostArr.length){
-          $scope.tradeAlert = {type: 'warning', msg: 'not a trade!'};
+        if (!TradeFactory.isValidTrade($scope.trade, $scope.tradeCostArr)){
+          $scope.tradeAlert = {type: 'warning', msg: 'wrong resources'};
         }
         else {
           var tradeObj = {};
@@ -244,11 +245,10 @@ app.controller('GameController', function ($scope, $state) {
           socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.playerId});
         }
       }; 
-      
+      $scope.wonderTradeAlert = null;
       $scope.submitWonderTrade = function () {
-        console.log($scope.wonderTrade)
-        if ($scope.wonderTrade.left.length + $scope.wonderTrade.right.length + $scope.wonderTrade.self.length !== $scope.wonderTradeCostArr.length){
-          $scope.wonderTradeAlert = {type: 'warning', msg: 'not a trade!'};
+        if (!TradeFactory.isValidTrade($scope.wonderTrade, $scope.wonderTradeCostArr)){
+          $scope.wonderTradeAlert = {type: 'warning', msg: 'wrong resources'};
         }
         else {
           var tradeObj = {};
@@ -261,6 +261,18 @@ app.controller('GameController', function ($scope, $state) {
           $scope.submitted = true;
           socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.playerId}); 
         }
+      }
+      
+      $scope.tradeCollapse = true;
+      $scope.toggleTradeCollapse = function () {
+        $scope.wonderTradeCollapse = true;
+        $scope.tradeCollapse ? $scope.tradeCollapse = false : $scope.tradeCollapse = true;
+      }
+      
+      $scope.wonderTradeCollapse = true;
+      $scope.toggleWonderTradeCollapse = function () {
+        $scope.tradeCollapse = true;
+        $scope.wonderTradeCollapse ? $scope.wonderTradeCollapse = false : $scope.wonderTradeCollapse = true;
       }
       
       $scope.closeWonderTradeAlert = function(){
@@ -370,7 +382,6 @@ app.controller('GameController', function ($scope, $state) {
       //************* war results *****************
 
       socket.on('war results', function(warResults) {
-        console.log('@@@@@@@@@@war results', warResults);
         $scope.$broadcast('warHappened', warResults)
 
       });
