@@ -25,7 +25,6 @@ function buildPlayerResources(player, resources) {
       } 
       else playersResources[resources[i]]++;
     }
-  console.log('build player resiyreces', playersResources)
   return player.save();
 }
 
