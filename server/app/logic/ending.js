@@ -5,26 +5,35 @@ var _ = require('lodash');
 
 module.exports = function () {
 
-	var calculatePoints = function (thisPlayer) {
+	var calculatePoints = function (player) {
 		var totalPoints = 0;
 		var totalMoney = 0;
+		let wonders = player.wondersBuilt;
 
-		return Player.findOne({ where: { id: thisPlayer.id }})
-		.then(function (player) {
+		console.log('**********player.tokens', player.tokens);
 
-			//calculate money and military points 
+		// 	//calculate money and military points 
+		if (player.tokens.length) {
+			console.log('########player.tokens', player.tokens);
+			let totalTokens = player.tokens.reduce(function(a, b) {
+				return a + b;
+			})
+			totalPoints += totalTokens;  
+		}
 
-			totalPoints += player.tokens[0] - player.tokens[1] + Math.floor(player.money/3);
-			totalMoney = player.money;
-			return player;
-		})
-		.then(function (player) {
+		totalPoints += Math.floor(player.money/3);
 
-			//calculate wonder points
+		totalMoney = player.money;
+
+		//calculate wonder points
 			
-			return Promise.join(player, player.builtWonders(), player.getBoard())
-		.spread(function(player, wonders, board) {
-			for (let i = 1; i < wonders+1; i--) {
+		return player.getBoard()
+		.then(function(board) {
+			// console.log('########player.wondersBuilt', wonders);
+			// console.log('########board', board);
+
+			for (let i = 1; i < wonders+1; i++) {
+				// console.log('########inside the loop');
 				//thisWonder will be a string such as 'wonder1'
 				let thisWonder = `wonder${i}`;
 				//check if board.wonder1 can be converted to number, then add that number to total points
@@ -35,9 +44,9 @@ module.exports = function () {
 
 			//calculate points from built cards
 
-			return Promise.join(player, wonders, board, player.getPermanent())
+		return Promise.join(board, player.getPermanent());
 		})
-		.spread(function(player, wonders, board, builtCards) {
+		.spread(function(board, builtCards) {
 			//Technology Cards helper variables:
 			let technologyCards = [0, 0, 0];//index 0 is tablet, index 1 is gear, index 2 is compass
 			let scientistsGuild = false;
@@ -91,7 +100,7 @@ module.exports = function () {
 			// count Technology Points
 
 			//find the technology card the user has most of
-			let max = Math.max(technologyCards);
+			let max = Math.max.apply(null, technologyCards);
 			let idx = technologyCards.indexOf(max);
 
 			//if the player has the scientists guild card and/or the second wonder built in the Babylon board, increment the number of the highest card
@@ -99,13 +108,14 @@ module.exports = function () {
 			if (board.name === "Babylon" && wonders > 1) technologyCards[idx]++;
 
 			//add victory points for repeating cards
+			// console.log('add to total points Math.pow(technologyCards[0], 2)', Math.pow(technologyCards[0], 2) + Math.pow(technologyCards[1], 2))
 			totalPoints += Math.pow(technologyCards[0], 2) + Math.pow(technologyCards[1], 2) + Math.pow(technologyCards[2], 2);
 
 			//find the minimum value of the technology cards
-			let min = Math.min(technologyCards);
+			let min = Math.min.apply(null, technologyCards);
+
 			//add 7 victory points for groups of 3 different symbols
 			totalPoints += min * 7;
-
 
 			// count Trading Points
 			for (let card of tradingCards) {
@@ -130,18 +140,18 @@ module.exports = function () {
 			// if the player has other guild cards, execute this promise:
 
 			if (guildCards.length) {
-				return Promise.join(player, wonders, board, builtCards, guildCards, player.getLeftNeighbor(), player.getRightNeighbor())
-				.spread(function(player, wonders, board, builtCards, guildCards, leftNeighbor, rightNeighbor) {
-					return Promise.join(player, wonders, board, builtCards, guildCards, leftNeighbor, rightNeighbor, leftNeighbor.getPermanent(), rightNeighbor.getPermanent())
+				return Promise.join(board, builtCards, guildCards, player.getLeftNeighbor(), player.getRightNeighbor())
+				.spread(function(board, builtCards, guildCards, leftNeighbor, rightNeighbor) {
+					return Promise.join(wonders, board, builtCards, guildCards, leftNeighbor, rightNeighbor, leftNeighbor.getPermanent(), rightNeighbor.getPermanent())
 				})
-				.spread(function(player, wonders, board, builtCards, guildCards, leftNeighbor, rightNeighbor, leftCards, rightCards) {
+				.spread(function(board, builtCards, guildCards, leftNeighbor, rightNeighbor, leftCards, rightCards) {
 					for (let card of guildCards) {
 						if (card.name === "Strategists Guild") {
 							totalPoints += leftNeighbor.tokens[2] * -1 + rightNeighbor.tokens[2] * -1;
 						} 
 						else if (card.name === "Builders Guild") {
 							return Promise.join(wonders, leftNeighbor.builtWonders(), rightNeighbor.builtWonders())
-							.spread(function(wonders, leftWonders, rightWonders) {
+							.spread(function(leftWonders, rightWonders) {
 								totalPoints += wonders + leftWonders +rightWonders;
 							})
 						} else {
@@ -154,9 +164,9 @@ module.exports = function () {
 			}// end if guildCards
 			})
 			.then(function() {
-				return { points: totalPoints, money: totalMoney}
+				console.log('totalPoints at the end', totalPoints)
+				return { player: player, points: totalPoints, money: totalMoney}
 			})
-		})
 	}
 
 
@@ -164,14 +174,33 @@ module.exports = function () {
 	//player.points = calculatePoints(player);
 
 	var findWinner = function (allPlayers) {
-		var topScore = _.maxBy(allPlayers, function(player) { return player.points.points });
-		var winner = _.filter(allPlayers, {'points': { 'points': topScore }});
-		if (winner.length === 1) return winner;
+		// console.log('allPlayers inside findWinner', allPlayers)
+		var topScore = allPlayers.sort(function(a,b) {
+	    	return a.points<b.points;
+		});
+
+		topScore.forEach(function(el, i) {
+			el.position = i + 1;
+		})
+		// console.log('********** inside find Winner topScore', topScore)
+		var winner = _.filter(allPlayers, {'points': topScore[0].points });
+		console.log('winner', winner)
+		if (winner.length === 1) {
+			// console.log('winner', winner[0])
+			// console.log('winner', winner[0].player.dataValues.name)
+			return [topScore, winner]
+		}
 		else if (winner.length > 1) {
-			var topMoney = _.maxBy(winner, function(player) { return player.points.money });
-			return topMoney;
+			console.log('more than one winner')
+			var topMoney = winner.sort(function(a,b) {
+				return a.money<b.money;
+			});
+			console.log('topMoney', topMoney)
+			var moneyWinner = _.filter(winner, {'money': topMoney[0].money });
+			console.log('moneyWinner', moneyWinner)
+			return [topScore, moneyWinner];
 		} else {
-			return "There was an error determining the winner"
+			return "There was an error determining the winner";
 		}
 	}
 
