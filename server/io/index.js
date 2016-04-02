@@ -131,26 +131,15 @@ module.exports = function (server) {
 
     if (playersChoices.length === peopleInRoom){
       return playCard(playersChoices)
-<<<<<<< HEAD
-
-      .then(function(results) { //[game, [warResults, era]]
-      	// console.log('$$$$$$$$$$$$$$$results', results)
-       //  console.log('playersChoices', playersChoices)
-=======
       .then(function(results) {
         console.log('playersChoices', playersChoices)
         console.log('results.id and .name beofre if', results.id, results.name)
->>>>>>> master
+
         if (results.length>1) {
 	        let game = results[0];
         	let warResults = results[1][0];
         	let era = results[1][1];
-<<<<<<< HEAD
-        	console.log('era', era)
-        	// console.log('***************warResults from socket back end', warResults)
-        	// console.log('***************current room', currentRoom)
-=======
->>>>>>> master
+
         	io.to(currentRoom).emit('war results', warResults);
         	if (era === 1) { //should be 3
         		return endOfEra.eraEnded(game, era)
