@@ -227,7 +227,7 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
         right: [],
         self: []
       };
-
+      $scope.tradeAlert = null;
       $scope.submitTrade = function(){
         if (!TradeFactory.isValidTrade($scope.trade, $scope.tradeCostArr)){
           $scope.tradeAlert = {type: 'warning', msg: 'wrong resources'};
@@ -245,7 +245,7 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
           socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.playerId});
         }
       }; 
-      
+      $scope.wonderTradeAlert = null;
       $scope.submitWonderTrade = function () {
         if (!TradeFactory.isValidTrade($scope.wonderTrade, $scope.wonderTradeCostArr)){
           $scope.wonderTradeAlert = {type: 'warning', msg: 'wrong resources'};
