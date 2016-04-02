@@ -9,6 +9,10 @@ app.directive('warResults', function ($rootScope, $state, $uibModal) {
         templateUrl: 'js/war-results/war-results.html',
         link: function(scope){
 
+            scope.winners = false;
+            scope.victory = false;
+            scope.end = false;
+
             // scope.warResults = [];
 
             // scope.warResults = [
@@ -19,29 +23,42 @@ app.directive('warResults', function ($rootScope, $state, $uibModal) {
                 $uibModal.open({
                     animation: scope.animationsEnabled,
                     templateUrl: 'warResultsModal',
-                    // size: 'small',
-                    scope: scope
+                    scope: scope,
+                    windowClass: 'war-modal'
+                    // ,
+                    // backdrop  : 'static',
+                    // keyboard  : false
                 })
 
             }
-            // scope.showWarResults();
-            // console.log(scope.warResults);
+
+            scope.dismissModal = function () {
+                // $uibModal.dismiss('cancel');
+            }
+
+            scope.showWinner = function () {
+                scope.end = true;
+                scope.warResults = false;
+            }
+
+            scope.leaveGame = function () {
+                //redirect to home page
+                localStorage.clear();
+                $state.go('home');
+                //clear game from db
+                scope.$emit('leave game')
+            }
 
             scope.$on('warHappened', function(data, args) {
                 scope.warResults = args;
-                console.log(scope.warResults);
-                scope.$digest();
                 scope.showWarResults();
             })
 
-            // socket.on('war results', function(warResults) {
-            //     console.log('@@@@@@@@@@war results inside the DIRECTIVE')
-            //     console.log('warResults', warResults)
-            //     scope.warResults = warResults;
-            //     scope.showWarResults();
-            // })
-            // scope.warResults = true;
-
+            scope.$on('gameEnded', function(data, args) {
+                scope.victory = true;
+                scope.gameResults = args[0];
+                scope.winners = args[1];
+            })
 
         }
 

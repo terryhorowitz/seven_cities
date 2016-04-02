@@ -39,12 +39,7 @@ module.exports = function () {
           }
         }
       }
-      var payment = checkResourcePaymentMethods(player, card.cost);
-      if (typeof payment === "string") return payment;
-      else {//include total to figure out trade options on frontend
-        payment.total = card.cost;
-        return payment;
-      }
+      return checkResourcePaymentMethods(player, card.cost);
     })
   }
   
@@ -58,42 +53,99 @@ module.exports = function () {
         _.pullAt(costCopy, costCopy.indexOf(cost[i]))
       }
     }
+    var copyAllPlayerResources = _.cloneDeep(playersResources);
     if (!costCopy.length) return 'paid by own resources';
-    else {
-      return canIBuyFromMyNeighbors(player, costCopy);
-    }
+    else return checkOtherPossibilities(copyAllPlayerResources, costCopy);
   }
   
-  function canIBuyFromMyNeighbors(player, cost) {
-    var playersResources = Resources.getGameResources(player.gameId)[player.id];
-    var leftResourcesCopy = _.cloneDeep(playersResources.left);
-    var rightResourcesCopy = _.cloneDeep(playersResources.right);
-    var trade = {};
-    var leftContribution = [];
-    var rightContribution = [];
-    var costCopy = _.cloneDeep(cost);
+  function combiningFunc(objValue, srcValue){
+      if (_.isArray(objValue)){
+        return objValue.concat(srcValue);
+      }
+      else {
+        if (objValue && srcValue){
+          return objValue + srcValue;
+        }
+        else if (objValue){
+          return objValue;
+        }
+        else if (srcValue) return srcValue;
+      }
+  }
 
-    for (var i = 0; i < cost.length; i++){
-      if (leftResourcesCopy[cost[i]]){
-        leftResourcesCopy[cost[i]]--;
-        leftContribution.push(cost[i]);
-        _.pullAt(costCopy, costCopy.indexOf(cost[i]));
-      }
-      if (rightResourcesCopy[cost[i]]){
-        rightResourcesCopy[cost[i]]--;
-        rightContribution.push(cost[i]);
-        if (costCopy.indexOf(cost[i]) > -1) _.pullAt(costCopy, costCopy.indexOf(cost[i]));
-      }
-    }
-    //check if a player can AFFORD!!!!
-    if (costCopy.length > 0) return 'no trade available!';
-    if (leftContribution.length) trade.left = leftContribution;
-    else trade.left = null;
-    if (rightContribution.length) trade.right = rightContribution;
-    else trade.right = null;
-    return trade;
+  function filterCombo (rsc, cost){
+    if (!rsc.combo) return [];
+    return rsc.combo.filter(function(r){
+      return r.some(function(e){
+        return cost.indexOf(e) > -1;      
+      })
+    })
   }
   
+  function filterResourceKeys (rscs, cost){
+    for (var resource in rscs) {
+      if (cost.indexOf(resource) === -1 && resource !== 'combo'){
+        delete rscs[resource];
+      }
+    }
+  }
+  
+  function removeTradingResources (neighborResourcesCombo){
+    if (!neighborResourcesCombo) return [];
+    return neighborResourcesCombo.filter(function(r){
+      return r.length === 2;
+    })
+  }
+  
+  function checkOtherPossibilities(resources, leftOverCost){
+    var ownResourcesComboCopy = _.cloneDeep(resources.self.combo) || [];
+    var allResources = _.merge(_.cloneDeep(resources.left), _.cloneDeep(resources.right), combiningFunc);
+    allResources.combo = removeTradingResources(allResources.combo);
+    allResources.combo = allResources.combo.concat(ownResourcesComboCopy);
+    filterResourceKeys(allResources, leftOverCost);
+    allResources.combo = filterCombo(allResources, leftOverCost);
+    var costForRecursion = _.cloneDeep(leftOverCost);
+    var resourcesForRecursion = _.cloneDeep(allResources);
+    if (recursivelyCheckCombos(resourcesForRecursion, costForRecursion)){
+      filterResourceKeys(resources.left, leftOverCost);
+      filterResourceKeys(resources.right, leftOverCost);
+      resources.right.combo = removeTradingResources(resources.right.combo);
+      resources.left.combo = removeTradingResources(resources.left.combo);
+      resources.left.combo = filterCombo(resources.left, leftOverCost);
+      resources.right.combo = filterCombo(resources.right, leftOverCost);
+      resources.self.combo = filterCombo(resources.self, leftOverCost);
+      return {
+        self: resources.self.combo,
+        left: resources.left,
+        right: resources.right,
+        cost: leftOverCost
+      }
+    }
+    else return 'no trade available!';
+  }
+  
+  function recursivelyCheckCombos(allResources, leftOverCost){
+    var costCopy = _.cloneDeep(leftOverCost);
+    for (var i = 0; i < costCopy.length; i++){
+      if (allResources[costCopy[i]]){
+        allResources[costCopy[i]]--;
+        _.pullAt(leftOverCost, leftOverCost.indexOf(costCopy[i]));
+      }
+    }
+    if (!leftOverCost.length) return true;
+    if (!allResources.combo.length) return false;
+    
+    var comboToCheck = allResources.combo.pop();
+    for (var j = 0; j < comboToCheck.length; j++){
+      var cost = _.cloneDeep(leftOverCost);
+      var rscCopy = _.cloneDeep(allResources);
+      if (!rscCopy[comboToCheck[j]]) rscCopy[comboToCheck[j]] = 1;
+      else rscCopy[comboToCheck[j]]++;
+      if (recursivelyCheckCombos(rscCopy, cost)) return true;
+    }
+    return false;
+  }
+
   function checkIfPlayerCanBuildWonder(playerId){
     return db_getters.getPlayer(playerId)
     .then(function(player){

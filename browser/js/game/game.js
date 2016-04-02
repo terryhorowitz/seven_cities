@@ -10,7 +10,7 @@ app.config(function ($stateProvider) {
 
 });
 
-app.controller('GameController', function ($scope, $state) {
+app.controller('GameController', function ($scope, $state, TradeFactory) {
 
     var socket = io(window.location.origin); 
     $scope.socket = socket;
@@ -23,7 +23,7 @@ app.controller('GameController', function ($scope, $state) {
     $scope.players;
     $scope.money;
     $scope.currentlyPlaying = false;
-    // $scope.me;
+//    $scope.me;
     $scope.myHand;
     $scope.rightNeighbor;
     $scope.leftNeighbor;
@@ -32,6 +32,11 @@ app.controller('GameController', function ($scope, $state) {
     $scope.submitted = false;
     $scope.background = {background: 'url(/img/map.jpg) no-repeat center center fixed', 'background-size': 'cover', 'min-height': '100%'};
     $scope.warResults = false;
+    $scope.alreadyBuiltForFree = {
+        1: true,
+        2: true,
+        3: true
+      }
 
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
 
@@ -46,6 +51,7 @@ app.controller('GameController', function ($scope, $state) {
     socket.on('connect', function(){
       console.log('I have made a persistent two-way connection to the server!');
       var tempId = localStorage.getItem('playerId');
+      if (tempId) $scope.playerId = tempId;
       socket.emit('create', {roomname: $scope.roomname, playername: $scope.playername, localId: tempId});
 
       socket.on('in room', function(data) {
@@ -55,7 +61,7 @@ app.controller('GameController', function ($scope, $state) {
       })
 
       socket.on('your id', function(data) {
-        $scope.me.playerId = data;
+        $scope.playerId = data;
         localStorage.setItem('playerId', data)
       })
 
@@ -66,7 +72,6 @@ app.controller('GameController', function ($scope, $state) {
       //need to initiate game when all players are ready (create a game in the db)
       socket.on('game initialized', function(data) {
         $scope.currentlyPlaying = true;
-        // console.log('game started')
         $scope.players = data;
         //find myself
         for (var i = 0; i < data.length; i++) {
@@ -126,63 +131,83 @@ app.controller('GameController', function ($scope, $state) {
         $scope.$digest();
       })
 
-      //{"left":null,"right":["ore"]}
-      //{"left":null,"right":["papyrus"]}
-
-          $scope.submitChoice = function(selection){
-            $scope.submitted = true;
-          socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+        $scope.submitChoice = function(selection){
+          $scope.submitted = true;
+          if (selection === "Build (free once per era)") {
+            $scope.alreadyBuiltForFree[$scope.currentEra] = false;
+            selection = 'Build for free';
+          }
+          socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.playerId});
           $scope.playOptions = null;
         }
                 
       socket.on('your options', function(options) {
-        $scope.wonderTrades = null;
-        $scope.tradeOptions = null;
-        $scope.playOptions = options.map(function(option) {
+        $scope.hasWonderTrade = false;
+        $scope.hasTrade = false;
+        var opts = options.map(function(option) {
           if (typeof option !== 'string' && option.wonder) {
-            var wonderNeeds = [];
-            var leftPayment = option.left || [];
-            var rightPayment = option.right || [];
-            option.total = leftPayment.concat(rightPayment)
-
-            for (var i = 0; i < option.total.length; i++){
-              var arr = [[],[]];
-              arr[0].push(option.total[i]);
-              wonderNeeds.push(arr);
-            }
-            for (var j = 0; j < wonderNeeds.length; j++){
-              if (option.left && option.left.length && wonderNeeds[j][0][0] === option.left[0]){
-                wonderNeeds[j][1].push('left');
-                option.left.shift();
-              }
-              if (option.right && option.right.length && wonderNeeds[j][0][0] === option.right[0]){
-                wonderNeeds[j][1].push('right');
-                option.right.shift();
+            $scope.hasWonderTrade = true;
+            var leftArr = [], rightArr = [];
+            for (var key in option.left){
+              if (key !== 'combo'){
+                while (option.left[key] > 0){
+                  leftArr.push(key);
+                  option.left[key]--;
+                }
               }
             }
-            $scope.tradeOptions = null;
-            $scope.wonderTrades = wonderNeeds;
+            for (var key in option.right){
+              if (key !== 'combo'){
+                while (option.right[key] > 0){
+                  rightArr.push(key);
+                  option.right[key]--;
+                }
+              }
+            }
+            $scope.leftWonderTradeOptions = {
+              combo: option.left.combo,
+              other: leftArr
+            }
+            $scope.rightWonderTradeOptions = {
+              combo: option.right.combo,
+              other: rightArr
+            }
+            $scope.playerWonderTradeOptions = option.self;
+            $scope.wonderTradeCost = option.cost.join(', ');
+            $scope.wonderTradeCostArr = option.cost;
           } else if (option === "wonder paid by own resources"){
             return "Build Wonder"
           }
           else if (typeof option !== 'string' && !option.wonder) {
-            var needed = [];
-            for (var i = 0; i < option.total.length; i++){
-              var arr = [[],[]];
-              arr[0].push(option.total[i]);
-              needed.push(arr);
+            $scope.hasTrade = true;
+            var leftArr = [], rightArr = [];
+            for (var key in option.left){
+              if (key !== 'combo'){
+                while (option.left[key] > 0){
+                  leftArr.push(key);
+                  option.left[key]--;
+                }
+              }
             }
-            for (var j = 0; j < needed.length; j++){
-              if (option.left && option.left.length && needed[j][0][0] === option.left[0]){
-                needed[j][1].push('left');
-                option.left.shift();
+            for (var key in option.right){
+              if (key !== 'combo'){
+                while (option.right[key] > 0){
+                  rightArr.push(key);
+                  option.right[key]--;
+                }
               }
-              if (option.right && option.right.length && needed[j][0][0] === option.right[0]){
-                needed[j][1].push('right');
-                option.right.shift();
-              }
-          }
-            $scope.tradeOptions = needed;
+            }
+            $scope.leftTradeOptions = {
+              combo: option.left.combo,
+              other: leftArr
+            }
+            $scope.rightTradeOptions = {
+              combo: option.right.combo,
+              other: rightArr
+            }
+            $scope.playerTradeOptions = option.self;
+            $scope.tradeCostArr = option.cost;
+            $scope.tradeCost = option.cost.join(', ');
           } else if (option === 'Discard') {
             return option;
           } else if (option === 'get free' || option === 'paid by own resources') {
@@ -192,43 +217,82 @@ app.controller('GameController', function ($scope, $state) {
           } else if (option === 'upgrade') {
             return 'Upgrade for free'
           } else if (option === 'build wonder') {
-            return 'Build wonder';
+            return 'Build wonder for free';
           } else return "";
         })
+        $scope.playOptions = opts.filter(function(o){
+          return typeof o === 'string' && o.length > 0;
+        })
+        if ($scope.me.board.name === "Olympia" && $scope.me.wondersBuilt >= 2 && $scope.alreadyBuiltForFree[$scope.currentEra]) {
+          $scope.playOptions.push('Build (free once per era)')
+        }
         $scope.$digest();
       })
-      
-      $scope.trade = {}
 
+      $scope.trade = {
+        left: [],
+        right: [],
+        self: []
+      };
+      $scope.wonderTrade = {
+        left: [],
+        right: [],
+        self: []
+      };
+      $scope.tradeAlert = null;
       $scope.submitTrade = function(){
-        var tradeObj = {};
-        tradeObj.left = [];
-        tradeObj.right = [];
-        for (var key in $scope.trade){
-          tradeObj[$scope.trade[key][0]].push($scope.trade[key][1]);
+        if (!TradeFactory.isValidTrade($scope.trade, $scope.tradeCostArr)){
+          $scope.tradeAlert = {type: 'warning', msg: 'wrong resources'};
         }
-        
-        if (!tradeObj.left.length) tradeObj.left = null;
-        if (!tradeObj.right.length) tradeObj.right = null;
-        tradeObj.wonder = false;
-        $scope.playOptions = null;
-        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+        else {
+          var tradeObj = {};
+          tradeObj.left = $scope.trade.left.filter(function(e){ return e; });
+          tradeObj.right = $scope.trade.right.filter(function(e){ return e; }); 
+          if (!tradeObj.left.length) tradeObj.left = null;
+          if (!tradeObj.right.length) tradeObj.right = null;
+          tradeObj.wonder = false;
+          $scope.playOptions = null;
+          $scope.submitted = true;
+          console.log('before emit trade', tradeObj)
+          socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.playerId});
+        }
       }; 
-      
-      $scope.tradeForWonder = {};
+      $scope.wonderTradeAlert = null;
       $scope.submitWonderTrade = function () {
-        var tradeObj = {};
-        tradeObj.left = [];
-        tradeObj.right = [];
-        for (var key in $scope.tradeForWonder){
-          tradeObj[$scope.tradeForWonder[key][0]].push($scope.tradeForWonder[key][1]);
+        if (!TradeFactory.isValidTrade($scope.wonderTrade, $scope.wonderTradeCostArr)){
+          $scope.wonderTradeAlert = {type: 'warning', msg: 'wrong resources'};
         }
-        
-        if (!tradeObj.left.length) tradeObj.left = null;
-        if (!tradeObj.right.length) tradeObj.right = null;
-        tradeObj.wonder = true;
-        $scope.playOptions = null;
-        socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.me.playerId});
+        else {
+          var tradeObj = {};
+          tradeObj.left = $scope.wonderTrade.left;
+          tradeObj.right = $scope.wonderTrade.right;
+          if (!tradeObj.left.length) tradeObj.left = null;
+          if (!tradeObj.right.length) tradeObj.right = null;
+          tradeObj.wonder = true;
+          $scope.playOptions = null;
+          $scope.submitted = true;
+          socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.playerId}); 
+        }
+      }
+      
+      $scope.tradeCollapse = true;
+      $scope.toggleTradeCollapse = function () {
+        $scope.wonderTradeCollapse = true;
+        $scope.tradeCollapse ? $scope.tradeCollapse = false : $scope.tradeCollapse = true;
+      }
+      
+      $scope.wonderTradeCollapse = true;
+      $scope.toggleWonderTradeCollapse = function () {
+        $scope.tradeCollapse = true;
+        $scope.wonderTradeCollapse ? $scope.wonderTradeCollapse = false : $scope.wonderTradeCollapse = true;
+      }
+      
+      $scope.closeWonderTradeAlert = function(){
+        $scope.wonderTradeAlert = null;
+      }
+      
+      $scope.closeTradeAlert = function(){
+        $scope.tradeAlert = null;
       }
 
       socket.on('err', function(data) {
@@ -237,6 +301,7 @@ app.controller('GameController', function ($scope, $state) {
       })
 
       socket.on('new round', function(data) {
+        console.log('data in new round', data)
         $scope.submitted = false;
         $scope.players = data;
         for (var i = 0; i < data.length; i++) {
@@ -265,7 +330,8 @@ app.controller('GameController', function ($scope, $state) {
       //player submits their choice
       $scope.selectCard = function(card) {
         $scope.cardSelection = card;
-        socket.emit('choice made', {player: $scope.me.playerId, card: card.id});
+        console.log('this is card and id in seleect card', card, $scope.playerId)
+        socket.emit('choice made', {player: $scope.playerId, card: card.id});
       };
 
       $scope.dismiss = function() {
@@ -293,23 +359,39 @@ app.controller('GameController', function ($scope, $state) {
         $scope.$broadcast('messageReceived', message)
       });
 
-      //************* war results *****************
 
-      $scope.showWarResults = function() {
-                $uibModal.open({
-                    animation: scope.animationsEnabled,
-                    templateUrl: 'warResultsModal',
-                    size: 'small'
-                    // ,
-                    // scope: scope
-                })
-            }
+      $scope.set_wonder = function(wonder) {
+        if ($scope.me && wonder <= $scope.me.wondersBuilt) {
+          return {
+            '-webkit-filter' : 'grayscale(100%)',
+            'filter' : 'grayscale(100%)'  
+          }
+        }
+      }
+
+      //************* war results *****************
 
       socket.on('war results', function(warResults) {
         $scope.$broadcast('warHappened', warResults)
-
       });
 
+
+
+      //************* game results *****************
+
+      socket.on('game results', function(gameResults) {
+        // console.log('@@@@@@@@@@game results', gameResults);
+        $scope.$broadcast('gameEnded', gameResults);
+      });
+
+
+
+      //************* game ended *****************
+
+      $scope.$on('leave game', function() {
+        console.log('@@@@@@@@@@leaving game');
+        socket.emit('delete game');
+      });
 
 
 });

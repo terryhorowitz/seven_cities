@@ -88,23 +88,29 @@ module.exports = function (server) {
 			}
 		});
 	socket.on('choice made', function(data) {
-		currentRoom = helpers.findRoomName(socket.rooms);
-		//needs to check if the choice is ok and then emit
-		var cardId = data.card;
-		var playerId = data.player;
-		var response;
-		var options = ['Discard'];
-//		return playCardOptions.checkSelectedCardOptions(playerId, cardId)
-    return Promise.join(playCardOptions.checkSelectedCardOptions(playerId, cardId), playCardOptions.checkIfPlayerCanBuildWonder(playerId))
-		.spread(function(cardOptions, wonderOptions) {
-      if (typeof wonderOptions !== "string") wonderOptions.wonder = true;
-      else if (typeof wonderOptions === "string") wonderOptions = "wonder " + wonderOptions;
-      if (typeof cardOptions !== 'string') cardOptions.wonder = false;
-			options.push(cardOptions);
-      options.push(wonderOptions);
-			io.sockets.connected[socket.id].emit('your options', options);
-		})
-	});
+			console.log('this is data in choice made', data)
+      currentRoom = helpers.findRoomName(socket.rooms);
+      //needs to check if the choice is ok and then emit
+      var cardId = data.card;
+      var playerId = data.player;
+      var response;
+      var options = ['Discard'];
+      
+      return playCardOptions.checkSelectedCardOptions(playerId, cardId)
+      .then(function(playerSelections){
+      	console.log('playerSelections in choice made', playerSelections)
+        return Promise.join(playerSelections, playCardOptions.checkIfPlayerCanBuildWonder(playerId))
+      })
+      .spread(function(cardOptions, wonderOptions) {
+        if (typeof wonderOptions !== "string") wonderOptions.wonder = true;
+        else if (typeof wonderOptions === "string") wonderOptions = "wonder " + wonderOptions;
+        if (typeof cardOptions !== 'string') cardOptions.wonder = false;
+            options.push(cardOptions);
+            options.push(wonderOptions);
+            io.sockets.connected[socket.id].emit('your options', options);
+            //check if player can build wonders
+        })
+      });
 
 	socket.on('send msg', function(data){
 		currentRoom = helpers.findRoomName(socket.rooms);
@@ -112,6 +118,7 @@ module.exports = function (server) {
 	})
 
 	socket.on('submit choice', function(data) {
+		console.log('this is data in choice submit', data)
 		currentRoom = helpers.findRoomName(socket.rooms);
                 var peopleInRoom = 0;
       
@@ -124,39 +131,46 @@ module.exports = function (server) {
 
     if (playersChoices.length === peopleInRoom){
       return playCard(playersChoices)
-
-      .then(function(results) { //[game, [warResults, era]]
+      .then(function(results) {
         console.log('playersChoices', playersChoices)
+        console.log('results.id and .name beofre if', results.id, results.name)
+
         if (results.length>1) {
 	        let game = results[0];
         	let warResults = results[1][0];
         	let era = results[1][1];
-        	console.log('***************warResults from socket back end', warResults)
-        	console.log('***************current room', currentRoom)
-        	io.to(currentRoom).emit('war results', warResults);
-          return endOfEra.eraEnded(game, era)
-          .then(function(game){
-                playersChoices = [];
-                // console.log('game.GamePlayers in new round', game.GamePlayers)
-                players = helpers.createPlayersObjectRefresh(game.GamePlayers)
-                // console.log('new round players', players)
-                io.to(currentRoom).emit('new round', players);
-                game.GamePlayers.forEach(function(player) {
-                io.sockets.connected[player.socket].emit('your hand', player.Temporary);
-        })
-        })
-        }
 
-// io.to(currentRoom).emit('in room', namesOfPlayers);
+        	io.to(currentRoom).emit('war results', warResults);
+        	if (era === 1) { //should be 3
+        		return endOfEra.eraEnded(game, era)
+        		.then(function(gameResults) {
+        			console.log('###########gameResults', gameResults);
+        			io.to(currentRoom).emit('game results', gameResults);
+        		})
+        	} else {
+	        	return endOfEra.eraEnded(game, era)
+	        	.then(function(game){
+	                playersChoices = [];
+	                // console.log('game.GamePlayers in new round', game.GamePlayers)
+	                players = helpers.createPlayersObjectRefresh(game.GamePlayers)
+	                // console.log('new round players', players)
+	                io.to(currentRoom).emit('new round', players);
+	                game.GamePlayers.forEach(function(player) {
+	                io.sockets.connected[player.socket].emit('your hand', player.Temporary);
+		        	})
+	        	})
+	        }
+	    }
+
+	// io.to(currentRoom).emit('in room', namesOfPlayers);
 
         else {
         	let game = results;
-	        // console.log('********************No war')
 	        // can refactor this repetion
 	      	playersChoices = [];
-	      	// console.log('game.GamePlayers in new round', game.GamePlayers)
+	      	console.log('game.GamePlayers in new round', game.GamePlayers)
 	      	players = helpers.createPlayersObjectRefresh(game.GamePlayers)
-	        // console.log('new round players', players)
+	        console.log('new round players', players)
 	      	io.to(currentRoom).emit('new round', players);
 	      	game.GamePlayers.forEach(function(player) {
 	            io.sockets.connected[player.socket].emit('your hand', player.Temporary);
