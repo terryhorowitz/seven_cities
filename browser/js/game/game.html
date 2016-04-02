@@ -72,7 +72,7 @@
 
 				<div class='wonders'>
 					<div ng-click="expandPile(wonder)" ng-repeat="wonder in wonderOptions" ng-class="{wonderexpand: wonder === clickedPile}" class="test">
-						<img ng-src='/img/wonders/{{me.board.name}}_{{wonder}}.png'>
+						<img ng-style='set_wonder(wonder)' ng-src='/img/wonders/{{me.board.name}}_{{wonder}}.png'>
 					</div>
 				</div>
 
