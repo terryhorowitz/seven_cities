@@ -352,9 +352,9 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
       // chat stuff
       $scope.msgs = [];
       $scope.sendMsg = function() {
-        $scope.msg.player = $scope.playername
-        socket.emit('send msg', {'player': $scope.msg.player, 'content': $scope.msg.text})
-        $scope.msg.text = ''
+        $scope.msg.player = $scope.playername;
+        socket.emit('send msg', {'player': $scope.msg.player, 'content': $scope.msg.text});
+        $scope.msg.text = '';
       } 
 
       $scope.hideChat = function() {
@@ -370,10 +370,10 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
       }
 
       socket.on('get msg', function(data) {
-        $scope.msgs.push(data)
-        $scope.$digest()
+        $scope.msgs.push(data);
+        $scope.$digest();
         var objDiv = document.getElementById("messageList");
-        objDiv.scrollTop = objDiv.scrollHeight
+        objDiv.scrollTop = objDiv.scrollHeight;
       })
 
       $scope.set_wonder = function(wonder) {
@@ -389,9 +389,25 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
 
       socket.on('war results', function(warResults) {
         $scope.$broadcast('warHappened', warResults)
-
       });
 
+
+
+      //************* game results *****************
+
+      socket.on('game results', function(gameResults) {
+        // console.log('@@@@@@@@@@game results', gameResults);
+        $scope.$broadcast('gameEnded', gameResults);
+      });
+
+
+
+      //************* game ended *****************
+
+      $scope.$on('leave game', function() {
+        console.log('@@@@@@@@@@leaving game');
+        socket.emit('delete game');
+      });
 
 
 });
