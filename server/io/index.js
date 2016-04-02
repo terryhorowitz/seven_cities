@@ -131,7 +131,6 @@ module.exports = function (server) {
       return playCard(playersChoices)
 
       .then(function(results) { //[game, [warResults, era]]
-        console.log('playersChoices', playersChoices)
         if (results.length>1) {
 	        let game = results[0];
         	let warResults = results[1][0];

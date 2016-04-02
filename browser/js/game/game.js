@@ -209,7 +209,7 @@ app.controller('GameController', function ($scope, $state) {
           } else if (option === 'upgrade') {
             return 'Upgrade for free'
           } else if (option === 'build wonder') {
-            return 'Build wonder';
+            return 'Build wonder for free';
           } else return "";
         })
         $scope.playOptions = opts.filter(function(o){
