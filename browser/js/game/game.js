@@ -133,7 +133,7 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
 
         $scope.submitChoice = function(selection){
           $scope.submitted = true;
-          if (selection === "Build for free (once per era)") {
+          if (selection === "Build (free once per era)") {
             $scope.alreadyBuiltForFree[$scope.currentEra = false];
             selection = 'Build for free';
           }
@@ -224,7 +224,7 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
           return typeof o === 'string' && o.length > 0;
         })
         if ($scope.me.board.name === "Olympia" && $scope.me.wondersBuilt >= 2 && $scope.alreadyBuiltForFree[$scope.currentEra]) {
-          $scope.playOptions.push('Build for free (once per era)')
+          $scope.playOptions.push('Build (free once per era)')
         }
         $scope.$digest();
       })
