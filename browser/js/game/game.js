@@ -350,31 +350,15 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
       }
 
       // chat stuff
-      $scope.msgs = [];
-      $scope.sendMsg = function() {
-        $scope.msg.player = $scope.playername;
-        socket.emit('send msg', {'player': $scope.msg.player, 'content': $scope.msg.text});
-        $scope.msg.text = '';
-      } 
 
-      $scope.hideChat = function() {
-        if ($scope.minimizeChat) {
-          document.getElementById('messageList').style.height = '250px';
-          $scope.minimizeChat = false;
-        }
-        else {
-          document.getElementById('messageList').style.height = '0px';
-          document.getElementById('messageList').style.padding = '5px';
-          $scope.minimizeChat = true;
-        }
-      }
+      $scope.$on('messageSent', function(data, args) {
+        socket.emit('send msg', args)
+      });
 
-      socket.on('get msg', function(data) {
-        $scope.msgs.push(data);
-        $scope.$digest();
-        var objDiv = document.getElementById("messageList");
-        objDiv.scrollTop = objDiv.scrollHeight;
-      })
+      socket.on('get msg', function(message) {
+        $scope.$broadcast('messageReceived', message)
+      });
+
 
       $scope.set_wonder = function(wonder) {
         if ($scope.me && wonder <= $scope.me.wondersBuilt) {
