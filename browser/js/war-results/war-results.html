@@ -4,11 +4,24 @@
 <script type="text/ng-template" id="warResultsModal">
 
     <div class="modal-body war-background">
-		<h2>War Results</h2>
-		<div ng-repeat="result in warResults">
-			<p >{{ result }}</p>
+	    <div class='war-results' ng-show="warResults">
+			<h2>War Results</h2>
+			<div ng-repeat="result in warResults">
+				<p >{{ result }}</p>
+			</div>
+			<button class="btn btn-default" ng-click="dismissModal()" ng-hide="victory">Ok</button>
+			<button class="btn btn-default" ng-click="showWinner()" ng-show="victory">Show Winner</button>
+			<button class="btn btn-default" ng-click="leaveGame()" ng-show="end">Leave game or replay</button>
+	    </div>
+	    <div class='game-results' ng-show="showWinner">
+			<h2>Game Results</h2>
+			<div ng-repeat="result in gameResults">
+				<p >{{ result.player.name }} with {{result.points}} points and {{result.money}} money</p>
+			</div>
+			<div>
+				<p >{{ winner }} wins!!!!!</p>
+			</div>
 		</div>
-
     </div>
  
 </script>

@@ -357,7 +357,6 @@ app.controller('GameController', function ($scope, $state) {
       socket.on('war results', function(warResults) {
         console.log('@@@@@@@@@@war results', warResults);
         $scope.$broadcast('warHappened', warResults)
-
       });
 
 
@@ -367,7 +366,6 @@ app.controller('GameController', function ($scope, $state) {
       socket.on('game results', function(gameResults) {
         console.log('@@@@@@@@@@game results', gameResults);
         $scope.$broadcast('gameEnded', gameResults)
-
       });
 
 
