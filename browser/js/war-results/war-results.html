@@ -1,6 +1,3 @@
-
-<!-- <div ng-show='neighborView'> -->
-    <!-- <view-neighbor></view-neighbor> -->
 <script type="text/ng-template" id="warResultsModal">
 
     <div class="modal-body war-background">
@@ -9,20 +6,18 @@
 			<div ng-repeat="result in warResults">
 				<p >{{ result }}</p>
 			</div>
-			<button class="btn btn-default" ng-click="dismissModal()" ng-hide="victory">Ok</button>
-			<button class="btn btn-default" ng-click="showWinner()" ng-show="victory">Show Winner</button>
+			<button class="btn btn-default" ng-click="dismissModal()" ng-hide="winners">Ok</button>
+			<button class="btn btn-default" ng-click="showWinner()" ng-show="winners">Show Winner</button>
 			<button class="btn btn-default" ng-click="leaveGame()" ng-show="end">Leave game or replay</button>
 	    </div>
-	    <div class='game-results' ng-show="showWinner">
+	    <div class='game-results' ng-show="end">
 			<h2>Game Results</h2>
 			<div ng-repeat="result in gameResults">
-				<p >{{ result.player.name }} with {{result.points}} points and {{result.money}} money</p>
+				<p ><span>{{ result.position | ordinal }} place: </span>{{ result.player.name }} with {{result.points}} points and {{result.money}} money</p>
 			</div>
-			<div>
-				<p >{{ winner }} wins!!!!!</p>
+			<div ng-repeat="winner in winners">
+				<h4>{{ winner }} wins!!!!!</h4>
 			</div>
 		</div>
     </div>
- 
 </script>
-<!-- </div> -->

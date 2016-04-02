@@ -9,7 +9,7 @@ app.directive('warResults', function ($rootScope, $state, $uibModal) {
         templateUrl: 'js/war-results/war-results.html',
         link: function(scope){
 
-            scope.winner = false;
+            scope.winners = false;
             scope.victory = false;
             scope.end = false;
 
@@ -36,7 +36,7 @@ app.directive('warResults', function ($rootScope, $state, $uibModal) {
             scope.showWinner = function () {
                 scope.end = true;
                 scope.warResults = false;
-                scope.victory = false;
+                // scope.victory = true;
             }
 
             scope.leaveGame = function () {
@@ -53,10 +53,10 @@ app.directive('warResults', function ($rootScope, $state, $uibModal) {
             })
 
             scope.$on('gameEnded', function(data, args) {
-                scope.victory = true;
+                // scope.victory = true;
                 // scope.gameResults = args;
                 scope.gameResults = args[0];
-                scope.winner = args[1];
+                scope.winners = args[1];
                 scope.$digest();
                 console.log('game results directive', scope.gameResults);
                 // scope.showGameResults();
