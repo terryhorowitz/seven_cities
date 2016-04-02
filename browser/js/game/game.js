@@ -134,7 +134,7 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
         $scope.submitChoice = function(selection){
           $scope.submitted = true;
           if (selection === "Build (free once per era)") {
-            $scope.alreadyBuiltForFree[$scope.currentEra = false];
+            $scope.alreadyBuiltForFree[$scope.currentEra] = false;
             selection = 'Build for free';
           }
           socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.playerId});
@@ -377,7 +377,7 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
       })
 
       $scope.set_wonder = function(wonder) {
-        if (wonder <= $scope.me.wondersBuilt) {
+        if ($scope.me && wonder <= $scope.me.wondersBuilt) {
           return {
             '-webkit-filter' : 'grayscale(100%)',
             'filter' : 'grayscale(100%)'  
