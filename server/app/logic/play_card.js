@@ -62,6 +62,7 @@ module.exports = function () {
     }, Promise.resolve())
     .then(function(){
       //rotate hands
+      console.log('##########inside rotate hands')
       return shiftHandFromPlayers(playersSelections[0].playerId, card.dataValues.era)
     })
     .catch(function(err){ console.error('error executing', err) })
@@ -227,6 +228,8 @@ module.exports = function () {
   }
     
   function shiftHandFromPlayers(startPlayerId, era){
+          console.log('##########inside shiftHandFromPlayers')
+
     var startPlayer;
     var warResults;
     return db_getters.getPlayer(startPlayerId)

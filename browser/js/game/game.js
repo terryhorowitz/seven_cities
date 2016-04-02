@@ -370,5 +370,23 @@ app.controller('GameController', function ($scope, $state) {
 
 
 
+      //************* game ended *****************
+
+      $scope.$on('leave game', function() {
+        console.log('@@@@@@@@@@leaving game');
+        socket.emit('delete game')
+      });
+
+      // $scope.leaveGame = function () {
+      //           //redirect to home page
+      //           // localStorage.clear();
+      //           // $state.go('home');
+      //           //clear game from db
+      //           console.log('right before broadcast in directive')
+      //           // scope.$broadcast('leave game')
+      //       }
+
+
+
 });
 

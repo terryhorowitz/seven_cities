@@ -6,9 +6,8 @@
 			<div ng-repeat="result in warResults">
 				<p >{{ result }}</p>
 			</div>
-			<button class="btn btn-default" ng-click="dismissModal()" ng-hide="winners">Ok</button>
-			<button class="btn btn-default" ng-click="showWinner()" ng-show="winners">Show Winner</button>
-			<button class="btn btn-default" ng-click="leaveGame()" ng-show="end">Leave game or replay</button>
+			<button class="btn btn-default" ng-click="dismissModal()" ng-hide="victory">Ok</button>
+			<button class="btn btn-default" ng-click="showWinner()" ng-show="victory">Show Winner</button>
 	    </div>
 	    <div class='game-results' ng-show="end">
 			<h2>Game Results</h2>
@@ -16,8 +15,9 @@
 				<p ><span>{{ result.position | ordinal }} place: </span>{{ result.player.name }} with {{result.points}} points and {{result.money}} money</p>
 			</div>
 			<div ng-repeat="winner in winners">
-				<h4>{{ winner }} wins!!!!!</h4>
+				<h3>{{ winner.player.name }} wins!!!!!</h3>
 			</div>
+			<button class="btn btn-default" ng-click="leaveGame()">Leave game or replay</button>
 		</div>
     </div>
 </script>

@@ -184,11 +184,11 @@ module.exports = function () {
 		})
 		// console.log('********** inside find Winner topScore', topScore)
 		var winner = _.filter(allPlayers, {'points': topScore[0].points });
-		// console.log('winner', winner)
+		console.log('winner', winner)
 		if (winner.length === 1) {
 			// console.log('winner', winner[0])
 			// console.log('winner', winner[0].player.dataValues.name)
-			return [topScore, winner[0].player.dataValues.name]
+			return [topScore, winner]
 		}
 		else if (winner.length > 1) {
 			console.log('more than one winner')
@@ -196,7 +196,7 @@ module.exports = function () {
 				return a.money<b.money;
 			});
 			console.log('topMoney', topMoney)
-			var moneyWinner = _.filter(topScore, {'money': topMoney[0].money });
+			var moneyWinner = _.filter(winner, {'money': topMoney[0].money });
 			console.log('moneyWinner', moneyWinner)
 			return [topScore, moneyWinner];
 		} else {

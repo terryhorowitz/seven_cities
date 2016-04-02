@@ -138,8 +138,8 @@ function sortTokens(tokensArr) {
 }
     
 module.exports = {
-		findRoomName: findRoomName,
-		startNewGame: startNewGame,
+	findRoomName: findRoomName,
+	startNewGame: startNewGame,
     createPlayersObject: createPlayersObject,
     createPlayersObjectRefresh: createPlayersObjectRefresh
 };
