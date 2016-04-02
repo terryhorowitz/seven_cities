@@ -15,6 +15,7 @@
 var Game = require('../../db/models').Game;
 var Deck = require('../../db/models').Deck;
 var Player = require('../../db/models').Player;
+var Card = require('../../db/models/index.js').Card;
 var War = require('./war');
 var playCard = require('./play_card');
 var ending = require('./ending')();
@@ -23,6 +24,7 @@ var Promise = require('bluebird');
 var _ = require('lodash');
 
 var eraEnded = function(game, currentEra) {
+  var thisDeck;
   let newPlayerHand, shuffledDeck;
   let playersArr = game.GamePlayers;
   let era = currentEra + 1;
@@ -51,8 +53,22 @@ var eraEnded = function(game, currentEra) {
     .then(function(playersArr) {
       return Deck.findOne({where: {era: era, numPlayers: playersArr.length}, include: [{all:true}]})
       .then(function(deck) {
-        shuffledDeck = _.shuffle(deck.cards)
-        return game.setDecks(deck)
+        thisDeck = deck;
+        if (era === 3) {
+          return Card.findAll({where: {type: "Guild"}})
+        } else {
+          return thisDeck;
+        }
+      })
+      .then(function(deck) {
+        if (era === 3) {
+          deck = _.shuffle(deck)
+          for (var i = 0; i < playersArr.length + 2; i++) {
+            thisDeck.cards.push(deck[i])
+          }
+        }
+        shuffledDeck = _.shuffle(thisDeck.cards)
+        return game.setDecks(thisDeck)
       })
       .then(function() {
         return Promise.map(playersArr, function(player){

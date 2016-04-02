@@ -57,13 +57,13 @@ router.get('/card', function(req, res, next){
 router.delete('/game', function(req, res, next){
   Game.destroy({where: {}})
   .then(function() {
-    res.send('destoried!')
+    res.send('destroyed!')
   }).catch(next)
 });
 
 router.delete('/player', function(req, res, next){
   Player.destroy({where: {}})
   .then(function() {
-    res.send('destoried!')
+    res.send('destroyed!')
   }).catch(next)
 });
