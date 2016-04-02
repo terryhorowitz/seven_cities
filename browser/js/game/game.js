@@ -32,6 +32,11 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
     $scope.submitted = false;
     $scope.background = {background: 'url(/img/map.jpg) no-repeat center center fixed', 'background-size': 'cover', 'min-height': '100%'};
     $scope.warResults = false;
+    $scope.alreadyBuiltForFree = {
+        1: true,
+        2: true,
+        3: true
+      }
 
     //a function to allow a players (first player in the room?) to initialize the game with the current number of players
 
@@ -128,6 +133,10 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
 
         $scope.submitChoice = function(selection){
           $scope.submitted = true;
+          if (selection === "Build for free (once per era)") {
+            $scope.alreadyBuiltForFree[$scope.currentEra = false];
+            selection = 'Build for free';
+          }
           socket.emit('submit choice', {choice: selection, cardId: $scope.cardSelection.id, playerId: $scope.playerId});
           $scope.playOptions = null;
         }
@@ -214,6 +223,9 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
         $scope.playOptions = opts.filter(function(o){
           return typeof o === 'string' && o.length > 0;
         })
+        if ($scope.me.board.name === "Olympia" && $scope.me.wondersBuilt >= 2 && $scope.alreadyBuiltForFree[$scope.currentEra]) {
+          $scope.playOptions.push('Build for free (once per era)')
+        }
         $scope.$digest();
       })
 
@@ -372,12 +384,6 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
           }
         }
       }
-      // $scope.set_wonder = function(wonder) {
-      //   if(wonder === $scope.me.wondersBuilt) {
-
-      //   }
-      //   console.log('wonder', wonder, $scope.me)
-      // }
 
       //************* war results *****************
 
