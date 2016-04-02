@@ -289,6 +289,7 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
       })
 
       socket.on('new round', function(data) {
+        console.log('data in new round', data)
         $scope.submitted = false;
         $scope.players = data;
         for (var i = 0; i < data.length; i++) {
@@ -317,6 +318,7 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
       //player submits their choice
       $scope.selectCard = function(card) {
         $scope.cardSelection = card;
+        console.log('this is card and id in seleect card', card, $scope.playerId)
         socket.emit('choice made', {player: $scope.playerId, card: card.id});
       };
 
@@ -362,19 +364,22 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
         objDiv.scrollTop = objDiv.scrollHeight
       })
 
+      $scope.set_wonder = function(wonder) {
+        if (wonder <= $scope.me.wondersBuilt) {
+          return {
+            '-webkit-filter' : 'grayscale(100%)',
+            'filter' : 'grayscale(100%)'  
+          }
+        }
+      }
+      // $scope.set_wonder = function(wonder) {
+      //   if(wonder === $scope.me.wondersBuilt) {
 
+      //   }
+      //   console.log('wonder', wonder, $scope.me)
+      // }
 
       //************* war results *****************
-
-      $scope.showWarResults = function() {
-                $uibModal.open({
-                    animation: scope.animationsEnabled,
-                    templateUrl: 'warResultsModal',
-                    size: 'small'
-                    // ,
-                    // scope: scope
-                })
-            }
 
       socket.on('war results', function(warResults) {
         $scope.$broadcast('warHappened', warResults)
