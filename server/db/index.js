@@ -7,12 +7,14 @@ var gameDB;
 if(process.env.HEROKU_POSTGRESQL_PUCE_URL){
   gameDB = new Sequelize(process.env.HEROKU_POSTGRESQL_PUCE_URL, {
     dialect: 'postgres',
-    port: 5432
+    port: 5432,
+    logging: false
   });
 } else {
   gameDB = new Sequelize('gamedb', '', null, {
     dialect: 'postgres',
-    port: 5432
+    port: 5432,
+    logging: false
   });
 }
 

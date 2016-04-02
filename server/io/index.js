@@ -88,7 +88,7 @@ module.exports = function (server) {
 			}
 		});
 	socket.on('choice made', function(data) {
-
+			console.log('this is data in choice made', data)
       currentRoom = helpers.findRoomName(socket.rooms);
       //needs to check if the choice is ok and then emit
       var cardId = data.card;
@@ -98,6 +98,7 @@ module.exports = function (server) {
       
       return playCardOptions.checkSelectedCardOptions(playerId, cardId)
       .then(function(playerSelections){
+      	console.log('playerSelections in choice made', playerSelections)
         return Promise.join(playerSelections, playCardOptions.checkIfPlayerCanBuildWonder(playerId))
       })
       .spread(function(cardOptions, wonderOptions) {
@@ -117,6 +118,7 @@ module.exports = function (server) {
 	})
 
 	socket.on('submit choice', function(data) {
+		console.log('this is data in choice submit', data)
 		currentRoom = helpers.findRoomName(socket.rooms);
                 var peopleInRoom = 0;
       
@@ -132,6 +134,7 @@ module.exports = function (server) {
 
       .then(function(results) { //[game, [warResults, era]]
         console.log('playersChoices', playersChoices)
+        console.log('results', results)
         if (results.length>1) {
 	        let game = results[0];
         	let warResults = results[1][0];
@@ -159,9 +162,9 @@ module.exports = function (server) {
 	        // console.log('********************No war')
 	        // can refactor this repetion
 	      	playersChoices = [];
-	      	// console.log('game.GamePlayers in new round', game.GamePlayers)
+	      	console.log('game.GamePlayers in new round', game.GamePlayers)
 	      	players = helpers.createPlayersObjectRefresh(game.GamePlayers)
-	        // console.log('new round players', players)
+	        console.log('new round players', players)
 	      	io.to(currentRoom).emit('new round', players);
 	      	game.GamePlayers.forEach(function(player) {
 	            io.sockets.connected[player.socket].emit('your hand', player.Temporary);
