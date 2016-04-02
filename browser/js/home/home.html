@@ -2,8 +2,12 @@
 	<section id="home">
 		<h1 id='title'>Seven Cities</h1>
 		<h3 id='subtitle'>A Multiplayer strategy game</h3>
+		<div ng-hide='login'>
+			<a href='/img/instructions/game_instructions.pdf' target="_blank"class='lined thin'>Instructions</a>
+			<button ng-click='showLogin()' class='lined thin'>Play</button>
+		</div>
 	 <!--  <button id='choosegame' ng-click='showin()' class='btn btn-option'><h2>Two Player</h2></button> -->
-	  <div id='allthings' class='text-center'>
+	  <form name="join" ng-submit="joinGame(join.$valid)" id='allthings' ng-show='login' class='text-center'>
 		  <div id='inputs'>
 			  <div id='room'>
 			  	<label>Game name: <input id='roomin' type='text', name='roomName' ng-model='chooseroomname' required></label>
@@ -13,8 +17,8 @@
 			  </div>
 			</div>
 		  <div id='joinbox'>
-		  	<button id='joingame' ng-click='twoPlayer()' class='lined thin'><h2>Join</h2></button>
+		  	<button type='submit' id='joingame' class='lined thin'>Join</button>
 		  </div>
-		</div>
+		</form>
 	</section>
 </div>
