@@ -1,5 +1,6 @@
 'use strict';
 var Game = require('../../db/models').Game;
+var Player = require('../../db/models').Player;
 var Promise = require('bluebird');
 var _ = require('lodash');
 
@@ -205,19 +206,18 @@ module.exports = function () {
 	}
 
 	var clearPlayersfromDB = function (allPlayers) {
-		_.map(allPlayers, function(player) {
-			return Player.destroy({where: { id: player.id }})
+		var gameid;
+		return Player.findOne({where: {id: allPlayers[0].playerId}})
+		.then(function(player) {
+			gameid = player.gameId;
+			console.log('gameid', gameid)
+			return Promise.join(Player.destroy({where: { gameId: gameid }}), Game.destroy({where: { id: gameid }}))
 		})
-	}
-
-	var clearGamefromDB = function (game) {
-		return Game.destroy({where: { id: game.id }})
 	}
 
 	return {
 		calculatePoints: calculatePoints,
 	    findWinner: findWinner,
-	    clearPlayersfromDB: clearPlayersfromDB,
-	    clearGamefromDB: clearGamefromDB
+	    clearPlayersfromDB: clearPlayersfromDB
 	}
 }

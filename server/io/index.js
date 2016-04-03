@@ -14,6 +14,8 @@ var playerReload = require('../app/logic/playerReload.js');
 var helpers = require('../app/logic/socketHelpers.js');
 var playCard = require('../app/logic/play_card.js')();
 var endOfEra = require('../app/logic/endOfEra.js');
+var ending = require('../app/logic/ending.js')();
+
 
 
 module.exports = function (server) {
@@ -185,15 +187,12 @@ module.exports = function (server) {
     }
 
 	})
-	socket.on('delete game', function(numPlayers) {
-		currentRoom = helpers.findRoomName(socket.rooms);
-    var peopleInRoom = 0;
+	socket.on('delete game', function(thesePlayers) {
     socket.disconnect();
-    clients = io.sockets.adapter.rooms[currentRoom];
-    for (var key in clients.sockets) {
-      peopleInRoom++;
-    }
-		console.log('peopleInRoom', peopleInRoom)
+  	return ending.clearPlayersfromDB(thesePlayers.players)
+  	.catch(function(err) {
+  		console.log('error in delete game in socket index', err)
+  	})
 	})
 });
   
