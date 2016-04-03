@@ -134,25 +134,35 @@ module.exports = function (server) {
       .then(function(results) {
         console.log('playersChoices', playersChoices)
         console.log('results.id and .name beofre if', results.id, results.name)
+
         if (results.length>1) {
 	        let game = results[0];
         	let warResults = results[1][0];
         	let era = results[1][1];
-        	io.to(currentRoom).emit('war results', warResults);
-          return endOfEra.eraEnded(game, era)
-          .then(function(game){
-                playersChoices = [];
-                // console.log('game.GamePlayers in new round', game.GamePlayers)
-                players = helpers.createPlayersObjectRefresh(game.GamePlayers)
-                // console.log('new round players', players)
-                io.to(currentRoom).emit('new round', players);
-                game.GamePlayers.forEach(function(player) {
-                io.sockets.connected[player.socket].emit('your hand', player.Temporary);
-        })
-        })
-        }
 
-// io.to(currentRoom).emit('in room', namesOfPlayers);
+        	io.to(currentRoom).emit('war results', warResults);
+        	if (era === 1) { //should be 3
+        		return endOfEra.eraEnded(game, era)
+        		.then(function(gameResults) {
+        			console.log('###########gameResults', gameResults);
+        			io.to(currentRoom).emit('game results', gameResults);
+        		})
+        	} else {
+	        	return endOfEra.eraEnded(game, era)
+	        	.then(function(game){
+	                playersChoices = [];
+	                // console.log('game.GamePlayers in new round', game.GamePlayers)
+	                players = helpers.createPlayersObjectRefresh(game.GamePlayers)
+	                // console.log('new round players', players)
+	                io.to(currentRoom).emit('new round', players);
+	                game.GamePlayers.forEach(function(player) {
+	                io.sockets.connected[player.socket].emit('your hand', player.Temporary);
+		        	})
+	        	})
+	        }
+	    }
+
+	// io.to(currentRoom).emit('in room', namesOfPlayers);
 
         else {
         	let game = results;

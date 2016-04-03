@@ -84,6 +84,7 @@ module.exports = function () {
   function buildCard() {
     return doSomethingBasedOnBuildingACard()
     .then(function(){
+      console.log('##########inside build card right before removeTemporary and addPermanent')
       return Promise.join(player.removeTemporary(card), player.addPermanent(card));
     })
     .catch(function(err){
@@ -247,7 +248,7 @@ module.exports = function () {
         newTempCards[playerSwapping.id] = _.find(game.GamePlayers, {id: playerSwapping[swapNeighbor]}).Temporary;
         playerSwapping = _.find(game.GamePlayers, {id: playerSwapping[swapNeighbor]});
       }
-      if (newTempCards[startPlayerId].length === 1) {
+      if (newTempCards[startPlayerId].length === 1) { //change this if developing
         return war.goToWar(game, era)
         .then(function(resultsAndEra) {
           warResults = resultsAndEra;
@@ -267,9 +268,6 @@ module.exports = function () {
     .then(function(){
       if (warResults) {
         return Promise.join(db_getters.getGame(startPlayer.gameId), warResults)
-        // .spread(function(game, warResults) {
-        //   return 
-        // })
       }
       else return db_getters.getGame(startPlayer.gameId)
     })

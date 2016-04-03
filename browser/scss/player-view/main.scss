@@ -50,6 +50,7 @@ $card-h-space-expand: 120px;
 $pile-width: 115px;
 $built-card-left: 100px;
 $expanded-position-h: 170px;
+$card-width: 100px;
 
 
 li {
@@ -101,7 +102,7 @@ li {
 	margin: 0 auto;
 	/*overflow: auto;*/
 	img {
-		max-width: 80px;
+		max-width: $card-width;
 	}
 }
 
@@ -149,7 +150,7 @@ li {
 				img {
 					transition: all 0.5s ease-in-out;
 					position: absolute;
-					width: 80px;
+					width: $card-width;
 				}
 				&:nth-of-type(1) img{
 					top: 0px;
