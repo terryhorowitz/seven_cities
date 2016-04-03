@@ -178,7 +178,7 @@ module.exports = function () {
 	//player.points = calculatePoints(player);
 
 	var findWinner = function (allPlayers) {
-		// console.log('allPlayers inside findWinner', allPlayers)
+		console.log('allPlayers inside findWinner', allPlayers)
 		var topScore = allPlayers.sort(function(a,b) {
 	    	return a.points<b.points;
 		});
@@ -186,7 +186,7 @@ module.exports = function () {
 		topScore.forEach(function(el, i) {
 			el.position = i + 1;
 		})
-		// console.log('********** inside find Winner topScore', topScore)
+		console.log('********** inside find Winner topScore', topScore)
 		var winner = _.filter(allPlayers, {'points': topScore[0].points });
 		console.log('winner', winner)
 		if (winner.length === 1) {
