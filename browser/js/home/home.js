@@ -9,9 +9,17 @@ app.config(function ($stateProvider) {
 
 
 app.controller('HomeController', function ($scope, $state) {
-    $scope.twoPlayer = function() {
-      localStorage.clear();
-    	$state.go('game', {roomname: $scope.chooseroomname, playername: $scope.choosename});
+    $scope.login = false;
+
+    $scope.joinGame = function(valid) {
+    	if (valid) {
+	    	localStorage.clear();
+	    	$state.go('game', {roomname: $scope.chooseroomname, playername: $scope.choosename});	
+    	}
+    }
+
+    $scope.showLogin = function () {
+    	$scope.login = true;
     }
 
     
