@@ -142,7 +142,7 @@ module.exports = function (server) {
         	let era = results[1][1];
 
         	io.to(currentRoom).emit('war results', warResults);
-        	if (era === 1) { //should be 3
+        	if (era === 3) { //should be 3
         		return endOfEra.eraEnded(game, era)
         		.then(function(gameResults) {
         			console.log('###########gameResults', gameResults);
