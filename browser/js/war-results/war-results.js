@@ -10,7 +10,7 @@ app.directive('warResults', function ($rootScope, $state, $uibModal) {
         link: function(scope){
 
             scope.winners = false;
-            scope.victory = false;
+            // scope.victory = false;
             scope.end = false;
 
             // scope.warResults = [];
@@ -20,21 +20,30 @@ app.directive('warResults', function ($rootScope, $state, $uibModal) {
             // ]
 
             scope.showWarResults = function() {
-                $uibModal.open({
+                var modalInstance = $uibModal.open({
                     animation: scope.animationsEnabled,
                     templateUrl: 'warResultsModal',
                     scope: scope,
-                    windowClass: 'war-modal'
-                    // ,
-                    // backdrop  : 'static',
-                    // keyboard  : false
+                    windowClass: 'war-modal',
+                    controller: function() {
+                        scope.closeModal = function(){
+                           modalInstance.close();
+                        }
+                    }
+                    ,
+                    backdrop  : 'static',
+                    keyboard  : false
                 })
 
             }
 
-            scope.dismissModal = function () {
-                // $uibModal.dismiss('cancel');
-            }
+            // console.log('war results', scope.warResults)
+
+            // scope.showWarResults();
+
+            // scope.dismissModal = function () {
+            //     $uibModal.dismiss('cancel');
+            // }
 
             scope.showWinner = function () {
                 scope.end = true;

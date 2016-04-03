@@ -10,8 +10,6 @@ module.exports = function () {
 		var totalMoney = 0;
 		let wonders = player.wondersBuilt;
 
-		console.log('**********player.tokens', player.tokens);
-
 		// 	//calculate money and military points 
 		if (player.tokens.length) {
 			console.log('########player.tokens', player.tokens);
@@ -134,10 +132,16 @@ module.exports = function () {
 			}
 
 			// count points from the shipowners guild card
+			console.log('shipownersGuild', shipownersGuild)
+			console.log('totalPoints', totalPoints)
+			console.log('processedCards', processedCards)
+			console.log('rawCards', rawCards)
+			console.log('numGuildCards', numGuildCards)
 			if (shipownersGuild) totalPoints += processedCards + rawCards + numGuildCards;
 
 
 			// if the player has other guild cards, execute this promise:
+			console.log('guildCards', guildCards)
 
 			if (guildCards.length) {
 				return Promise.join(board, builtCards, guildCards, player.getLeftNeighbor(), player.getRightNeighbor())
@@ -174,7 +178,7 @@ module.exports = function () {
 	//player.points = calculatePoints(player);
 
 	var findWinner = function (allPlayers) {
-		// console.log('allPlayers inside findWinner', allPlayers)
+		console.log('allPlayers inside findWinner', allPlayers)
 		var topScore = allPlayers.sort(function(a,b) {
 	    	return a.points<b.points;
 		});
@@ -182,7 +186,7 @@ module.exports = function () {
 		topScore.forEach(function(el, i) {
 			el.position = i + 1;
 		})
-		// console.log('********** inside find Winner topScore', topScore)
+		console.log('********** inside find Winner topScore', topScore)
 		var winner = _.filter(allPlayers, {'points': topScore[0].points });
 		console.log('winner', winner)
 		if (winner.length === 1) {
