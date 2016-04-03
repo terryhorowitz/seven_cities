@@ -99,6 +99,7 @@ module.exports = function () {
   
   function checkOtherPossibilities(resources, leftOverCost){
     var ownResourcesComboCopy = _.cloneDeep(resources.self.combo) || [];
+    console.log('combos --- tc?', ownResourcesComboCopy)
     var allResources = _.merge(_.cloneDeep(resources.left), _.cloneDeep(resources.right), combiningFunc);
     allResources.combo = removeTradingResources(allResources.combo);
     allResources.combo = allResources.combo.concat(ownResourcesComboCopy);
