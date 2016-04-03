@@ -48,6 +48,7 @@ module.exports = function () {
   
   /////// Public API/////////////
   function orchestrator(playersSelections){
+    console.log('orchestrating', playersSelections)
     return playersSelections.reduce(function(promiseAccumulator, playerChoice){
       choice = playerChoice.choice;
       return promiseAccumulator
@@ -57,6 +58,7 @@ module.exports = function () {
         .spread(function(_player, _card){
           player = _player;
           card = _card;
+        console.log('each player', playerChoice.choice)
           return executeChoice(playerChoice.choice);
         })
     }, Promise.resolve())
