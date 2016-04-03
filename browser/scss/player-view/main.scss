@@ -51,6 +51,8 @@ $pile-width: 115px;
 $built-card-left: 50px;
 $expanded-position-h: 170px;
 $card-width: 100px;
+$card-width-neighbor: 85px;
+$pile-width-neighbor: 95px;
 
 
 li {
@@ -218,13 +220,44 @@ li {
 					top: 0;
 				}
 			}
+		}
+		&:nth-of-type(1) {
+			left: $built-card-left;
+		}
+		&:nth-of-type(2) {
+			left: $pile-width-neighbor + $built-card-left;
+		}
+		&:nth-of-type(3) {
+			left: 2*$pile-width-neighbor + $built-card-left;
+		}
+		&:nth-of-type(4) {
+			left: 3*$pile-width-neighbor + $built-card-left;
+		}
+		&:nth-of-type(5) {
+			left: 4*$pile-width-neighbor + $built-card-left;
+		}
+		&:nth-of-type(6) {
+			left: 5*$pile-width-neighbor + $built-card-left;
+		}
+		&:nth-of-type(7) {
+			left: 6*$pile-width-neighbor + $built-card-left;
 		}		
 	}
 }
 
 #built-cards.other-boards {
 	top: 110px;
-	left: 20px;
+	left: -30px;
+	.pile {
+		width: $pile-width-neighbor;
+		ul {
+			li {
+				img {
+					width: $card-width-neighbor;
+				}
+			}
+		}
+	}
 }
 
 .wonders{
