@@ -82,7 +82,6 @@ module.exports = function () {
   function buildCard() {
     return doSomethingBasedOnBuildingACard()
     .then(function(){
-      console.log('##########inside build card right before removeTemporary and addPermanent')
       return Promise.join(player.removeTemporary(card), player.addPermanent(card));
     })
     .catch(function(err){
