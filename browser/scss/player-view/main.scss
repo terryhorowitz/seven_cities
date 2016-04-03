@@ -48,9 +48,11 @@ $card-v-space: 10px;
 $card-h-space: 5px;
 $card-h-space-expand: 120px;
 $pile-width: 115px;
-$built-card-left: 100px;
+$built-card-left: 50px;
 $expanded-position-h: 170px;
 $card-width: 100px;
+$card-width-neighbor: 85px;
+$pile-width-neighbor: 95px;
 
 
 li {
@@ -167,6 +169,12 @@ li {
 				&:nth-of-type(5) img {
 					top: 4*$card-v-space;
 				}
+				&:nth-of-type(6) img {
+					top: 5*$card-v-space;
+				}
+				&:nth-of-type(7) img {
+					top: 6*$card-v-space;
+				}
 			}
 			
 		}
@@ -188,11 +196,14 @@ li {
 		&:nth-of-type(6) {
 			left: 5*$pile-width + $built-card-left;
 		}
+		&:nth-of-type(7) {
+			left: 6*$pile-width + $built-card-left;
+		}
 	}
 	.pile.expand {
 		transition: all 0.5s ease-in-out;
 		position: absolute;
-		left: 100px;
+		left: 150px;
 		ul {
 			/*display: flex;
 			flex-direction: row;*/
@@ -209,12 +220,44 @@ li {
 					top: 0;
 				}
 			}
+		}
+		&:nth-of-type(1) {
+			left: $built-card-left;
+		}
+		&:nth-of-type(2) {
+			left: $pile-width-neighbor + $built-card-left;
+		}
+		&:nth-of-type(3) {
+			left: 2*$pile-width-neighbor + $built-card-left;
+		}
+		&:nth-of-type(4) {
+			left: 3*$pile-width-neighbor + $built-card-left;
+		}
+		&:nth-of-type(5) {
+			left: 4*$pile-width-neighbor + $built-card-left;
+		}
+		&:nth-of-type(6) {
+			left: 5*$pile-width-neighbor + $built-card-left;
+		}
+		&:nth-of-type(7) {
+			left: 6*$pile-width-neighbor + $built-card-left;
 		}		
 	}
 }
 
 #built-cards.other-boards {
 	top: 110px;
+	left: -30px;
+	.pile {
+		width: $pile-width-neighbor;
+		ul {
+			li {
+				img {
+					width: $card-width-neighbor;
+				}
+			}
+		}
+	}
 }
 
 .wonders{
@@ -315,6 +358,9 @@ nav {
 	}
 	.text-side {
 		padding-left: 5px;
+		.options-button {
+			margin-bottom: 5px;
+		}
 	}
 	a {
 		color: inherit;
@@ -326,6 +372,10 @@ nav {
 			text-decoration: none;
 		}
 	}
+}
+
+.options-button {
+	margin-bottom: 5px;
 }
 
 selected-card {
@@ -365,8 +415,8 @@ selected-card {
 	box-shadow: -10px -8px 27px 4px rgba(0,0,0,0.54);
   }
 
-	#chatMessage {
-		font-family: 'PT Serif', serif;
+#chatMessage {
+	font-family: 'PT Serif', serif;
     position: fixed;
     word-wrap: break-word;
     bottom: 0;
@@ -377,7 +427,9 @@ selected-card {
     color: black;
     border-style: solid;
     border-width: 1px;
-    border-color: #663300;  }
+    border-color: #663300;
+    padding: 10px;
+}
 
 #messageList {
   height: 0px;
@@ -532,7 +584,7 @@ board-name {
 	padding: 0 10px;
 	h4 {
 		/*font-family: 'Cinzel';*/
-		font-size: 18px;
+		font-size: 16px;
 		font-weight: bold;
 		text-shadow: 0 0 2px #fff;
 	}
@@ -568,6 +620,7 @@ board-name {
 
 .pay-cost {
   font-size: 14px;
+  margin-bottom: 10px;
 }
 
 .trade-btn.active {
@@ -583,6 +636,20 @@ board-name {
 .trade-btn:hover {
   background-color: #8C693E;
   border-color: #8C693E;
+}
+
+.submit-trade-btn {
+	margin-top: 5px;
+}
+
+.alert {
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+}
+
+.trading-buttons {
+	margin: 2px 0;
 }
 
 @import url(https://fonts.googleapis.com/css?family=PT+Serif);

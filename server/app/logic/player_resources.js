@@ -4,10 +4,10 @@ var db_getters = require('./db_getters.js')
 
 function buildPlayerResources(player, resources) {
   if (resources[0] === "Raw Resource"){
-    resources = ["wood/stone/ore/clay"]
+    resources = ["wood/stone/ore/clay"];
   }
   else if (resources[0] === "Processed Resource"){ 
-    resources = ["glass/textile/papyrus"]
+    resources = ["glass/textile/papyrus"];
   }
   var gameResources = getGameResources(player.gameId);
   var playersResources = gameResources[player.id].self;
