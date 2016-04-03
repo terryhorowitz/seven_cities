@@ -106,7 +106,7 @@ function findRoomName(roomsObj) {
 }
 
 function sortBuiltCards (cards){
-	var sorted = [[],[],[],[],[],[]];
+	var sorted = [[],[],[],[],[],[],[]];
 	var cardTypeMap = {
 		"Raw Resource": 0,
 		"Processed Resource": 1,

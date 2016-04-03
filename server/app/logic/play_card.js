@@ -82,7 +82,6 @@ module.exports = function () {
   function buildCard() {
     return doSomethingBasedOnBuildingACard()
     .then(function(){
-      console.log('##########inside build card right before removeTemporary and addPermanent')
       return Promise.join(player.removeTemporary(card), player.addPermanent(card));
     })
     .catch(function(err){
@@ -91,14 +90,17 @@ module.exports = function () {
   }
   
   function payForCard() {
-    var total = player.money - card.cost;
-    player.money = total;
+    player.money = player.money - 1;
     return buildCard();
   }
   
   function buildWonder(){
     player.wondersBuilt = player.wondersBuilt + 1;
-        return Promise.join(player.removeTemporary(card), player.save(), getWonderOutcome()); 
+      return Promise.join(player.removeTemporary(card), player.save())
+      .spread(function(tempRm, _player){
+        player = _player;
+        return getWonderOutcome();
+      })
   }
   
   function discard(){
@@ -179,7 +181,6 @@ module.exports = function () {
   
   
   function tradeForCard(tradeParams){
-    //obj that needs to be recieved: {left: ['wood', 'clay'], right: ['clay]} OR {left: ['ore'], right: null} etc).
     var forWonder, payLeft, payRight;
     tradeParams.wonder ? forWonder = true : forWonder = false;
     tradeParams.left !== null ? payLeft = trade(tradeParams.left, 'left') : payLeft = 0;
@@ -192,10 +193,8 @@ module.exports = function () {
       return Promise.join(leftNeighbor.save(), rightNeighbor.save(), player.save())
     })
     .then(function(leftNeighbor, rightNeighbor){
-      if (forWonder) {
-        return buildWonder();
-      }
-      return buildCard();
+      if (forWonder) return buildWonder();
+      else return buildCard();
     })
   }
 
@@ -205,25 +204,18 @@ module.exports = function () {
     for (var i = 0; i < trade.length; i++){
       totalPayment += tradeParams[resourceTypeMap[trade[i]]];
     }
-    return totalPayment;
+    return Number(totalPayment);
   }
   
   function getWonderOutcome () {
     var boardName = player.board.name;
-    // var wonderFunc = player.board[wonder + player.wondersBuilt];
-    if (boardName === "Esphesos" && player.wondersBuilt === 2){
-      player.money += 9;
-      return player.save();
+    if (boardName === "Ephesos" && player.wondersBuilt === 2){
+      player.money = Number(player.money) + 9;
+      return player.update({money: player.money});
     }
     else if (boardName === "Alexandria" && player.wondersBuilt === 2){
       return addToPlayerResources.buildPlayerResources(player, ["clay/ore/wood/stone"]);
     }
-//    else if (boardName === "Halikarnassos" && player.wondersBuilt === 2){
-//      return  player.save()// do something on front end for this??
-//    }
-//    else if(boardName === "Olympia" && player.wondersBuilt === 2){
-//      return player.save()//"do not have to pay once per era";
-//    }
     else return Promise.resolve();
   }
     

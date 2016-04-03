@@ -6,7 +6,7 @@
 			<div ng-repeat="result in warResults">
 				<p >{{ result }}</p>
 			</div>
-			<button class="btn btn-default" ng-click="dismissModal()" ng-hide="victory">Ok</button>
+			<button class="btn btn-default" ng-click="closeModal()" ng-hide="victory">Ok</button>
 			<button class="btn btn-default" ng-click="showWinner()" ng-show="victory">Show Winner</button>
 	    </div>
 	    <div class='game-results' ng-show="end">
