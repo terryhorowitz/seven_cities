@@ -120,7 +120,7 @@ module.exports = function (server) {
 	socket.on('submit choice', function(data) {
 		console.log('this is data in choice submit', data)
 		currentRoom = helpers.findRoomName(socket.rooms);
-                var peopleInRoom = 0;
+    var peopleInRoom = 0;
       
     clients = io.sockets.adapter.rooms[currentRoom];
       for (var key in clients.sockets) {
@@ -141,7 +141,7 @@ module.exports = function (server) {
         	let era = results[1][1];
 
         	io.to(currentRoom).emit('war results', warResults);
-        	if (era === 1) { //should be 3
+        	if (era === 3) { //should be 3
         		return endOfEra.eraEnded(game, era)
         		.then(function(gameResults) {
         			console.log('###########gameResults', gameResults);
@@ -150,13 +150,13 @@ module.exports = function (server) {
         	} else {
 	        	return endOfEra.eraEnded(game, era)
 	        	.then(function(game){
-	                playersChoices = [];
-	                // console.log('game.GamePlayers in new round', game.GamePlayers)
-	                players = helpers.createPlayersObjectRefresh(game.GamePlayers)
-	                // console.log('new round players', players)
-	                io.to(currentRoom).emit('new round', players);
-	                game.GamePlayers.forEach(function(player) {
-	                io.sockets.connected[player.socket].emit('your hand', player.Temporary);
+              playersChoices = [];
+              // console.log('game.GamePlayers in new round', game.GamePlayers)
+              players = helpers.createPlayersObjectRefresh(game.GamePlayers)
+              // console.log('new round players', players)
+              io.to(currentRoom).emit('new round', players);
+              game.GamePlayers.forEach(function(player) {
+              io.sockets.connected[player.socket].emit('your hand', player.Temporary);
 		        	})
 	        	})
 	        }
@@ -184,6 +184,16 @@ module.exports = function (server) {
     	io.to(currentRoom).emit('waiting on', waiting);
     }
 
+	})
+	socket.on('delete game', function(numPlayers) {
+		currentRoom = helpers.findRoomName(socket.rooms);
+    var peopleInRoom = 0;
+    socket.disconnect();
+    clients = io.sockets.adapter.rooms[currentRoom];
+    for (var key in clients.sockets) {
+      peopleInRoom++;
+    }
+		console.log('peopleInRoom', peopleInRoom)
 	})
 });
   
