@@ -36,14 +36,14 @@
               <label class="btn btn-primary trade-btn" ng-model="trade.right[$parent.$index + rightTradeOptions.other.length]" uib-btn-radio="{{combo}}{{[$index]}}" ng-repeat="item in combo track by $index" uncheckable>{{item}}</label>
             </div>
           </div>
-            <button type ="button" class="btn btn-default btn-submit submit-trade-btn" ng-click="submitTrade()">submit</button>
+            <button type ="button" class="btn btn-default btn-success submit-trade-btn" ng-click="submitTrade()">submit</button>
             <uib-alert type="{{tradeAlert.type}}" close="closetradeAlert()" ng-show="tradeAlert">{{tradeAlert.msg}}</uib-alert>
         </div>
         </div>
       </form>
         
       <form ng-show="hasWonderTrade">
-        <button type="button" class="btn btn-default" ng-click="toggleWonderTradeCollapse()">
+        <button type="button" class="btn btn-default options-button" ng-click="toggleWonderTradeCollapse()">
         build wonder:
         </button>
         <div uib-collapse="!wonderTradeCollapse">
@@ -51,7 +51,7 @@
           <div class="">
           need: {{wonderTradeCost}}
           </div>
-          <div ng-show="playerWonderTradeOptions.length > 0">Own
+          <div class="trading-buttons" ng-show="playerWonderTradeOptions.length > 0">Own
             <div class="btn-group" ng-repeat="combo in playerWonderTradeOptions track by $index">
               <label class="btn btn-primary trade-btn" ng-model="wonderTrade.self[$parent.$index]" uib-btn-radio="{{combo}}{{[$index]}}" ng-repeat="item in combo track by $index" uncheckable>{{item}}</label>
             </div>
@@ -69,7 +69,7 @@
               <label class="btn btn-primary trade-btn" ng-model="wonderTrade.right[$parent.$index + rightWonderTradeOptions.other.length]" uib-btn-radio="{{combo}}{{[$index]}}" ng-repeat="item in combo track by $index" uncheckable>{{item}}</label>
             </div>
           </div>
-            <button type ="button" class="btn btn-default btn-submit submit-trade-btn" ng-click="submitWonderTrade()">submit</button>
+            <button type ="button" class="btn btn-default btn-success submit-trade-btn" ng-click="submitWonderTrade()">submit</button>
             <uib-alert type="{{wonderTradeAlert.type}}" close="closeWonderTradeAlert()" ng-show="wonderTradeAlert">{{wonderTradeAlert.msg}}</uib-alert>
         </div>
         </div>

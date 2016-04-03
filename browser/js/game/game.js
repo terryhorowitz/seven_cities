@@ -277,13 +277,13 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
       
       // $scope.tradeCollapse = true;
       $scope.toggleTradeCollapse = function () {
-        // $scope.wonderTradeCollapse = true;
+        $scope.wonderTradeCollapse = true;
         $scope.tradeCollapse ? $scope.tradeCollapse = false : $scope.tradeCollapse = true;
       }
       
       // $scope.wonderTradeCollapse = true;
       $scope.toggleWonderTradeCollapse = function () {
-        // $scope.tradeCollapse = true;
+        $scope.tradeCollapse = true;
         $scope.wonderTradeCollapse ? $scope.wonderTradeCollapse = false : $scope.wonderTradeCollapse = true;
       }
       

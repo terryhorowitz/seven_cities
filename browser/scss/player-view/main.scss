@@ -203,7 +203,7 @@ li {
 	.pile.expand {
 		transition: all 0.5s ease-in-out;
 		position: absolute;
-		left: 100px;
+		left: 150px;
 		ul {
 			/*display: flex;
 			flex-direction: row;*/
@@ -584,7 +584,7 @@ board-name {
 	padding: 0 10px;
 	h4 {
 		/*font-family: 'Cinzel';*/
-		font-size: 18px;
+		font-size: 16px;
 		font-weight: bold;
 		text-shadow: 0 0 2px #fff;
 	}
@@ -620,6 +620,7 @@ board-name {
 
 .pay-cost {
   font-size: 14px;
+  margin-bottom: 10px;
 }
 
 .trade-btn.active {
@@ -642,7 +643,13 @@ board-name {
 }
 
 .alert {
-	padding: 5px;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	padding-left: 5px;
+}
+
+.trading-buttons {
+	margin: 2px 0;
 }
 
 @import url(https://fonts.googleapis.com/css?family=PT+Serif);
