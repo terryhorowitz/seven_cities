@@ -4,11 +4,9 @@ var db_getters = require('./db_getters.js')
 
 function buildPlayerResources(player, resources) {
   if (resources[0] === "Raw Resource"){
-    console.log('here 1', resources)
     resources = ["wood/stone/ore/clay"]
   }
   else if (resources[0] === "Processed Resource"){ 
-    console.log('here 2', resources)
     resources = ["glass/textile/papyrus"]
   }
   var gameResources = getGameResources(player.gameId);
@@ -27,7 +25,6 @@ function buildPlayerResources(player, resources) {
       } 
       else playersResources[resources[i]]++;
     }
-  console.log('everything', playersResources)
   return player.save();
 }
 
