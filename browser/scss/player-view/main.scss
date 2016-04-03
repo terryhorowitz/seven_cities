@@ -167,6 +167,12 @@ li {
 				&:nth-of-type(5) img {
 					top: 4*$card-v-space;
 				}
+				&:nth-of-type(6) img {
+					top: 5*$card-v-space;
+				}
+				&:nth-of-type(7) img {
+					top: 6*$card-v-space;
+				}
 			}
 			
 		}
@@ -187,6 +193,9 @@ li {
 		}
 		&:nth-of-type(6) {
 			left: 5*$pile-width + $built-card-left;
+		}
+		&:nth-of-type(7) {
+			left: 6*$pile-width + $built-card-left;
 		}
 	}
 	.pile.expand {
