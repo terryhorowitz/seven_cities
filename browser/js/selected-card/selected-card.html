@@ -4,16 +4,16 @@
         <img ng-src="img/{{cardSelection.picture}}">
     </div>
     <div class="text-side">
-        <div ng-repeat='option in playOptions track by $index'>
+        <div class="options-button" ng-repeat='option in playOptions track by $index'>
             <button type ="button" class="btn btn-default" ng-click="submitChoice(option)">{{option.msg || option}}</button>
         </div>
       
       <form ng-show="hasTrade">
-        <button type="button" class="btn btn-default" ng-click="toggleTradeCollapse()">
+        <button type="button" class="btn btn-default options-button" ng-click="toggleTradeCollapse()">
           Build Card:
         </button>
-        <div uib-collapse="tradeCollapse">
-          <div class="well well-lg">
+        <div uib-collapse="!tradeCollapse">
+          <div class="">
           <div class="pay-cost">
             need: {{tradeCost}}
           </div>

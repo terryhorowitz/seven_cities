@@ -275,15 +275,15 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
         }
       }
       
-      $scope.tradeCollapse = true;
+      // $scope.tradeCollapse = true;
       $scope.toggleTradeCollapse = function () {
-        $scope.wonderTradeCollapse = true;
+        // $scope.wonderTradeCollapse = true;
         $scope.tradeCollapse ? $scope.tradeCollapse = false : $scope.tradeCollapse = true;
       }
       
-      $scope.wonderTradeCollapse = true;
+      // $scope.wonderTradeCollapse = true;
       $scope.toggleWonderTradeCollapse = function () {
-        $scope.tradeCollapse = true;
+        // $scope.tradeCollapse = true;
         $scope.wonderTradeCollapse ? $scope.wonderTradeCollapse = false : $scope.wonderTradeCollapse = true;
       }
       
@@ -329,6 +329,8 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
       })
       //player submits their choice
       $scope.selectCard = function(card) {
+        $scope.tradeCollapse = false;
+        $scope.wonderTradeCollapse = false;
         $scope.cardSelection = card;
         console.log('this is card and id in seleect card', card, $scope.playerId)
         socket.emit('choice made', {player: $scope.playerId, card: card.id});
