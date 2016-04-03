@@ -130,7 +130,6 @@ module.exports = function (server) {
 		playersChoices.push(data)
 
     if (playersChoices.length === peopleInRoom){
-      console.log('submitts', playersChoices)
       return playCard(playersChoices)
       .then(function(results) {
         console.log('playersChoices', playersChoices)

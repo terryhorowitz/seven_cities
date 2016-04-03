@@ -4,14 +4,10 @@ var db_getters = require('./db_getters.js')
 
 function buildPlayerResources(player, resources) {
   if (resources[0] === "Raw Resource"){
-    console.log('raaw', resources)
     resources = ["wood/stone/ore/clay"];
-    console.log('adding raw?', resources)
   }
   else if (resources[0] === "Processed Resource"){ 
-    console.log('process', resources)
     resources = ["glass/textile/papyrus"];
-    console.log('adding procss?', resources)
   }
   var gameResources = getGameResources(player.gameId);
   var playersResources = gameResources[player.id].self;
@@ -29,7 +25,6 @@ function buildPlayerResources(player, resources) {
       } 
       else playersResources[resources[i]]++;
     }
-  console.log('added to own rsc?', playersResources)
   return player.save();
 }
 
