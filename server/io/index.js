@@ -133,7 +133,7 @@ module.exports = function (server) {
       return playCard(playersChoices)
       .then(function(results) {
         console.log('playersChoices', playersChoices)
-        console.log('results.id and .name beofre if', results.id, results.name)
+        // console.log('results.id and .name beofre if', results.id, results.name)
 
         if (results.length>1) {
 	        let game = results[0];
