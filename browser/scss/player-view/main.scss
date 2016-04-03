@@ -48,7 +48,7 @@ $card-v-space: 10px;
 $card-h-space: 5px;
 $card-h-space-expand: 120px;
 $pile-width: 115px;
-$built-card-left: 100px;
+$built-card-left: 50px;
 $expanded-position-h: 170px;
 $card-width: 100px;
 
@@ -592,6 +592,14 @@ board-name {
 .trade-btn:hover {
   background-color: #8C693E;
   border-color: #8C693E;
+}
+
+.submit-trade-btn {
+	margin-top: 5px;
+}
+
+.alert {
+	padding: 5px;
 }
 
 @import url(https://fonts.googleapis.com/css?family=PT+Serif);

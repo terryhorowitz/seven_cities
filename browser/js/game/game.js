@@ -289,10 +289,12 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
       
       $scope.closeWonderTradeAlert = function(){
         $scope.wonderTradeAlert = null;
+        $scope.$digest();
       }
       
       $scope.closeTradeAlert = function(){
         $scope.tradeAlert = null;
+        $scope.$digest();
       }
 
       socket.on('err', function(data) {
