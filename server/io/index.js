@@ -14,6 +14,8 @@ var playerReload = require('../app/logic/playerReload.js');
 var helpers = require('../app/logic/socketHelpers.js');
 var playCard = require('../app/logic/play_card.js')();
 var endOfEra = require('../app/logic/endOfEra.js');
+var ending = require('../app/logic/ending.js')();
+
 
 
 module.exports = function (server) {
@@ -120,7 +122,7 @@ module.exports = function (server) {
 	socket.on('submit choice', function(data) {
 		console.log('this is data in choice submit', data)
 		currentRoom = helpers.findRoomName(socket.rooms);
-                var peopleInRoom = 0;
+    var peopleInRoom = 0;
       
     clients = io.sockets.adapter.rooms[currentRoom];
       for (var key in clients.sockets) {
@@ -150,13 +152,13 @@ module.exports = function (server) {
         	} else {
 	        	return endOfEra.eraEnded(game, era)
 	        	.then(function(game){
-	                playersChoices = [];
-	                // console.log('game.GamePlayers in new round', game.GamePlayers)
-	                players = helpers.createPlayersObjectRefresh(game.GamePlayers)
-	                // console.log('new round players', players)
-	                io.to(currentRoom).emit('new round', players);
-	                game.GamePlayers.forEach(function(player) {
-	                io.sockets.connected[player.socket].emit('your hand', player.Temporary);
+              playersChoices = [];
+              // console.log('game.GamePlayers in new round', game.GamePlayers)
+              players = helpers.createPlayersObjectRefresh(game.GamePlayers)
+              // console.log('new round players', players)
+              io.to(currentRoom).emit('new round', players);
+              game.GamePlayers.forEach(function(player) {
+              io.sockets.connected[player.socket].emit('your hand', player.Temporary);
 		        	})
 	        	})
 	        }
@@ -184,6 +186,13 @@ module.exports = function (server) {
     	io.to(currentRoom).emit('waiting on', waiting);
     }
 
+	})
+	socket.on('delete game', function(thesePlayers) {
+    socket.disconnect();
+  	return ending.clearPlayersfromDB(thesePlayers.players)
+  	.catch(function(err) {
+  		console.log('error in delete game in socket index', err)
+  	})
 	})
 });
   

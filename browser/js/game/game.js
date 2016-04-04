@@ -393,8 +393,7 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
       //************* game ended *****************
 
       $scope.$on('leave game', function() {
-        console.log('@@@@@@@@@@leaving game');
-        socket.emit('delete game');
+        socket.emit('delete game', {players: $scope.players});
       });
 
 
