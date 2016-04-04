@@ -287,14 +287,9 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
         $scope.wonderTradeCollapse ? $scope.wonderTradeCollapse = false : $scope.wonderTradeCollapse = true;
       }
       
-      $scope.closeWonderTradeAlert = function(){
-        $scope.wonderTradeAlert = null;
-        $scope.$digest();
-      }
-      
       $scope.closeTradeAlert = function(){
         $scope.tradeAlert = null;
-        $scope.$digest();
+        $scope.wonderTradeAlert = null;
       }
 
       socket.on('err', function(data) {
@@ -334,7 +329,7 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
         $scope.tradeCollapse = false;
         $scope.wonderTradeCollapse = false;
         $scope.cardSelection = card;
-        console.log('this is card and id in seleect card', card, $scope.playerId)
+        console.log('this is card and id in seleect card', card, $scope.playerId);
         socket.emit('choice made', {player: $scope.playerId, card: card.id});
       };
 
