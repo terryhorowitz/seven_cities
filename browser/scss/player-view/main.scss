@@ -486,7 +486,8 @@ selected-card {
 
 .war-modal {
 	.modal-content {
-		background: url(img/war_helmet2.jpg) no-repeat center center; 
+		background: url(img/war_helmet2_transp.png) no-repeat center center;
+		background-color: rgba(255, 255, 255, 0.7);
 		width: 550px;
 		margin: 0 auto;
 		-webkit-background-size: contain;
@@ -509,7 +510,7 @@ selected-card {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	background: rgba(255,255,255, 0.5);
+	background: rgba(255,255,255, 0.4);
 	-moz-transition: background .3s linear;
 	-webkit-transition: background .3s linear;
 	-o-transition: background .3s linear;
