@@ -287,12 +287,9 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
         $scope.wonderTradeCollapse ? $scope.wonderTradeCollapse = false : $scope.wonderTradeCollapse = true;
       }
       
-      $scope.closeWonderTradeAlert = function(){
-        $scope.wonderTradeAlert = null;
-      }
-      
       $scope.closeTradeAlert = function(){
         $scope.tradeAlert = null;
+        $scope.wonderTradeAlert = null;
       }
 
       socket.on('err', function(data) {
