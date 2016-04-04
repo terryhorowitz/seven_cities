@@ -69,6 +69,12 @@ seedCards()
   return seedBoards();
 })
 .then(function(){
+  return Game.destroy({where: {}});
+})
+.then(function(){
+  return Player.destroy({where: {}});
+})
+.then(function(){
   console.log('Database seeded :)')
 }).catch(function(err){
     console.error('seed error!', err)
