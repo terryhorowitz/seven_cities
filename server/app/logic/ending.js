@@ -122,13 +122,13 @@ module.exports = function () {
 					totalPoints += tradingCards.length;
 				}
 				else if (card.name === "Chamber of Commerce") {
-					totalPoints += processedCards.length * 2;
+					totalPoints += processedCards * 2;//verify this calculation
 				}
 				else if (card.name === "Haven") {
-					totalPoints += rawCards.length;
+					totalPoints += rawCards; //verify this calculation
 				}
 				else if (card.name === "Arena") {
-					totalPoints += wonders.length;
+					totalPoints += wonders;//verify this calculation
 				}
 			}
 
