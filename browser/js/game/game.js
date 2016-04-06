@@ -296,6 +296,7 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
       })
 
       socket.on('new round', function(data) {
+        $scope.nonNeighbors = [];
         $scope.submitted = false;
         $scope.players = data;
         for (var i = 0; i < data.length; i++) {
