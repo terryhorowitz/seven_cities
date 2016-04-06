@@ -13,7 +13,6 @@ module.exports = function () {
 
 		// 	//calculate money and military points 
 		if (player.tokens.length) {
-			console.log('########player.tokens', player.tokens);
 			let totalTokens = player.tokens.reduce(function(a, b) {
 				return a + b;
 			})
@@ -133,16 +132,16 @@ module.exports = function () {
 			}
 
 			// count points from the shipowners guild card
-			console.log('shipownersGuild', shipownersGuild)
-			console.log('totalPoints', totalPoints)
-			console.log('processedCards', processedCards)
-			console.log('rawCards', rawCards)
-			console.log('numGuildCards', numGuildCards)
+			// console.log('shipownersGuild', shipownersGuild)
+			// console.log('totalPoints', totalPoints)
+			// console.log('processedCards', processedCards)
+			// console.log('rawCards', rawCards)
+			// console.log('numGuildCards', numGuildCards)
 			if (shipownersGuild) totalPoints += processedCards + rawCards + numGuildCards;
 
 
 			// if the player has other guild cards, execute this promise:
-			console.log('guildCards', guildCards)
+			// console.log('guildCards', guildCards)
 
 			if (guildCards.length) {
 				return Promise.join(board, builtCards, guildCards, player.getLeftNeighbor(), player.getRightNeighbor())
@@ -169,7 +168,7 @@ module.exports = function () {
 			}// end if guildCards
 			})
 			.then(function() {
-				console.log('totalPoints at the end', totalPoints)
+				// console.log('totalPoints at the end', totalPoints)
 				return { player: player, points: totalPoints, money: totalMoney}
 			})
 	}
@@ -179,7 +178,7 @@ module.exports = function () {
 	//player.points = calculatePoints(player);
 
 	var findWinner = function (allPlayers) {
-		console.log('allPlayers inside findWinner', allPlayers)
+		// console.log('allPlayers inside findWinner', allPlayers)
 		var topScore = allPlayers.sort(function(a,b) {
 	    	return a.points<b.points;
 		});
@@ -187,22 +186,22 @@ module.exports = function () {
 		topScore.forEach(function(el, i) {
 			el.position = i + 1;
 		})
-		console.log('********** inside find Winner topScore', topScore)
+		// console.log('********** inside find Winner topScore', topScore)
 		var winner = _.filter(allPlayers, {'points': topScore[0].points });
-		console.log('winner', winner)
+		// console.log('winner', winner)
 		if (winner.length === 1) {
 			// console.log('winner', winner[0])
 			// console.log('winner', winner[0].player.dataValues.name)
 			return [topScore, winner]
 		}
 		else if (winner.length > 1) {
-			console.log('more than one winner')
+			// console.log('more than one winner')
 			var topMoney = winner.sort(function(a,b) {
 				return a.money<b.money;
 			});
-			console.log('topMoney', topMoney)
+			// console.log('topMoney', topMoney)
 			var moneyWinner = _.filter(winner, {'money': topMoney[0].money });
-			console.log('moneyWinner', moneyWinner)
+			// console.log('moneyWinner', moneyWinner)
 			return [topScore, moneyWinner];
 		} else {
 			return "There was an error determining the winner";
@@ -214,7 +213,7 @@ module.exports = function () {
 		return Player.findOne({where: {id: allPlayers[0].playerId}})
 		.then(function(player) {
 			gameid = player.gameId;
-			console.log('gameid', gameid)
+			// console.log('gameid', gameid)
 			return Promise.join(Player.destroy({where: { gameId: gameid }}), Game.destroy({where: { id: gameid }}))
 		})
 	}

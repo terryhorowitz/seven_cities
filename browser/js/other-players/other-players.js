@@ -19,7 +19,6 @@ app.directive('otherPlayers', function ($rootScope, $state, $uibModal) {
 
                 scope.neighbor = neighbor;
                 scope.neighborWonders = [1, 2, 3];
-                console.log('this is neighbor', scope.neighbor)
                 scope.minuses = neighbor.minuses;
                 scope.pluses = neighbor.pluses;
                 scope.money = neighbor.money;
