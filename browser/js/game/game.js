@@ -55,7 +55,6 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
       socket.emit('create', {roomname: $scope.roomname, playername: $scope.playername, localId: tempId});
 
       socket.on('in room', function(data) {
-        console.log('this is in room', data);
         $scope.inRoom = data.join(', ');
         $scope.$digest();
       })
@@ -253,7 +252,6 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
           tradeObj.wonder = false;
           $scope.playOptions = null;
           $scope.submitted = true;
-          console.log('before emit trade', tradeObj)
           socket.emit('submit choice', {choice: tradeObj, cardId: $scope.cardSelection.id, playerId: $scope.playerId});
         }
       }; 
@@ -298,7 +296,6 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
       })
 
       socket.on('new round', function(data) {
-        console.log('data in new round', data)
         $scope.submitted = false;
         $scope.players = data;
         for (var i = 0; i < data.length; i++) {
@@ -329,7 +326,6 @@ app.controller('GameController', function ($scope, $state, TradeFactory) {
         $scope.tradeCollapse = false;
         $scope.wonderTradeCollapse = false;
         $scope.cardSelection = card;
-        console.log('this is card and id in seleect card', card, $scope.playerId);
         socket.emit('choice made', {player: $scope.playerId, card: card.id});
       };
 
